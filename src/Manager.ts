@@ -30,7 +30,7 @@ export interface ManagerOptions {
   send: SendPacketFunction;
   resumeTimeout?: number;
   shards?: number;
-  plugins?: typeof Plugin[]
+  plugins?: typeof Plugin[];
 }
 
 export class Manager extends EventEmitter {
@@ -60,7 +60,7 @@ export class Manager extends EventEmitter {
     if (options.plugins && Array.isArray(options.plugins))
       for (const pluginc of options.plugins) {
         try {
-          const plugin = new (pluginc)(this);
+          const plugin = new pluginc(this);
           this.plugins.push(plugin);
           plugin.onLoad();
         } catch (error) {
@@ -82,12 +82,14 @@ export class Manager extends EventEmitter {
       throw new TypeError("Lava#init: Please provide the bot user id.");
 
     this.userId = userId;
-    for await (const options of this.#nodes.filter(n => !this.getNode(n.name))) {
+    for await (const options of this.#nodes.filter(
+      (n) => !this.getNode(n.name)
+    )) {
       const socket = new LavaSocket(options, this);
       try {
         await socket._connect(userId);
         this.nodes.push(socket);
-        this.plugins.forEach(p => p.onNewSocket(socket));
+        this.plugins.forEach((p) => p.onNewSocket(socket, options));
       } catch (error) {
         this.emit("error", error, options.name);
       }
@@ -141,7 +143,7 @@ export class Manager extends EventEmitter {
 
     const player = new GuildPlayer(guildId, node, this);
     this.players.push(player);
-    this.plugins.forEach(p => p.onPlayerSummon(player));
+    this.plugins.forEach((p) => p.onPlayerSummon(player));
     return player;
   }
 
