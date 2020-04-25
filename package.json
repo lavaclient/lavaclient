@@ -1,0 +1,37 @@
+{
+  "name": "lavaclient",
+  "version": "1.0.0",
+  "description": "A simple and lightweight lavalink client built in typescript.",
+  "main": "build/index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "node test/index.js",
+    "compile": "ayc build",
+    "prepublishOnly": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lolwastedjs/lavaclient.git"
+  },
+  "keywords": [
+    "lavalink",
+    "lightweight",
+    "discord.js"
+  ],
+  "author": "MeLike2D",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lolwastedjs/lavaclient/issues"
+  },
+  "homepage": "https://github.com/lolwastedjs/lavaclient#readme",
+  "devDependencies": {
+    "@ayanaware/ts": "^1.1.3",
+    "@types/node": "^13.13.2",
+    "@types/ws": "^7.2.4",
+    "discord.js": "^12.2.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@kyflx-dev/lavalink-types": "^1.0.1"
+  }
+}

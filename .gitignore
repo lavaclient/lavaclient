@@ -1,0 +1,5 @@
+node_modules/
+build/
+test/
+*.d.ts
+package-lock.json
