@@ -1,4 +1,4 @@
-# Lavaclient
+# Lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient)
 
 > A simple and lightweight [Lavalink](https://github.com/Frederikam/Lavalink) client written in TypeScript. Works with Discord.js and Eris.
 
@@ -6,7 +6,7 @@
 - 🔰 **Simplistic**: Lavaclient is designed to be simple and it is highly user-friendly.
 - 🔋 **Plugins**: [WIP] Plugins are addons that can be easily added to Lavaclient to enable custom functionality and queue support.
 
-[Discord Server](https://discord.gg/BnQECNd) • [GitHub](https://github.com/lavaclient/lavaclient)
+[GitHub](https://github.com/lavaclient/lavaclient)
 
 ## Installation
 
