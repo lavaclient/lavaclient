@@ -16,7 +16,7 @@ npm install lavaclient
 
 - [Lavaclient REST](https://npmjs.com/lavaclient-rest-plugin)
 
-Have you made any plugins? If so tell us in our [discord server](https://discord.gg/BnQECNd)!
+Have you made any plugins? If so, open a [pull-request](https://github.com/Lavaclient/lavaclient/pulls).
 
 ## Example usage
 
