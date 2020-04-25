@@ -6,8 +6,6 @@
 - 🔰 **Simplistic**: Lavaclient is designed to be simple and it is highly user-friendly.
 - 🔋 **Plugins**: [WIP] Plugins are addons that can be easily added to Lavaclient to enable custom functionality and queue support.
 
-[GitHub](https://github.com/lavaclient/lavaclient)
-
 ## Installation
 
 ```shell
@@ -70,3 +68,9 @@ manager.removePlayer("696355996657909790");
 
 - [MeLike2D](https://github.com/lolwastedjs)
 - [Chroventer](https://github.com/chroventer)
+
+## Links
+
+- [GitHub](https://github.com/Lavaclient/lavaclient)
+- [NPM](https://npmjs.com/package/lavaclient)
+- [Documentation](https://lavaclient.js.org)
