@@ -18,5 +18,11 @@
     "lib": ["es2017"],
     "types": ["node"]
   },
-  "exclude": ["./build/"]
+  "exclude": ["./build/"],
+  "typedocOptions": {
+    "name": "Lavaclient",
+    "readme": "./README.md",
+    "out": "docs",
+    "hideGenerator": true
+  }
 }
