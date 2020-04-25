@@ -30,7 +30,7 @@ export interface ManagerOptions {
   send: SendPacketFunction;
   resumeTimeout?: number;
   shards?: number;
-  plugins?: typeof Plugin[];
+  plugins?: Plugin[];
 }
 
 export class Manager extends EventEmitter {
@@ -58,9 +58,9 @@ export class Manager extends EventEmitter {
     this.shards = options.shards ?? 1;
 
     if (options.plugins && Array.isArray(options.plugins))
-      for (const pluginc of options.plugins) {
+      for (const plugin of options.plugins) {
         try {
-          const plugin = new pluginc(this);
+          plugin.init(this);
           this.plugins.push(plugin);
           plugin.onLoad();
         } catch (error) {

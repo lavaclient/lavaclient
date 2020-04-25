@@ -1,12 +1,22 @@
 {
-  "extends": "@ayanaware/ts/config",
   "compilerOptions": {
     "target": "ES2019",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "rootDir": "src",
     "declaration": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "newLine": "lf",
+    "pretty": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "forceConsistentCasingInFileNames": true,
+    "disableSizeLimit": true,
+    "outDir": "build/",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["es2017"],
+    "types": ["node"]
   },
   "exclude": ["./build/"]
 }
