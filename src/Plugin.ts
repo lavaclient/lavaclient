@@ -1,6 +1,6 @@
 import { Socket, Player } from "./index";
 import { Manager } from "./Manager";
-import { SocketOptions } from "lavaclient";
+import { SocketOptions } from "./Socket";
 
 export class Plugin {
   public constructor(public manager: Manager) {}
