@@ -20,6 +20,7 @@ jobs:
         with:
           build_dir: docs
           commit_message: 'docs: build and deploy docs'
+          fqdn: lavaclient.js.org
           keep_history: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
