@@ -26,14 +26,12 @@ The only setup example as of right now is for `discord.js`.
 import { Manager } from "lavaclient";
 import { Client } from "discord.js";
 
-const nodes = [
-  {
+const nodes = [{
     name: "main",
     address: "localhost",
     password: "youshallnotpass",
     port: 2333,
-  },
-];
+}];
 
 const client = new Client();
 const manager = new Manager(nodes, {
