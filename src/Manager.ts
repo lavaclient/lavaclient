@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 
 import GuildPlayer from "./Player";
 import LavaSocket, { SocketOptions } from "./Socket";
+import { Plugin } from "./Plugin";
 
 export interface VoiceServer {
   token: string;
@@ -29,6 +30,7 @@ export interface ManagerOptions {
   send: SendPacketFunction;
   resumeTimeout?: number;
   shards?: number;
+  plugins?: typeof Plugin[]
 }
 
 export class Manager extends EventEmitter {
@@ -43,6 +45,7 @@ export class Manager extends EventEmitter {
   public send: SendPacketFunction;
 
   public nodes: LavaSocket[] = [];
+  public plugins: Plugin[] = [];
   public players: GuildPlayer[] = [];
 
   public constructor(nodes: SocketOptions[], options: ManagerOptions) {
@@ -53,6 +56,17 @@ export class Manager extends EventEmitter {
     this.resumeKey = options.resumeKey ?? null;
     this.resumeTimeout = options.resumeTimeout ?? 60;
     this.shards = options.shards ?? 1;
+
+    if (options.plugins && Array.isArray(options.plugins))
+      for (const pluginc of options.plugins) {
+        try {
+          const plugin = new (pluginc)(this);
+          this.plugins.push(plugin);
+          plugin.onLoad();
+        } catch (error) {
+          this.emit("error", error);
+        }
+      }
 
     if (!nodes)
       throw new Error("Lava: Please provide an array of socket options.");
@@ -73,6 +87,7 @@ export class Manager extends EventEmitter {
       try {
         await socket._connect(userId);
         this.nodes.push(socket);
+        this.plugins.forEach(p => p.onNewSocket(socket));
       } catch (error) {
         this.emit("error", error, options.name);
       }
@@ -126,6 +141,7 @@ export class Manager extends EventEmitter {
 
     const player = new GuildPlayer(guildId, node, this);
     this.players.push(player);
+    this.plugins.forEach(p => p.onPlayerSummon(player));
     return player;
   }
 
