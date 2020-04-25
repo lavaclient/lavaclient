@@ -8,7 +8,9 @@
     "test": "node test/index.js",
     "build": "rimraf build && tsc",
     "build:docs": "typedoc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "npm run lint -- --fix"
   },
   "repository": {
     "type": "git",
@@ -28,11 +30,31 @@
   "devDependencies": {
     "@types/node": "^13.13.2",
     "@types/ws": "^7.2.4",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^6.8.0",
     "rimraf": "^3.0.2",
     "typedoc": "^0.17.4",
     "typescript": "^3.8.3"
   },
   "dependencies": {
     "@kyflx-dev/lavalink-types": "^1.0.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "no-mixed-spaces-and-tabs": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/camelcase": "off"
+    }
   }
 }
