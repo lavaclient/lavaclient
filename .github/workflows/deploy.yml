@@ -1,0 +1,25 @@
+name: Deployment
+on: push
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+      - name: Install Node
+        uses: actions/setup-node@master
+        with:
+          node-version: 12
+      - name: Installation
+        run: npm install
+      - name: Build documentation
+        run: 'npm run build:docs'
+      - name: Deploy documentation
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v1
+        with:
+          build_dir: docs
+          commit_message: 'docs: build and deploy docs'
+          keep_history: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
