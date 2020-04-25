@@ -6,8 +6,9 @@
   "types": "index.d.ts",
   "scripts": {
     "test": "node test/index.js",
-    "compile": "tsc",
-    "prepublishOnly": "npm run compile"
+    "build": "rimraf build && tsc",
+    "build:docs": "typedoc",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,8 @@
   "devDependencies": {
     "@types/node": "^13.13.2",
     "@types/ws": "^7.2.4",
+    "rimraf": "^3.0.2",
+    "typedoc": "^0.17.4",
     "typescript": "^3.8.3"
   },
   "dependencies": {
