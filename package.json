@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "A simple and lightweight lavalink client built in typescript.",
   "main": "build/index.js",
   "types": "index.d.ts",
@@ -19,7 +19,7 @@
   "keywords": [
     "lavalink",
     "lightweight",
-    "discord.js"
+    "discord"
   ],
   "author": "MeLike2D",
   "license": "MIT",
@@ -38,7 +38,8 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@kyflx-dev/lavalink-types": "^1.0.1"
+    "@kyflx-dev/    "@kyflx-dev/lavalink-types": "^1.0.1",
+    "ws": "^7.2.5"lavalink-types": "^1.0.1"
   },
   "eslintConfig": {
     "root": true,

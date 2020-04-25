@@ -6,7 +6,11 @@ A simple and lightweight lavalink client made in [Typescript](https://www.typesc
 - 🔰 Simple for Beginners.
 - ⛓ Strict Typings.
 
-[Discord Server](https://discord.gg/BnQECNd) • [GitHub](https://github.com/kyflx/lavaclient)
+[Discord Server](https://discord.gg/BnQECNd) • [GitHub](https://github.com/lavaclient/lavaclient)
+
+## Plugins
+
+- [REST Functionality](https://npmjs.com/lavaclient-rest-plugin)
 
 ## Introduction
 
@@ -70,3 +74,8 @@ Support is held in <https://discord.gg/BnQECNd>
 ```bash
 npm install lavaclient
 ```
+
+## Contributers
+
+- [MeLike2D](https://github.com/lolwastedjs)
+- [Chroventer](https://github.com/chroventer)

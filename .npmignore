@@ -3,3 +3,5 @@ test/
 node_modules/
 .ignore
 tsconfig.json
+docs/
+.github/
