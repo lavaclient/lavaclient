@@ -1,27 +1,24 @@
-# lavaclient
+# Lavaclient
 
-A simple and lightweight lavalink client made in [Typescript](https://www.typescriptlang.org/).
+> A simple and lightweight [Lavalink](https://github.com/Frederikam/Lavalink) client written in TypeScript. Works with Discord.js and Eris.
 
-- 📦 Lightweight
-- 🔰 Simple for Beginners.
-- ⛓ Strict Typings.
+- 📦 **Lightweight**: Lavaclient depends on almost 0 dependencies and it is modular to increase performance and speed.
+- 🔰 **Simplistic**: Lavaclient is designed to be simple and it is highly user-friendly.
+- 🔋 **Plugins**: [WIP] Plugins are addons that can be easily added to Lavaclient to enable custom functionality and queue support.
 
 [Discord Server](https://discord.gg/BnQECNd) • [GitHub](https://github.com/lavaclient/lavaclient)
 
-## Plugins
+## Installation
 
-- [REST Functionality](https://npmjs.com/lavaclient-rest-plugin)
+```shell
+npm install lavaclient
+```
 
-## Introduction
+### Plugins
 
-Lavaclient doesn't depend on discord.js or eris so you can use it with any discord api wrapper you would like.
-Here are some benefits to using Lavaclient:
+- [Lavaclient REST](https://npmjs.com/lavaclient-rest-plugin)
 
-- Lightweight: It has clean and simple code, it uses no packages that include code; Just a package containing lavalink typings.
-  - No Bloat: Lavaclient only uses 3 classes that's only for the functionality, unlike other packages where they have several classes just for storage.
-- Plugins: We have some plugins coming soon that allows for REST functionality and queue support.
-
-### Setup
+## Example usage
 
 The only setup example as of right now is for discord.js.
 
@@ -65,14 +62,6 @@ await player.leave();
 
 ```ts
 manager.removePlayer("696355996657909790");
-```
-
-## Installation
-
-Support is held in <https://discord.gg/BnQECNd>
-
-```bash
-npm install lavaclient
 ```
 
 ## Contributers
