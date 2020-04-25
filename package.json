@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A simple and lightweight lavalink client built in typescript.",
   "main": "build/index.js",
   "types": "index.d.ts",
@@ -55,7 +55,8 @@
     "rules": {
       "no-mixed-spaces-and-tabs": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/camelcase": "off"
+      "@typescript-eslint/camelcase": "off",
+      "quotes": ["error", "double"]
     }
   }
 }

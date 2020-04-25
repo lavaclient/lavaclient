@@ -1,6 +1,6 @@
 # Lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient)
 
-> A simple and lightweight [Lavalink](https://github.com/Frederikam/Lavalink) client written in TypeScript. Works with Discord.js and Eris.
+> A simple and lightweight [Lavalink](https://github.com/Frederikam/Lavalink) client written in TypeScript. Works with any Discord Library.
 
 - 📦 **Lightweight**: Lavaclient depends on almost 0 dependencies and it is modular to increase performance and speed.
 - 🔰 **Simplistic**: Lavaclient is designed to be simple and it is highly user-friendly.
@@ -18,9 +18,11 @@ npm install lavaclient
 
 - [Lavaclient REST](https://npmjs.com/lavaclient-rest-plugin)
 
+Have you made any plugins? If so tell us in our [discord server](https://discord.gg/BnQECNd)!
+
 ## Example usage
 
-The only setup example as of right now is for discord.js.
+The only setup example as of right now is for `discord.js`.
 
 ```ts
 import { Manager } from "lavaclient";
