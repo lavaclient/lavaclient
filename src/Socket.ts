@@ -10,36 +10,26 @@ export interface SocketOptions {
   name: string;
 }
 
-export interface Payload extends Record<string, any> {
-  op: string;
-}
-
 interface Queued {
   resolve: (v: any) => any;
   reject: (error: Error) => any;
-  data: Payload;
+  data: Record<string, any>;
 }
 
 export default class LavaSocket {
   #ws: WebSocket;
-  #queue: Queued[] = [];
-  public manager: Manager;
 
   public name: string;
-  public tries: number;
-  public stats?: NodeStats;
+  public tries: number = 0;
+  public stats: NodeStats;
+  protected queue: Queued[] = [];
 
-  /* Connection Options */
   #address: string;
   #port: string;
   #password: string;
 
-  public constructor(options: SocketOptions, manager: Manager) {
-    this.manager = manager;
-
+  public constructor(options: SocketOptions, public manager: Manager) {
     this.name = options.name;
-    this.tries = 0;
-
     this.#address = options.address;
     this.#port = options.port.toString();
     this.#password = options.password;
@@ -72,7 +62,7 @@ export default class LavaSocket {
     return `${this.#address}:${this.#port}`;
   }
 
-  public send(data: Payload): Promise<boolean> {
+  public send(data: Record<string, any>): Promise<boolean> {
     return new Promise((resolve, reject) => {
       let message;
       try {
@@ -83,7 +73,7 @@ export default class LavaSocket {
       }
 
       if (!this.connected) {
-        this.#queue.push({ resolve, reject, data });
+        this.queue.push({ resolve, reject, data });
       }
 
       this.#ws.send(message, (error) => {
@@ -97,10 +87,6 @@ export default class LavaSocket {
     });
   }
 
-  /**
-   * Connect to the Lavalink Node.
-   * @private
-   */
   async _connect(userId: string): Promise<void> {
     const headers: Record<string, any> = {
       "User-Id": userId.toString(),
@@ -129,11 +115,11 @@ export default class LavaSocket {
 
   private async _flush(): Promise<void> {
     await Promise.all(
-      this.#queue.map((q) =>
-        this.#ws.send(q.data, (e) => (e ? q.reject(e) : q.resolve(true)))
+      this.queue.map(({ data, reject, resolve }) =>
+        this.#ws.send(data, (e) => (e ? reject(e) : resolve(true)))
       )
     );
-    this.#queue = [];
+    this.queue = [];
   }
 
   private _open(): Promise<void> {
@@ -192,10 +178,11 @@ export default class LavaSocket {
         await this._connect(this.manager.userId);
       } catch (error) {
         this.manager.emit("error", this.name, error);
-        setInterval(() => this.reconnect(code, reason), 2500);
+        setTimeout(() => this.reconnect(code, reason), 2500);
       }
     } else {
-      await this.manager.removeNode(this.name);
+      this.manager.removeNode(this.name);
+      this.manager.emit("disconnect", this.name, "Couldn't reconnect in total times given.");
     }
   }
 }

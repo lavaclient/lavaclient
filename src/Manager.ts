@@ -3,24 +3,7 @@ import { EventEmitter } from "events";
 import GuildPlayer from "./Player";
 import LavaSocket, { SocketOptions } from "./Socket";
 import { Plugin } from "./Plugin";
-
-export interface VoiceServer {
-  token: string;
-  guild_id: string;
-  endpoint: string;
-}
-
-export interface VoiceState {
-  channel_id?: string;
-  guild_id: string;
-  user_id: string;
-  session_id: string;
-  deaf?: boolean;
-  mute?: boolean;
-  self_deaf?: boolean;
-  self_mute?: boolean;
-  suppress?: boolean;
-}
+import { VoiceServer, VoiceState } from ".";
 
 type SendPacketFunction = (guildId: string, packet: any) => any;
 export interface ManagerOptions {
@@ -31,6 +14,8 @@ export interface ManagerOptions {
   resumeTimeout?: number;
   shards?: number;
   plugins?: Plugin[];
+  socket?: typeof LavaSocket;
+  player?: typeof GuildPlayer;
 }
 
 export class Manager extends EventEmitter {
@@ -44,40 +29,55 @@ export class Manager extends EventEmitter {
   public shards: number;
   public send: SendPacketFunction;
 
-  public nodes: LavaSocket[] = [];
   public plugins: Plugin[] = [];
+  public nodes: LavaSocket[] = [];
   public players: GuildPlayer[] = [];
 
-  public constructor(nodes: SocketOptions[], options: ManagerOptions) {
+  public constructor(nodes: SocketOptions[], private options: ManagerOptions) {
     super();
 
     this.reconnectTries = options.tries ?? 3;
     this.storeStats = options.storeStats ?? true;
-    this.resumeKey = options.resumeKey ?? null;
+    this.resumeKey = options.resumeKey ?? Math.random().toString(36);
     this.resumeTimeout = options.resumeTimeout ?? 60;
     this.shards = options.shards ?? 1;
 
     if (options.plugins && Array.isArray(options.plugins)) {
       for (const plugin of options.plugins) {
         try {
-          this.plugins.push(plugin.init(this));
-          plugin.onLoad();
+          plugin.manager = this;
+          this.plugins.push(plugin);
+          if (plugin.onLoad) plugin.onLoad();
         } catch (error) {
           this.emit("error", error);
         }
       }
     }
 
-    if (!nodes) {
-      throw new Error("Lava: Please provide an array of socket options.");
-    }
-
-    if (!options.send || typeof options.send !== "function") {
-      throw new TypeError("Lava: Please provide a send method.");
-    }
-
     this.send = options.send;
     this.#nodes = nodes;
+  }
+
+  get player(): typeof GuildPlayer {
+    if (
+      this.options.player &&
+      Object.getPrototypeOf(this.options.player) === GuildPlayer
+    ) {
+      return this.options.player;
+    }
+
+    return GuildPlayer;
+  }
+
+  get socket(): typeof LavaSocket {
+    if (
+      this.options.socket &&
+      Object.getPrototypeOf(this.options.socket) === LavaSocket
+    ) {
+      return this.options.socket;
+    }
+
+    return LavaSocket;
   }
 
   public async init(userId: string = this.userId): Promise<boolean> {
@@ -89,11 +89,11 @@ export class Manager extends EventEmitter {
     for await (const options of this.#nodes.filter(
       (n) => !this.getNode(n.name)
     )) {
-      const socket = new LavaSocket(options, this);
+      const socket = new this.socket(options, this);
       try {
         await socket._connect(userId);
         this.nodes.push(socket);
-        this.plugins.forEach((p) => p.onNewSocket(socket, options));
+        this._runPluginMethod("onNewSocket", socket, options);
       } catch (error) {
         this.emit("error", error, options.name);
       }
@@ -125,7 +125,6 @@ export class Manager extends EventEmitter {
     return player._provideState(state);
   }
 
-  /** Player */
   public getPlayer(guildId: string): GuildPlayer {
     return this.players.find((p) => p.guildId === guildId);
   }
@@ -163,17 +162,16 @@ export class Manager extends EventEmitter {
       throw new Error(`Lava: Node "${node.name}" isn't connected`);
     }
 
-    const player = new GuildPlayer(guildId, node, this);
+    const player = new this.player(guildId, node, this);
     this.players.push(player);
-    this.plugins.forEach((p) => p.onPlayerSummon(player));
+    this._runPluginMethod("onPlayerSummon", player);
     return player;
   }
 
-  /** Socket */
   public getNode(name?: string): LavaSocket {
     if (!name) {
       if (!this.storeStats) {
-        return null;
+        return;
       }
 
       return this.nodes.sort((a, b) => b.penalties - a.penalties)[0];
@@ -182,7 +180,7 @@ export class Manager extends EventEmitter {
     return this.nodes.find((s) => s.name === name);
   }
 
-  public async removeNode(name: string): Promise<boolean> {
+  public removeNode(name: string): boolean {
     try {
       const node = this.nodes.find((s) => s.name === name);
       if (!node) {
@@ -198,6 +196,14 @@ export class Manager extends EventEmitter {
     } catch (error) {
       this.emit("error", error, name);
       return false;
+    }
+  }
+
+  _runPluginMethod(method: keyof Plugin, ...args: any[]): void {
+    for (const plugin of this.plugins) {
+      if (plugin[method]) {
+        (plugin[method] as Function)(...args);
+      }
     }
   }
 }

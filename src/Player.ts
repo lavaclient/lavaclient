@@ -1,8 +1,9 @@
 import * as Lava from "@kyflx-dev/lavalink-types";
-
 import { EventEmitter } from "events";
-import { Manager, VoiceServer, VoiceState } from "./Manager";
+
+import { Manager } from "./Manager";
 import LavaSocket from "./Socket";
+import { VoiceServer, VoiceState } from ".";
 
 export type PlayOptions = Partial<
   Omit<Lava.PlayTrack, "op" | "guildId" | "track">
@@ -14,14 +15,11 @@ export interface ConnectOptions {
 }
 
 export default class GuildPlayer extends EventEmitter {
-  #server: VoiceServer;
-  #state: VoiceState;
   public node: LavaSocket;
   public manager: Manager;
 
   public guildId: string;
   public channelId: string;
-
   public paused: boolean;
   public state: Lava.PlayerState;
   public track: string;
@@ -29,25 +27,14 @@ export default class GuildPlayer extends EventEmitter {
   public timestamp: number;
   public volume: number;
 
+  protected _server: VoiceServer;
+  protected _state: VoiceState;
+
   public constructor(guildId: string, node: LavaSocket, manager: Manager) {
     super();
 
-    if (!guildId) {
-      throw new Error("GuildPlayer: Please provide a guild id.");
-    }
-
     this.guildId = guildId;
-
-    if (!node) {
-      throw new Error("GuildPlayer: Please provide a socket.");
-    }
-
     this.node = node;
-
-    if (!manager) {
-      throw new Error("GuildPlayer: Please provide a manager.");
-    }
-
     this.manager = manager;
 
     this.on("event", async (event: Lava.Event) => {
@@ -84,7 +71,10 @@ export default class GuildPlayer extends EventEmitter {
     });
   }
 
-  public async connect(channelId: string, options: ConnectOptions = {}): Promise<GuildPlayer> {
+  public async connect(
+    channelId: string,
+    options: ConnectOptions = {}
+  ): Promise<GuildPlayer> {
     this.channelId = channelId;
 
     await this.manager.send(this.guildId, {
@@ -100,7 +90,7 @@ export default class GuildPlayer extends EventEmitter {
     return this;
   }
 
-  public async leave():  Promise<GuildPlayer> {
+  public async leave(): Promise<GuildPlayer> {
     this.channelId = null;
 
     await this.manager.send(this.guildId, {
@@ -159,23 +149,22 @@ export default class GuildPlayer extends EventEmitter {
     return this.send("destroy");
   }
 
-  /** Private Stuff */
   _provideServer(server: VoiceServer): void {
-    this.#server = server;
+    this._server = server;
   }
 
   _provideState(state: VoiceState): void {
-    this.#state = state;
+    this._state = state;
   }
 
   async _update(): Promise<boolean> {
     return this.send("voiceUpdate", {
-      sessionId: this.#state.session_id,
-      event: this.#server,
+      sessionId: this._state.session_id,
+      event: this._server,
     });
   }
 
-  private send(op: string, body: Record<string, any> = {}): Promise<boolean> {
+  protected send(op: string, body: Record<string, any> = {}): Promise<boolean> {
     const guildId = this.guildId;
     return this.node.send({ op, ...body, guildId });
   }

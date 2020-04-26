@@ -66,6 +66,46 @@ await player.leave();
 manager.removePlayer("696355996657909790");
 ```
 
+### Extending Player & Socket
+
+```ts
+import { Player, Manager } from "lavaclient";
+
+class CustomPlayer extends Player {
+  bassboost(level) {
+    this.equalizer([
+      {
+        band: 0,
+        gain: 1
+      }, {
+        band: 1,
+        gain: 0.75
+      }
+    ]);
+  }
+}
+
+const manager = new Manager([], {
+  player: CustomPlayer
+});
+```
+
+```ts
+import { Socket, Manager } from "lavaclient";
+
+class CustomSocket extends Socket {
+  constructor(...args) {
+    super(...args);
+
+    console.log("Socket Initalization.");
+  }
+}
+
+const manager = new Manager([], { 
+  socket: CustomSocket 
+});
+```
+
 ## Contributers
 
 - [MeLike2D](https://github.com/lolwastedjs)

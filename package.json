@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A simple and lightweight lavalink client built in typescript.",
   "main": "build/index.js",
   "types": "index.d.ts",
@@ -28,17 +28,17 @@
   },
   "homepage": "https://github.com/lolwastedjs/lavaclient#readme",
   "devDependencies": {
-    "@types/node": "^13.13.2",
+    "@types/node": "^13.13.4",
     "@types/ws": "^7.2.4",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "eslint": "^6.8.0",
     "rimraf": "^3.0.2",
-    "typedoc": "^0.17.4",
+    "typedoc": "^0.17.5",
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@kyflx-dev/lavalink-types": "^1.0.1",
+    "@kyflx-dev/lavalink-types": "^1.0.2",
     "ws": "^7.2.5"
   },
   "eslintConfig": {
@@ -56,7 +56,10 @@
       "no-mixed-spaces-and-tabs": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/camelcase": "off",
-      "quotes": ["error", "double"]
+      "quotes": [
+        "error",
+        "double"
+      ]
     }
   }
 }
