@@ -6,8 +6,6 @@
 - 🔰 **Simplistic**: Lavaclient is designed to be simple and it is highly user-friendly.
 - 🔋 **Plugins**: [WIP] Plugins are addons that can be easily added to Lavaclient to enable custom functionality and queue support.
 
-[GitHub](https://github.com/lavaclient/lavaclient)
-
 ## Installation
 
 ```shell
@@ -18,7 +16,7 @@ npm install lavaclient
 
 - [Lavaclient REST](https://npmjs.com/lavaclient-rest-plugin)
 
-Have you made any plugins? If so tell us in our [discord server](https://discord.gg/BnQECNd)!
+Have you made any plugins? If so, open a [pull-request](https://github.com/Lavaclient/lavaclient/pulls).
 
 ## Example usage
 
@@ -110,3 +108,9 @@ const manager = new Manager([], {
 
 - [MeLike2D](https://github.com/lolwastedjs)
 - [Chroventer](https://github.com/chroventer)
+
+## Links
+
+- [GitHub](https://github.com/Lavaclient/lavaclient)
+- [NPM](https://npmjs.com/package/lavaclient)
+- [Documentation](https://lavaclient.js.org)
