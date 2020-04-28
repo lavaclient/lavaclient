@@ -1,11 +1,11 @@
 {
   "name": "lavaclient",
-  "version": "1.0.8",
-  "description": "A simple and lightweight lavalink client built in typescript.",
+  "version": "1.0.9",
+  "description": "A simple and lightweight lavalink client written in typescript.",
   "main": "build/index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "node test/index.js",
+    "test": "npm run build && node tests/index.js",
     "build": "rimraf build && tsc",
     "build:docs": "typedoc",
     "prepublishOnly": "npm run build",
@@ -14,19 +14,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lolwastedjs/lavaclient.git"
+    "url": "git+https://github.com/lavaclient/lavaclient.git"
   },
   "keywords": [
     "lavalink",
     "lightweight",
-    "discord"
+    "discord",
+    "simple"
   ],
   "author": "MeLike2D",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lolwastedjs/lavaclient/issues"
+    "url": "https://github.com/lavaclient/lavaclient/issues"
   },
-  "homepage": "https://github.com/lolwastedjs/lavaclient#readme",
+  "homepage": "https://github.com/lavaclient/lavaclient#readme",
   "devDependencies": {
     "@types/node": "^13.13.4",
     "@types/ws": "^7.2.4",
@@ -40,26 +41,5 @@
   "dependencies": {
     "@kyflx-dev/lavalink-types": "^1.0.2",
     "ws": "^7.2.5"
-  },
-  "eslintConfig": {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "rules": {
-      "no-mixed-spaces-and-tabs": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/camelcase": "off",
-      "quotes": [
-        "error",
-        "double"
-      ]
-    }
   }
 }

@@ -1,4 +1,4 @@
-# Lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient)
+# Lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299)](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Lavaclient/lavaclient&amp;utm_campaign=Badge_Grade)
 
 > A simple and lightweight [Lavalink](https://github.com/Frederikam/Lavalink) client written in TypeScript. Works with any Discord Library.
 
@@ -37,9 +37,9 @@ const nodes = [
 
 const client = new Client();
 const manager = new Manager(nodes, {
-  send: (guildId, packet) => {
-    const guild = client.guilds.cache.get(guildId);
-    if (guild) return guild.shard.send(packet);
+  send: (id, payload) => {
+    const guild = client.guilds.cache.get(id);
+    if (guild) return guild.shard.send(payload);
     return;
   },
 });
@@ -52,16 +52,12 @@ client.ws.on("VOICE_STATE_UPDATE", (pk) => manager.stateUpdate(pk));
 ### Joining & Leaving
 
 ```ts
-const player = manager.summonPlayer("696355996657909790");
+const player = await manager.join({
+  guild: "696355996657909790",
+  channel: "696359398708215848"
+});
 
-await player.connect("696359398708215848", { deaf: true });
-await player.leave();
-```
-
-### Destroying a Player
-
-```ts
-manager.removePlayer("696355996657909790");
+await manager.leave("696355996657909790")
 ```
 
 ### Extending Player & Socket
@@ -99,8 +95,8 @@ class CustomSocket extends Socket {
   }
 }
 
-const manager = new Manager([], { 
-  socket: CustomSocket 
+const manager = new Manager([], {
+  socket: CustomSocket
 });
 ```
 

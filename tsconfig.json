@@ -15,7 +15,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["ES2019"],
-    "types": ["node"]
+    "types": ["node"],
+    "removeComments": true
   },
   "exclude": ["./build/"],
   "typedocOptions": {

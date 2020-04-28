@@ -1,38 +1,28 @@
-import WebSocket from "ws";
 import { NodeStats } from "@kyflx-dev/lavalink-types";
+import WebSocket from "ws";
 
 import { Manager } from "./Manager";
-
-export interface SocketOptions {
-  address: string;
-  port: string | number;
-  password: string;
-  name: string;
-}
-
-interface Queued {
-  resolve: (v: any) => any;
-  reject: (error: Error) => any;
-  data: Record<string, any>;
-}
+import * as Util from "./Util";
 
 export default class LavaSocket {
   #ws: WebSocket;
 
   public name: string;
-  public tries: number = 0;
+  public tries = 0;
   public stats: NodeStats;
-  protected queue: Queued[] = [];
+  protected waiting: Util.WaitingPayload[] = [];
 
   #address: string;
   #port: string;
   #password: string;
 
-  public constructor(options: SocketOptions, public manager: Manager) {
+  public constructor(options: Util.SocketData, public manager: Manager) {
     this.name = options.name;
     this.#address = options.address;
     this.#port = options.port.toString();
     this.#password = options.password;
+
+    this._connect(manager.userId);
   }
 
   public get penalties(): number {
@@ -62,32 +52,40 @@ export default class LavaSocket {
     return `${this.#address}:${this.#port}`;
   }
 
-  public send(data: Record<string, any>): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      let message;
+  public send(payload: any): Promise<boolean> {
+    return new Promise((res, rej) => {
       try {
-        message = JSON.stringify(data);
+        payload = JSON.stringify(payload);
       } catch (error) {
-        this.manager.emit("error", error, this.name);
-        return reject(false);
+        return rej(false);
       }
 
       if (!this.connected) {
-        this.queue.push({ resolve, reject, data });
+        this.waiting.push({ res, rej, payload });
+        return res(false);
       }
 
-      this.#ws.send(message, (error) => {
+      this.#ws.send(payload, (error) => {
         if (error) {
           this.manager.emit("error", error, this.name);
-          return reject(false);
+          return rej(false);
         }
 
-        return resolve(true);
+        return res(true);
       });
     });
   }
 
-  async _connect(userId: string): Promise<void> {
+  protected async flush(): Promise<void> {
+    await Promise.all(
+      this.waiting.map(({ payload, rej, res }) =>
+        this.#ws.send(payload, (e) => (e ? rej(e) : res(true)))
+      )
+    );
+    this.waiting = [];
+  }
+
+  private async _connect(userId: string): Promise<void> {
     const headers: Record<string, any> = {
       "User-Id": userId.toString(),
       Authorization: this.#password,
@@ -113,17 +111,8 @@ export default class LavaSocket {
     });
   }
 
-  private async _flush(): Promise<void> {
-    await Promise.all(
-      this.queue.map(({ data, reject, resolve }) =>
-        this.#ws.send(data, (e) => (e ? reject(e) : resolve(true)))
-      )
-    );
-    this.queue = [];
-  }
-
   private _open(): Promise<void> {
-    return this._flush().then(async () => {
+    return this.flush().then(async () => {
       await this._configureResuming();
       this.manager.emit("open", this.name);
     });
@@ -182,7 +171,11 @@ export default class LavaSocket {
       }
     } else {
       this.manager.removeNode(this.name);
-      this.manager.emit("disconnect", this.name, "Couldn't reconnect in total times given.");
+      this.manager.emit(
+        "disconnect",
+        this.name,
+        "Couldn't reconnect in total times given."
+      );
     }
   }
 }

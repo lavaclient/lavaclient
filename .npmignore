@@ -1,7 +1,11 @@
 src/
-test/
 node_modules/
-.ignore
-tsconfig.json
+tests/
 docs/
 .github/
+
+.gitignore
+.eslintrc.json
+.eslintignore
+tsconfig.json
+config.json

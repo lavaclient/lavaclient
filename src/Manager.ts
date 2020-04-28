@@ -1,25 +1,11 @@
 import { EventEmitter } from "events";
 
 import GuildPlayer from "./Player";
-import LavaSocket, { SocketOptions } from "./Socket";
-import { Plugin } from "./Plugin";
-import { VoiceServer, VoiceState } from ".";
-
-type SendPacketFunction = (guildId: string, packet: any) => any;
-export interface ManagerOptions {
-  resumeKey?: string;
-  tries?: number;
-  storeStats?: boolean;
-  send: SendPacketFunction;
-  resumeTimeout?: number;
-  shards?: number;
-  plugins?: Plugin[];
-  socket?: typeof LavaSocket;
-  player?: typeof GuildPlayer;
-}
+import LavaSocket from "./Socket";
+import * as Util from "./Util";
 
 export class Manager extends EventEmitter {
-  #nodes: SocketOptions[];
+  #nodes: Util.SocketData[];
 
   public reconnectTries: number;
   public userId: string;
@@ -27,13 +13,16 @@ export class Manager extends EventEmitter {
   public resumeKey: string;
   public resumeTimeout: number;
   public shards: number;
-  public send: SendPacketFunction;
+  public send: (guildId: string, packet: any) => any;
 
-  public plugins: Plugin[] = [];
+  public plugins: Util.Plugin[] = [];
   public nodes: LavaSocket[] = [];
   public players: GuildPlayer[] = [];
 
-  public constructor(nodes: SocketOptions[], private options: ManagerOptions) {
+  public constructor(
+    nodes: Util.SocketData[],
+    private options: Util.ManagerOptions
+  ) {
     super();
 
     this.reconnectTries = options.tries ?? 3;
@@ -80,47 +69,28 @@ export class Manager extends EventEmitter {
     return LavaSocket;
   }
 
-  public async init(userId: string = this.userId): Promise<boolean> {
-    if (!userId) {
-      throw new TypeError("Lava#init: Please provide the bot user id.");
-    }
-
+  public async init(userId: string = this.userId): Promise<void> {
     this.userId = userId;
-    for await (const options of this.#nodes.filter(
-      (n) => !this.getNode(n.name)
-    )) {
-      const socket = new this.socket(options, this);
-      try {
-        await socket._connect(userId);
-        this.nodes.push(socket);
-        this._runPluginMethod("onNewSocket", socket, options);
-      } catch (error) {
-        this.emit("error", error, options.name);
-      }
+    for (const data of this.#nodes.filter((_) => !this.getNode(_.name))) {
+      const socket = new this.socket(data, this);
+      this.nodes.push(socket);
+      this._runPluginMethod("onNewSocket", socket, data);
     }
-
-    return true;
   }
 
-  public async serverUpdate(server: VoiceServer): Promise<boolean> {
+  public async serverUpdate(server: Util.VoiceServer): Promise<boolean> {
     const player = this.getPlayer(server.guild_id);
-    if (!player) {
-      return;
-    }
+    if (!player) return;
 
     player._provideServer(server);
     return player._update();
   }
 
-  public async stateUpdate(state: VoiceState): Promise<void> {
-    if (state.user_id !== this.userId) {
-      return;
-    }
+  public async stateUpdate(state: Util.VoiceState): Promise<void> {
+    if (state.user_id !== this.userId) return;
 
     const player = this.getPlayer(state.guild_id);
-    if (!player) {
-      return;
-    }
+    if (!player) return;
 
     return player._provideState(state);
   }
@@ -129,51 +99,61 @@ export class Manager extends EventEmitter {
     return this.players.find((p) => p.guildId === guildId);
   }
 
-  public async removePlayer(guildId: string): Promise<void> {
-    const player = this.getPlayer(guildId);
-    if (!player) {
-      return;
-    }
+  public async leave(guildId: string): Promise<boolean> {
+    const player = this.players.find((p) => p.guildId === guildId);
+    if (!player) return false;
+
+    await this.send(guildId, {
+      op: 4,
+      d: {
+        guild_id: guildId,
+        channel_id: null,
+        self_mute: null,
+        self_deaf: null,
+      },
+    });
 
     this.players.splice(
       this.players.findIndex((p) => p.guildId === guildId),
       1
     );
 
-    await player.leave();
-    await player.destroy();
+    player.removeAllListeners();
+
+    return true;
   }
 
-  public summonPlayer(
-    guildId: string,
-    node: LavaSocket = this.getNode()
-  ): GuildPlayer {
-    const existing = this.getPlayer(guildId);
+  public async join(
+    data: Util.PlayerData,
+    options: Util.ConnectOptions = {}
+  ): Promise<GuildPlayer> {
+    const existing = this.getPlayer(data.guild);
+    if (existing) return existing;
 
-    if (existing) {
-      return existing;
-    }
+    const node =
+      data.node instanceof LavaSocket ? data.node : this.getNode(data.node);
+    if (!node) throw new Error("Lava#summonPlayer: No node avaliable.");
 
-    if (!node) {
-      throw new Error("Lava#summonPlayer: No node avaliable.");
-    }
-
-    if (!node.connected) {
-      throw new Error(`Lava: Node "${node.name}" isn't connected`);
-    }
-
-    const player = new this.player(guildId, node, this);
+    const player = new this.player(data, node);
     this.players.push(player);
     this._runPluginMethod("onPlayerSummon", player);
+
+    await this.send(data.guild, {
+      op: 4,
+      d: {
+        guild_id: data.guild,
+        channel_id: data.channel,
+        self_mute: options.mute ?? false,
+        self_deaf: options.deaf ?? false,
+      },
+    });
+
     return player;
   }
 
   public getNode(name?: string): LavaSocket {
     if (!name) {
-      if (!this.storeStats) {
-        return;
-      }
-
+      if (!this.storeStats) return;
       return this.nodes.sort((a, b) => b.penalties - a.penalties)[0];
     }
 
@@ -183,9 +163,7 @@ export class Manager extends EventEmitter {
   public removeNode(name: string): boolean {
     try {
       const node = this.nodes.find((s) => s.name === name);
-      if (!node) {
-        return false;
-      }
+      if (!node) return false;
 
       this.nodes.splice(
         this.nodes.findIndex((s) => s.name === name),
@@ -199,7 +177,7 @@ export class Manager extends EventEmitter {
     }
   }
 
-  _runPluginMethod(method: keyof Plugin, ...args: any[]): void {
+  private _runPluginMethod(method: keyof Util.Plugin, ...args: any[]): void {
     for (const plugin of this.plugins) {
       if (plugin[method]) {
         (plugin[method] as Function)(...args);
