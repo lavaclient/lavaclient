@@ -34,11 +34,7 @@ export default class GuildPlayer extends EventEmitter {
       switch (event.type) {
         case "TrackEndEvent":
           emit("end", event);
-
-          if (event.reason !== "REPLACED") {
-            this.playing = false;
-          }
-
+          if (event.reason !== "REPLACED") this.playing = false;
           this.track = null;
           this.timestamp = null;
           break;

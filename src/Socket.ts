@@ -26,15 +26,11 @@ export default class LavaSocket {
   }
 
   public get penalties(): number {
-    if (!this.manager.storeStats) {
-      return 0;
-    }
+    if (!this.manager.storeStats) return 0;
 
     let penalties = 0;
     penalties += this.stats.players;
-    penalties += Math.round(
-      1.05 ** (100 * this.stats.cpu.systemLoad) * 10 - 10
-    );
+    penalties += Math.round(1.05 ** (100 * this.stats.cpu.systemLoad) * 10 - 10);
 
     if (this.stats.frameStats) {
       penalties += this.stats.frameStats.deficit;
@@ -127,7 +123,7 @@ export default class LavaSocket {
       return;
     }
 
-    const player = this.manager.getPlayer(data.guildId);
+    const player = this.manager.players.get(data.guildId);
     switch (data.op) {
       case "stats":
         if (this.manager.storeStats) {
@@ -170,7 +166,7 @@ export default class LavaSocket {
         setTimeout(() => this.reconnect(code, reason), 2500);
       }
     } else {
-      this.manager.removeNode(this.name);
+      this.manager.nodes.delete(this.name);
       this.manager.emit(
         "disconnect",
         this.name,

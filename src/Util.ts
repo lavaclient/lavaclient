@@ -26,7 +26,7 @@ export interface ManagerOptions {
 export interface PlayerData {
   guild: string;
   channel: string;
-  node: LavaSocket | string;
+  node?: string;
 }
 
 export interface SocketData {
