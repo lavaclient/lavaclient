@@ -1,17 +1,14 @@
 import * as Types from "@kyflx-dev/lavalink-types";
 import { EventEmitter } from "events";
 
-import { Manager } from "./Manager";
 import LavaSocket from "./Socket";
 import * as Util from "./Util";
 
 export default class GuildPlayer extends EventEmitter {
-  public manager: Manager;
-
   public guildId: string;
   public channelId: string;
   public paused: boolean;
-  public state: Types.PlayerState;
+  public state: Util.GuildPlayerState = {} as Util.GuildPlayerState;
   public track: string;
   public playing: boolean;
   public timestamp: number;
@@ -22,39 +19,34 @@ export default class GuildPlayer extends EventEmitter {
 
   public constructor(data: Util.PlayerData, public node: LavaSocket) {
     super();
-
     this.guildId = data.guild;
     this.channelId = data.channel;
-    this.manager = node.manager;
 
     this.on("event", async (event: Types.Event) => {
-      const emit = (event: string, ...args: any[]): boolean =>
-        this.listenerCount(event) ? this.emit(event, ...args) : null;
-
       switch (event.type) {
         case "TrackEndEvent":
-          emit("end", event);
           if (event.reason !== "REPLACED") this.playing = false;
           this.track = null;
           this.timestamp = null;
+          this.emit("end", event);
           break;
         case "TrackExceptionEvent":
-          emit("error", event.exception ?? event.error);
+          this.emit("error", event.exception ?? event.error);
           break;
         case "TrackStartEvent":
-          emit("start", event.track);
+          this.emit("start", event.track);
           break;
         case "TrackStuckEvent":
           await this.stop();
-          emit("end", event);
+          this.emit("end", event);
           break;
         case "WebSocketClosedEvent":
-          emit("closed", event);
+          this.emit("closed", event);
           break;
       }
-    }).on("playerUpdate", (data: Types.PlayerUpdate) => {
-      this.state = data.state;
-    });
+    }).on("playerUpdate", (data: Types.PlayerUpdate) =>
+      Object.assign(this.state, data.state)
+    );
   }
 
   public play(track: string, options: Util.PlayOptions = {}): Promise<boolean> {
@@ -90,6 +82,7 @@ export default class GuildPlayer extends EventEmitter {
   }
 
   public equalizer(bands: Types.EqualizerBand[]): Promise<boolean> {
+    Object.assign(this.state, { bands });
     return this.send("equalizer", { bands });
   }
 
@@ -97,12 +90,10 @@ export default class GuildPlayer extends EventEmitter {
     return this.send("destroy");
   }
 
-  _provideServer(server: Util.VoiceServer): void {
-    this._server = server;
-  }
-
-  _provideState(state: Util.VoiceState): void {
-    this._state = state;
+  provide(update: Util.VoiceServer | Util.VoiceState): void {
+    const isServer = (_: any): _ is Util.VoiceServer => !!_.token;
+    if (isServer(update)) this._server = update;
+    else this._state = update;
   }
 
   async _update(): Promise<boolean> {
@@ -112,7 +103,7 @@ export default class GuildPlayer extends EventEmitter {
     });
   }
 
-  private send(op: string, body: Record<string, any> = {}): Promise<boolean> {
+  protected send(op: string, body: Record<string, any> = {}): Promise<boolean> {
     const guildId = this.guildId;
     return this.node.send({ op, ...body, guildId });
   }

@@ -9,7 +9,7 @@ export default class LavaSocket {
 
   public name: string;
   public tries = 0;
-  public stats: NodeStats;
+  public stats: Partial<NodeStats> = {};
   protected waiting: Util.WaitingPayload[] = [];
 
   #address: string;
@@ -30,7 +30,9 @@ export default class LavaSocket {
 
     let penalties = 0;
     penalties += this.stats.players;
-    penalties += Math.round(1.05 ** (100 * this.stats.cpu.systemLoad) * 10 - 10);
+    penalties += Math.round(
+      1.05 ** (100 * this.stats.cpu.systemLoad) * 10 - 10
+    );
 
     if (this.stats.frameStats) {
       penalties += this.stats.frameStats.deficit;
@@ -42,10 +44,6 @@ export default class LavaSocket {
 
   public get connected(): boolean {
     return this.#ws && this.#ws.readyState === WebSocket.OPEN;
-  }
-
-  public get address(): string {
-    return `${this.#address}:${this.#port}`;
   }
 
   public send(payload: any): Promise<boolean> {
@@ -88,11 +86,12 @@ export default class LavaSocket {
       "Num-Shards": this.manager.shards,
     };
 
-    if (this.manager.resumeKey) {
-      headers["Resume-Key"] = this.manager.resumeKey;
-    }
+    if (this.manager.resumeKey) headers["Resume-Key"] = this.manager.resumeKey;
 
-    this.#ws = new WebSocket(`ws://${this.address}`, { headers });
+    this.#ws = new WebSocket(`ws://${this.#address}:${this.#port}`, {
+      headers,
+    });
+
     this.#ws.on("close", this._close.bind(this));
     this.#ws.on("error", this._error.bind(this));
     this.#ws.on("message", this._message.bind(this));
@@ -167,11 +166,7 @@ export default class LavaSocket {
       }
     } else {
       this.manager.nodes.delete(this.name);
-      this.manager.emit(
-        "disconnect",
-        this.name,
-        "Couldn't reconnect in total times given."
-      );
+      this.manager.emit("disconnect", this.name, "Couldn't reconnect.");
     }
   }
 }

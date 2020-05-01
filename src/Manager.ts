@@ -36,9 +36,8 @@ export class Manager extends EventEmitter {
 
     if (options.plugins) {
       this.plugins.forEach((plugin) => {
-        plugin.manager = this;
         this.plugins.push(plugin);
-        if (plugin.onLoad) plugin.onLoad();
+        if (plugin.onLoad) plugin.onLoad(this);
       });
     }
   }
@@ -62,7 +61,7 @@ export class Manager extends EventEmitter {
     const player = this.players.get(server.guild_id);
     if (!player) return;
 
-    player._provideServer(server);
+    player.provide(server);
     return player._update();
   }
 
@@ -72,7 +71,7 @@ export class Manager extends EventEmitter {
     const player = this.players.get(state.guild_id);
     if (!player) return;
 
-    return player._provideState(state);
+    return player.provide(state);
   }
 
   public async leave(guildId: string): Promise<boolean> {
