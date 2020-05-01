@@ -35,9 +35,10 @@ export class Manager extends EventEmitter {
     this.send = options.send;
 
     if (options.plugins) {
-      this.plugins.forEach((plugin) => {
+      options.plugins.forEach((plugin) => {
+        plugin.manager = this
         this.plugins.push(plugin);
-        if (plugin.onLoad) plugin.onLoad(this);
+        if (plugin.onLoad) plugin.onLoad();
       });
     }
   }

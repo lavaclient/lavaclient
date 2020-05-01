@@ -65,7 +65,8 @@ export interface VoiceState {
 }
 
 export abstract class Plugin {
-  public abstract onLoad(manager: Manager): any;
+  manager: Manager
+  public abstract onLoad(): any;
   public abstract onNewSocket(_socket: LavaSocket, _options: SocketData): any;
   public abstract onPlayerSummon(_player: GuildPlayer): any;
 }
