@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "1.0.14",
+  "version": "1.0.16",
   "description": "A simple and lightweight lavalink client written in typescript.",
   "main": "build/index.js",
   "types": "index.d.ts",

@@ -4,7 +4,7 @@ import WebSocket from "ws";
 import { Manager } from "./Manager";
 import * as Util from "./Util";
 
-export default class LavaSocket {
+export default class Socket {
   #ws: WebSocket;
 
   public name: string;

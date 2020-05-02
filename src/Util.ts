@@ -1,8 +1,8 @@
 import { PlayTrack, EqualizerBand, PlayerState } from "@kyflx-dev/lavalink-types";
 
 import { Manager } from "./Manager";
-import GuildPlayer from "./Player";
-import LavaSocket from "./Socket";
+import Player from "./Player";
+import Socket from "./Socket";
 
 export type PlayOptions = Partial<Omit<PlayTrack, "op" | "guildId" | "track">>;
 
@@ -19,8 +19,8 @@ export interface ManagerOptions {
   resumeTimeout?: number;
   shards?: number;
   plugins?: Plugin[];
-  socket?: typeof LavaSocket;
-  player?: typeof GuildPlayer;
+  socket?: typeof Socket;
+  player?: typeof Player;
 }
 
 export interface GuildPlayerState extends PlayerState {
@@ -67,6 +67,6 @@ export interface VoiceState {
 export abstract class Plugin {
   manager: Manager
   public abstract onLoad(): any;
-  public abstract onNewSocket(_socket: LavaSocket, _options: SocketData): any;
-  public abstract onPlayerSummon(_player: GuildPlayer): any;
+  public abstract onNewSocket(_socket: Socket, _options: SocketData): any;
+  public abstract onPlayerSummon(_player: Player): any;
 }

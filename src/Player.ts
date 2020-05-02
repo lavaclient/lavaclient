@@ -1,10 +1,10 @@
 import * as Types from "@kyflx-dev/lavalink-types";
 import { EventEmitter } from "events";
 
-import LavaSocket from "./Socket";
+import Socket from "./Socket";
 import * as Util from "./Util";
 
-export default class GuildPlayer extends EventEmitter {
+export default class Player extends EventEmitter {
   public guildId: string;
   public channelId: string;
   public paused: boolean;
@@ -17,7 +17,7 @@ export default class GuildPlayer extends EventEmitter {
   private _server: Util.VoiceServer;
   private _state: Util.VoiceState;
 
-  public constructor(data: Util.PlayerData, public node: LavaSocket) {
+  public constructor(data: Util.PlayerData, public node: Socket) {
     super();
     this.guildId = data.guild;
     this.channelId = data.channel;

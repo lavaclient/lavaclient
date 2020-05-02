@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 
-import GuildPlayer from "./Player";
-import LavaSocket from "./Socket";
+import Player from "./Player";
+import Socket from "./Socket";
 import * as Util from "./Util";
 
 export class Manager extends EventEmitter {
@@ -14,12 +14,12 @@ export class Manager extends EventEmitter {
   public resumeTimeout: number;
   public shards: number;
   public send: (guildId: string, packet: any) => any;
-  private socket: typeof LavaSocket;
-  private player: typeof GuildPlayer;
+  private socket: typeof Socket;
+  private player: typeof Player;
 
   public plugins: Util.Plugin[] = [];
-  public nodes: Map<string, LavaSocket> = new Map();
-  public players: Map<string, GuildPlayer> = new Map();
+  public nodes: Map<string, Socket> = new Map();
+  public players: Map<string, Player> = new Map();
 
   public constructor(nodes: Util.SocketData[], options: Util.ManagerOptions) {
     super();
@@ -30,8 +30,8 @@ export class Manager extends EventEmitter {
     this.resumeKey = options.resumeKey ?? Math.random().toString(36);
     this.resumeTimeout = options.resumeTimeout ?? 60;
     this.shards = options.shards ?? 1;
-    this.socket = options.socket ?? LavaSocket;
-    this.player = options.player ?? GuildPlayer;
+    this.socket = options.socket ?? Socket;
+    this.player = options.player ?? Player;
     this.send = options.send;
 
     if (options.plugins) {
@@ -97,7 +97,7 @@ export class Manager extends EventEmitter {
   public async join(
     data: Util.PlayerData,
     options: Util.ConnectOptions = {}
-  ): Promise<GuildPlayer> {
+  ): Promise<Player> {
     const existing = this.players.get(data.guild);
     if (existing) return existing;
 
