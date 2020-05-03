@@ -1,4 +1,8 @@
-import { PlayTrack, EqualizerBand, PlayerState } from "@kyflx-dev/lavalink-types";
+import {
+  PlayTrack,
+  EqualizerBand,
+  PlayerState,
+} from "@kyflx-dev/lavalink-types";
 
 import { Manager } from "./Manager";
 import Player from "./Player";
@@ -24,7 +28,7 @@ export interface ManagerOptions {
 }
 
 export interface GuildPlayerState extends PlayerState {
-  bands?: EqualizerBand
+  bands?: EqualizerBand;
 }
 
 export interface PlayerData {
@@ -65,7 +69,7 @@ export interface VoiceState {
 }
 
 export abstract class Plugin {
-  manager: Manager
+  manager: Manager;
   public abstract onLoad(): any;
   public abstract onNewSocket(_socket: Socket, _options: SocketData): any;
   public abstract onPlayerSummon(_player: Player): any;

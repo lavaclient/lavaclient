@@ -96,7 +96,8 @@ export default class Player extends EventEmitter {
     else this._state = update;
   }
 
-  async _update(): Promise<boolean> {
+  async _connect(): Promise<boolean> {
+    if (!this._server || !this._state) return;
     return this.send("voiceUpdate", {
       sessionId: this._state.session_id,
       event: this._server,

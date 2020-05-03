@@ -36,14 +36,14 @@ export class Manager extends EventEmitter {
 
     if (options.plugins) {
       options.plugins.forEach((plugin) => {
-        plugin.manager = this
+        plugin.manager = this;
         this.plugins.push(plugin);
         if (plugin.onLoad) plugin.onLoad();
       });
     }
   }
 
-  public get ideal() {
+  public get ideal(): Socket[] {
     if (!this.storeStats) return;
     const ideal = [...this.nodes.values()];
     return ideal.sort((a, b) => b.penalties - a.penalties);
@@ -61,18 +61,20 @@ export class Manager extends EventEmitter {
   public async serverUpdate(server: Util.VoiceServer): Promise<boolean> {
     const player = this.players.get(server.guild_id);
     if (!player) return;
-
     player.provide(server);
-    return player._update();
+    return player._connect();
   }
 
-  public async stateUpdate(state: Util.VoiceState): Promise<void> {
+  public async stateUpdate(state: Util.VoiceState): Promise<boolean> {
     if (state.user_id !== this.userId) return;
 
     const player = this.players.get(state.guild_id);
-    if (!player) return;
+    if (state.channel_id && player) {
+      player.provide(state);
+      return player._connect();
+    }
 
-    return player.provide(state);
+    return false;
   }
 
   public async leave(guildId: string): Promise<boolean> {
