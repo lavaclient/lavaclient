@@ -1,14 +1,13 @@
-import * as Types from "@kyflx-dev/lavalink-types";
+import * as Types from "@kyflx-dev/lavalink-types/";
 import { EventEmitter } from "events";
-
-import Socket from "./Socket";
+import { Socket } from "./Socket";
 import * as Util from "./Util";
 
-export default class Player extends EventEmitter {
+export class Player extends EventEmitter {
   public guildId: string;
   public channelId: string;
   public paused: boolean;
-  public state: Util.GuildPlayerState = {} as Util.GuildPlayerState;
+  public state: Partial<Util.GuildPlayerState> = {};
   public track: string;
   public playing: boolean;
   public timestamp: number;
@@ -49,44 +48,53 @@ export default class Player extends EventEmitter {
     );
   }
 
-  public play(track: string, options: Util.PlayOptions = {}): Promise<boolean> {
+  public play(track: string, options: Util.PlayOptions = {}): Promise<void> {
     this.track = track;
     this.timestamp = Date.now();
     this.playing = true;
+
     return this.send("play", { track, ...options });
   }
 
-  public stop(): Promise<boolean> {
+  public stop(): Promise<void> {
     this.playing = false;
     this.timestamp = null;
     this.track = null;
+
     return this.send("stop");
   }
 
-  public pause(pause = true): Promise<boolean> {
+  public pause(pause = true): Promise<void> {
     this.paused = pause;
+
     return this.send("pause", { pause });
   }
 
-  public resume(): Promise<boolean> {
-    return this.pause(false);
+  public resume(): Promise<void> {
+    this.pause(false);
+
+    return;
   }
 
-  public seek(position: number): Promise<boolean> {
-    return this.send("seek", { position });
+  public seek(position: number): Promise<void> {
+    this.send("seek", { position });
+
+    return;
   }
 
-  public setVolume(volume: number): Promise<boolean> {
+  public setVolume(volume: number): Promise<void> {
     this.volume = volume;
+
     return this.send("volume", { volume });
   }
 
-  public equalizer(bands: Types.EqualizerBand[]): Promise<boolean> {
+  public equalizer(bands: Types.EqualizerBand[]): Promise<void> {
     Object.assign(this.state, { bands });
+
     return this.send("equalizer", { bands });
   }
 
-  public async destroy(): Promise<boolean> {
+  public async destroy(): Promise<void> {
     return this.send("destroy");
   }
 
@@ -96,16 +104,20 @@ export default class Player extends EventEmitter {
     else this._state = update;
   }
 
-  async _connect(): Promise<boolean> {
-    if (!this._server || !this._state) return;
+  async _connect(): Promise<void> {
+    if (!this._server || !this._state) {
+      return;
+    }
+
     return this.send("voiceUpdate", {
       sessionId: this._state.session_id,
       event: this._server,
     });
   }
 
-  protected send(op: string, body: Record<string, any> = {}): Promise<boolean> {
+  protected send(op: string, body: Record<string, any> = {}): Promise<void> {
     const guildId = this.guildId;
+
     return this.node.send({ op, ...body, guildId });
   }
 }

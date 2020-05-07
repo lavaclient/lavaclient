@@ -1,10 +1,10 @@
 import { NodeStats } from "@kyflx-dev/lavalink-types";
-import WebSocket from "ws";
+import WebSocket, { ClientOptions } from "ws";
 
 import { Manager } from "./Manager";
 import * as Util from "./Util";
 
-export default class Socket {
+export class Socket {
   #ws: WebSocket;
 
   public name: string;
@@ -16,56 +16,47 @@ export default class Socket {
   #port: string;
   #password: string;
 
-  public constructor(options: Util.SocketData, public manager: Manager) {
-    this.name = options.name;
-    this.#address = options.address;
-    this.#port = options.port.toString();
-    this.#password = options.password;
+  public constructor(
+    data: Util.SocketData,
+    public manager: Manager,
+    public options: ClientOptions = {}
+  ) {
+    this.name = data.name;
+    this.#address = data.address;
+    this.#port = data.port.toString();
+    this.#password = data.password;
 
     this._connect(manager.userId);
-  }
-
-  public get penalties(): number {
-    if (!this.manager.storeStats) return 0;
-
-    let penalties = 0;
-    penalties += this.stats.players;
-    penalties += Math.round(
-      1.05 ** (100 * this.stats.cpu.systemLoad) * 10 - 10
-    );
-
-    if (this.stats.frameStats) {
-      penalties += this.stats.frameStats.deficit;
-      penalties += this.stats.frameStats.nulled * 2;
-    }
-
-    return penalties;
   }
 
   public get connected(): boolean {
     return this.#ws && this.#ws.readyState === WebSocket.OPEN;
   }
 
-  public send(payload: any): Promise<boolean> {
+  public send(payload: any): Promise<void> {
     return new Promise((res, rej) => {
       try {
         payload = JSON.stringify(payload);
       } catch (error) {
-        return rej(false);
+        this.manager.emit("error", error, this.name);
+
+        return;
       }
 
       if (!this.connected) {
         this.waiting.push({ res, rej, payload });
-        return res(false);
+
+        return;
       }
 
       this.#ws.send(payload, (error) => {
         if (error) {
           this.manager.emit("error", error, this.name);
-          return rej(false);
+
+          return rej(error);
         }
 
-        return res(true);
+        return res();
       });
     });
   }
@@ -88,9 +79,8 @@ export default class Socket {
 
     if (this.manager.resumeKey) headers["Resume-Key"] = this.manager.resumeKey;
 
-    this.#ws = new WebSocket(`ws://${this.#address}:${this.#port}`, {
-      headers,
-    });
+    const url = `ws://${this.#address}:${this.#port}`;
+    this.#ws = new WebSocket(url, Object.assign({ headers }, this.options));
 
     this.#ws.on("close", this._close.bind(this));
     this.#ws.on("error", this._error.bind(this));
@@ -98,7 +88,7 @@ export default class Socket {
     this.#ws.on("open", this._open.bind(this));
   }
 
-  private async _configureResuming(): Promise<boolean> {
+  private async _configureResuming(): Promise<void> {
     return this.send({
       op: "configureResuming",
       timeout: this.manager.resumeTimeout,
