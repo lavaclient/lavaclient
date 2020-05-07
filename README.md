@@ -1,4 +1,4 @@
-# Lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299)](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Lavaclient/lavaclient&amp;utm_campaign=Badge_Grade)
+# Lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299)](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&utm_medium=referral&utm_content=Lavaclient/lavaclient&utm_campaign=Badge_Grade)
 
 > A simple and lightweight [Lavalink](https://github.com/Frederikam/Lavalink) client written in TypeScript. Works with any Discord Library.
 
@@ -14,9 +14,24 @@ npm install lavaclient
 
 ### Plugins
 
+Lavaclient has a plugins system but as of right now it is very limited in things you can do. They are a Work-In-Progress.
+
 - [Lavaclient REST](https://npmjs.com/lavaclient-rest-plugin)
+- [Lavaclient Queue](https://npmjs.com/lavaclient-queue-plugin)
 
 Have you made any plugins? If so, open a [pull-request](https://github.com/Lavaclient/lavaclient/pulls).
+
+```ts
+import { Manager, Plugin, Player } from "lavaclient";
+
+class MyPlugin extends Plugin {
+  onJoin(player: Player) {
+    console.log(`New Player: ${player.guildId}`);
+  }
+}
+
+Manager.use(new MyPlugin());
+```
 
 ## Example usage
 
@@ -32,6 +47,7 @@ const nodes = [
     address: "localhost",
     password: "youshallnotpass",
     port: 2333,
+    ws: {}, // if you want to pass options to thw websocket.
   },
 ];
 
@@ -44,7 +60,7 @@ const manager = new Manager(nodes, {
   },
 });
 
-client.on("ready", () => manager.init(client.user.id));
+client.on("ready", async () => await manager.init(client.user.id));
 client.ws.on("VOICE_SERVER_UPDATE", (pk) => manager.serverUpdate(pk));
 client.ws.on("VOICE_STATE_UPDATE", (pk) => manager.stateUpdate(pk));
 ```
@@ -54,10 +70,10 @@ client.ws.on("VOICE_STATE_UPDATE", (pk) => manager.stateUpdate(pk));
 ```ts
 const player = await manager.join({
   guild: "696355996657909790",
-  channel: "696359398708215848"
+  channel: "696359398708215848",
 });
 
-await manager.leave("696355996657909790")
+await manager.leave("696355996657909790");
 ```
 
 ### Extending Player & Socket
@@ -70,17 +86,18 @@ class CustomPlayer extends Player {
     this.equalizer([
       {
         band: 0,
-        gain: 1
-      }, {
+        gain: 1,
+      },
+      {
         band: 1,
-        gain: 0.75
-      }
+        gain: 0.75,
+      },
     ]);
   }
 }
 
 const manager = new Manager([], {
-  player: CustomPlayer
+  player: CustomPlayer,
 });
 ```
 
@@ -96,7 +113,7 @@ class CustomSocket extends Socket {
 }
 
 const manager = new Manager([], {
-  socket: CustomSocket
+  socket: CustomSocket,
 });
 ```
 

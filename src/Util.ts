@@ -1,12 +1,8 @@
-import {
-  PlayTrack,
-  EqualizerBand,
-  PlayerState,
-} from "@kyflx-dev/lavalink-types";
-
+import { EqualizerBand, PlayerState, PlayTrack } from "@kyflx-dev/lavalink-types";
+import { ClientOptions } from "ws";
 import { Manager } from "./Manager";
-import Player from "./Player";
-import Socket from "./Socket";
+import { Player } from "./Player";
+import { Socket } from "./Socket";
 
 export type PlayOptions = Partial<Omit<PlayTrack, "op" | "guildId" | "track">>;
 
@@ -22,7 +18,6 @@ export interface ManagerOptions {
   send: (guildId: string, packet: any) => any;
   resumeTimeout?: number;
   shards?: number;
-  plugins?: Plugin[];
   socket?: typeof Socket;
   player?: typeof Player;
 }
@@ -42,6 +37,7 @@ export interface SocketData {
   port: string | number;
   password: string;
   name: string;
+  ws?: ClientOptions;
 }
 
 export interface WaitingPayload {
@@ -69,8 +65,7 @@ export interface VoiceState {
 }
 
 export abstract class Plugin {
-  manager: Manager;
-  public abstract onLoad(): any;
-  public abstract onNewSocket(_socket: Socket, _options: SocketData): any;
-  public abstract onPlayerSummon(_player: Player): any;
+  public abstract onManagerNew(manager: Manager): any;
+  public abstract onSocketInit(_socket: Socket, _options: SocketData): any;
+  public abstract onJoin(_player: Player): any;
 }
