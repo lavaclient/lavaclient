@@ -47,7 +47,7 @@ const nodes = [
     address: "localhost",
     password: "youshallnotpass",
     port: 2333,
-    ws: {}, // if you want to pass options to thw websocket.
+    ws: {}, // if you want to pass options to the websocket.
   },
 ];
 
