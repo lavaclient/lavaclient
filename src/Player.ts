@@ -99,8 +99,7 @@ export class Player extends EventEmitter {
   }
 
   provide(update: Util.VoiceServer | Util.VoiceState): void {
-    const isServer = (_: any): _ is Util.VoiceServer => !!_.token;
-    if (isServer(update)) this._server = update;
+    if ("token" in update) this._server = update;
     else this._state = update;
   }
 
