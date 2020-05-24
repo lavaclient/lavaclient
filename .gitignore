@@ -1,6 +1,5 @@
 node_modules/
 build/
 tests/
-*.d.ts
 package-lock.json
 config.json

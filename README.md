@@ -1,129 +1,108 @@
-# Lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299)](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&utm_medium=referral&utm_content=Lavaclient/lavaclient&utm_campaign=Badge_Grade)
+# lavaclient &middot; [![Discord](https://discordapp.com/api/guilds/696355996657909790/embed.png)](https://discord.gg/BnQECNd) [![Version](https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600)](https://npmjs.com/lavaclient) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299)](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&utm_medium=referral&utm_content=Lavaclient/lavaclient&utm_campaign=Badge_Grade)
 
-> A simple and lightweight [Lavalink](https://github.com/Frederikam/Lavalink) client written in TypeScript. Works with any Discord Library.
+> Lavaclient is a simple, easy-to-use, and flexible lavalink client that can be used with any discord library.
 
-- 📦 **Lightweight**: Lavaclient depends on almost 0 dependencies and it is modular to increase performance and speed.
-- 🔰 **Simplistic**: Lavaclient is designed to be simple and it is highly user-friendly.
-- 🔋 **Plugins**: [WIP] Plugins are addons that can be easily added to Lavaclient to enable custom functionality and queue support.
+- 📦 **Lightweight**: Modular to the core, no forced features or bloat. Less then 400 lines of clean and optimized code.
+- 🔰 **Simplistic**: Lavaclient is designed to be simple and highly beginner friendly and flexible for any use case.
+- 🔋 **Flexible**: Our easy-to-use and powerful plugins system allow you to customize every single part of lavaclient with no caveats.
 
-## Installation
-
-```shell
+```bash
 npm install lavaclient
 ```
 
-### Plugins
+## Plugins
 
-Lavaclient has a plugins system but as of right now it is very limited in things you can do. They are a Work-In-Progress.
+Have you made any plugins? If so, make a [pull request](https://github.com/lavaclient/lavaclient/pulls).
 
-- [Lavaclient REST](https://npmjs.com/lavaclient-rest-plugin)
-- [Lavaclient Queue](https://npmjs.com/lavaclient-queue-plugin)
+- [Lavaclient REST](https://npmjs.com/lavaclient-rest)
+- [Lavaclient Queue](https://npmjs.com/lavaclient-queue)
 
-Have you made any plugins? If so, open a [pull-request](https://github.com/Lavaclient/lavaclient/pulls).
+## Usage
 
-```ts
-import { Manager, Plugin, Player } from "lavaclient";
+> In this example we're using discord.js but it should work with any other library you choose.
 
-class MyPlugin extends Plugin {
-  onJoin(player: Player) {
-    console.log(`New Player: ${player.guildId}`);
-  }
-}
-
-Manager.use(new MyPlugin());
-```
-
-## Example usage
-
-The only setup example as of right now is for `discord.js`.
-
-```ts
-import { Manager } from "lavaclient";
-import { Client } from "discord.js";
+```js
+const { Client } = require("discord.js");
+const { Manager } = require("lavaclient");
 
 const nodes = [
   {
     name: "main",
-    address: "localhost",
-    password: "youshallnotpass",
+    host: "localhost",
     port: 2333,
-    ws: {}, // if you want to pass options to thw websocket.
+    password: "youshallnotpass",
   },
 ];
 
 const client = new Client();
 const manager = new Manager(nodes, {
-  send: (id, payload) => {
+  send(id, payload) {
     const guild = client.guilds.cache.get(id);
-    if (guild) return guild.shard.send(payload);
-    return;
-  },
+    if (guild) guild.shard.send(payload);
+  }
 });
 
-client.on("ready", async () => await manager.init(client.user.id));
+/** Provide voice updates to lavaclient. */
 client.ws.on("VOICE_SERVER_UPDATE", (pk) => manager.serverUpdate(pk));
 client.ws.on("VOICE_STATE_UPDATE", (pk) => manager.stateUpdate(pk));
+
+/** Initalize the Manager */
+client.on("ready", async () => {
+  console.log("Bot is now ready!");
+
+  await manager.init(client.user.id);
+  manager.on("open", (name) => console.log(name, "is now open"));
+  manager.on("close", (name) => console.log(name, "was disconnected from lavalink."));
+  manager.on("error", (error) => console.error(error));
+});
 ```
 
-### Joining & Leaving
+### Joining, Leaving, and Playing
 
-```ts
+```js
 const player = await manager.join({
-  guild: "696355996657909790",
-  channel: "696359398708215848",
-});
+  guild: "guild id**",
+  channel: "voice channel id**"
+}, { deafen: false, mute: false });
 
-await manager.leave("696355996657909790");
+await player.play("base64 track string");
+player.on("end", () => manager.leave(player.guild))
 ```
 
-### Extending Player & Socket
+### Plugins - Structures
+
+> Note: This is written in typescript for greater support, but javascript should work...
+
+In version 2 of lavaclient the plugins system has changed completely.
+The "Extend" decorator used in this example will NOT work in Javascript, for javascript users please use Structures#extend(), It works the same as DiscordJS's structures.
 
 ```ts
-import { Player, Manager } from "lavaclient";
+import { Extend, Structures, Plugin, Manager } from "lavaclient";
 
-class CustomPlayer extends Player {
-  bassboost(level) {
-    this.equalizer([
-      {
-        band: 0,
-        gain: 1,
-      },
-      {
-        band: 1,
-        gain: 0.75,
-      },
-    ]);
+declare module "lavaclient" {
+  interface Player {
+    skip(): Promise<void>;
   }
 }
 
-const manager = new Manager([], {
-  player: CustomPlayer,
-});
-```
-
-```ts
-import { Socket, Manager } from "lavaclient";
-
-class CustomSocket extends Socket {
-  constructor(...args) {
-    super(...args);
-
-    console.log("Socket Initalization.");
+class MyPlugin extends Plugin {
+  public preRegister() {
+    @Extend("player")
+    class MyPlayer extends Structures.get("player") { // I recommend using Structures#get for this part so plugins can be seemless.
+      // Lets say this is adds a bunch of queue functionality.
+      public async skip() {
+        await this.stop();
+        console.log("Skipped the last playing song.");
+      }
+    }
   }
 }
 
-const manager = new Manager([], {
-  socket: CustomSocket,
-});
+Manager.use(new MyPlugin());
+
+// And now there's a skip method that we can use globally.
 ```
 
-## Contributers
+---
 
-- [MeLike2D](https://github.com/lolwastedjs)
-- [Chroventer](https://github.com/chroventer)
-
-## Links
-
-- [GitHub](https://github.com/Lavaclient/lavaclient)
-- [NPM](https://npmjs.com/package/lavaclient)
-- [Documentation](https://lavaclient.js.org)
+[MeLike2D](https://melike2d.me) &copy; 2020

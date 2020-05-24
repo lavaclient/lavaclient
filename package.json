@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "1.1.2",
+  "version": "2.0.6",
   "description": "A simple and lightweight lavalink client written in typescript.",
   "main": "build/index.js",
   "types": "index.d.ts",
@@ -17,11 +17,11 @@
     "url": "git+https://github.com/lavaclient/lavaclient.git"
   },
   "keywords": [
-    "lavalink",
-    "lightweight",
-    "discord",
     "simple",
-    "websocket"
+    "lightweight",
+    "modular",
+    "lavalink",
+    "client"
   ],
   "author": "MeLike2D",
   "license": "MIT",
@@ -29,18 +29,18 @@
     "url": "https://github.com/lavaclient/lavaclient/issues"
   },
   "homepage": "https://github.com/lavaclient/lavaclient#readme",
-  "devDependencies": {
-    "@types/node": "^13.13.5",
-    "@types/ws": "^7.2.4",
-    "@typescript-eslint/eslint-plugin": "^2.31.0",
-    "@typescript-eslint/parser": "^2.31.0",
-    "eslint": "^6.8.0",
-    "rimraf": "^3.0.2",
-    "typedoc": "^0.17.6",
-    "typescript": "^3.8.3"
-  },
   "dependencies": {
     "@kyflx-dev/lavalink-types": "^1.0.2",
-    "ws": "^7.2.5"
+    "ws": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.1",
+    "@types/ws": "^7.2.4",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "discord.js": "^12.2.0",
+    "eslint": "^7.0.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.2"
   }
 }

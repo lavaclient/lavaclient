@@ -1,32 +1,37 @@
-import * as Types from "@kyflx-dev/lavalink-types/";
+import * as Types from "@kyflx-dev/lavalink-types";
 import { EventEmitter } from "events";
+import { Manager } from "./Manager";
 import { Socket } from "./Socket";
 import * as Util from "./Util";
 
 export class Player extends EventEmitter {
-  public guildId: string;
-  public channelId: string;
-  public paused: boolean;
-  public state: Partial<Util.GuildPlayerState> = {};
-  public track: string;
-  public playing: boolean;
-  public timestamp: number;
-  public volume: number;
+  public channel: string;
+  public readonly guild: string;
+  public readonly manager: Manager;
 
-  private _server: Util.VoiceServer;
+  public paused = false;
+  public state: Partial<Types.PlayerState> = {};
+  public track = "";
+  public playing = false;
+  public playingTimestamp: number;
+  public volume = 100;
+
   private _state: Util.VoiceState;
+  private _server: Util.VoiceServer;
 
-  public constructor(data: Util.PlayerData, public node: Socket) {
+  public constructor(data: Util.PlayerData, public readonly node: Socket) {
     super();
-    this.guildId = data.guild;
-    this.channelId = data.channel;
+
+    this.guild = data.guild;
+    this.channel = data.channel;
+    this.manager = node.manager;
 
     this.on("event", async (event: Types.Event) => {
       switch (event.type) {
         case "TrackEndEvent":
           if (event.reason !== "REPLACED") this.playing = false;
           this.track = null;
-          this.timestamp = null;
+          this.playingTimestamp = null;
           this.emit("end", event);
           break;
         case "TrackExceptionEvent":
@@ -48,53 +53,43 @@ export class Player extends EventEmitter {
     );
   }
 
-  public play(track: string, options: Util.PlayOptions = {}): Promise<void> {
-    this.track = track;
-    this.timestamp = Date.now();
+  public play(track: string, options: Util.PlayOptions = {}): Promise<boolean> {
     this.playing = true;
-
-    return this.send("play", { track, ...options });
+    this.playingTimestamp = Date.now();
+    this.track = track;
+    return this.send("play", { ...options, track });
   }
 
-  public stop(): Promise<void> {
+  public stop(): Promise<boolean> {
     this.playing = false;
-    this.timestamp = null;
+    this.playingTimestamp = null;
     this.track = null;
-
     return this.send("stop");
   }
 
-  public pause(pause = true): Promise<void> {
+  public pause(pause = true): Promise<boolean> {
     this.paused = pause;
-
     return this.send("pause", { pause });
   }
 
-  public resume(): Promise<void> {
-    this.pause(false);
-
-    return;
+  public resume(): Promise<boolean> {
+    return this.pause(false);
   }
 
-  public seek(position: number): Promise<void> {
-    this.send("seek", { position });
-
-    return;
+  public seek(position: number): Promise<boolean> {
+    return this.send("seek", { position });
   }
 
-  public setVolume(volume: number): Promise<void> {
+  public setVolume(volume: number): Promise<boolean> {
     this.volume = volume;
-
     return this.send("volume", { volume });
   }
 
-  public equalizer(bands: Types.EqualizerBand[]): Promise<void> {
-    Object.assign(this.state, { bands });
-
+  public equalizer(bands: Types.EqualizerBand[]): Promise<boolean> {
     return this.send("equalizer", { bands });
   }
 
-  public async destroy(): Promise<void> {
+  public destroy(): Promise<boolean> {
     return this.send("destroy");
   }
 
@@ -103,20 +98,16 @@ export class Player extends EventEmitter {
     else this._state = update;
   }
 
-  async _connect(): Promise<void> {
-    if (!this._server || !this._state) {
-      return;
-    }
-
+  async _connect(): Promise<boolean> {
+    if (!this._server || !this._state) return;
     return this.send("voiceUpdate", {
       sessionId: this._state.session_id,
       event: this._server,
     });
   }
 
-  protected send(op: string, body: Record<string, any> = {}): Promise<void> {
-    const guildId = this.guildId;
-
+  protected send(op: string, body: Record<string, any> = {}): Promise<boolean> {
+    const guildId = this.guild;
     return this.node.send({ op, ...body, guildId });
   }
 }

@@ -1,4 +1,4 @@
-export { Manager } from "./Manager";
-export { Player } from "./Player";
-export { Socket } from "./Socket";
-export { Plugin } from "./Util";
+export * from "./lib/Manager";
+export * from "./lib/Player";
+export * from "./lib/Socket";
+export { Structures, Plugin, Extend } from "./lib/Util";
