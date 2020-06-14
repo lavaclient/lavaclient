@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "A simple and lightweight lavalink client written in typescript.",
   "main": "build/index.js",
   "types": "index.d.ts",
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@types/node": "^14.0.1",
-    "@types/ws": "^7.2.4",
+    "@types/ws": "^7.2.5",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "discord.js": "^12.2.0",

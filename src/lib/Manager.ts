@@ -94,6 +94,7 @@ export class Manager extends EventEmitter {
       },
     });
 
+    await player.destroy()
     this.players.delete(guildId);
     player.removeAllListeners();
   }
