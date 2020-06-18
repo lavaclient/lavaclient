@@ -130,7 +130,7 @@ manager.use(new MyPlugin());
 Or Javascript (this also works in typescript):
 
 ```js
-const { Structures, Manager } = require("lavaclient");
+const { Structures, Manager, Plugin } = require("lavaclient");
 
 class MyPlugin extends Plugin {
 	load() {
