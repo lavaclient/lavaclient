@@ -100,10 +100,10 @@ declare module "lavaclient" {
      */
     destroy(guild: string): Promise<boolean>;
 
-    on(event: "socketError", listener: (socket: Socket, error: any) => void): Manager;
-    on(event: "socketReady", listener: (socket: Socket) => void): Manager;
-    on(event: "socketClose", listener: (socket: Socket, code: number, reason: string) => void): Manager;
-    on(event: "socketDisconnect", listener: (socket: Socket, tries: number) => void): Manager;
+    on(event: "socketError", listener: (socket: Socket, error: any) => any): this;
+    on(event: "socketReady", listener: (socket: Socket) => any): this;
+    on(event: "socketClose", listener: (socket: Socket, code: number, reason: string) => any): this;
+    on(event: "socketDisconnect", listener: (socket: Socket, tries: number) => any): this;
   }
 
   export class Player extends EventEmitter {
@@ -244,14 +244,14 @@ declare module "lavaclient" {
      */
     voiceUpdate(): Promise<void>;
 
-    on(event: "event", listener: (event: Event) => void): Player;
-    on(event: "playerUpdate", listener: (event: PlayerUpdate) => void): Player;
+    on(event: "event", listener: (event: Event) => any): this;
+    on(event: "playerUpdate", listener: (event: PlayerUpdate) => any): this;
 
-    on(event: "end", listener: (event: TrackEndEvent) => void): Player;
-    on(event: "error", listener: (error: string) => void): Player;
-    on(event: "start", listener: (event: TrackStartEvent) => void): Player;
-    on(event: "stuck", listener: (event: TrackStuckEvent) => void): Player
-    on(event: "closed", listener: (event: WebSocketClosedEvent) => void): Player
+    on(event: "end", listener: (event: TrackEndEvent) => any): this;
+    on(event: "error", listener: (error: string) => any): this;
+    on(event: "start", listener: (event: TrackStartEvent) => any): this;
+    on(event: "stuck", listener: (event: TrackStuckEvent) => any): this;
+    on(event: "closed", listener: (event: WebSocketClosedEvent) => any): this;
 
     /**
      * Adds
