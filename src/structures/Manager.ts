@@ -179,7 +179,7 @@ export class Manager extends EventEmitter {
     if (!socket || !socket.connected)
       throw new Error("Manager#create(): You didn't provide a valid socket.");
 
-    const player = new Player(socket, data);
+    const player = new (Structures.get("player"))(socket, data);
     this.players.set(data.guild, player);
 
     if (!options.noConnect && data.channel)
