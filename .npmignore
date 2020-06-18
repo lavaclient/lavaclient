@@ -6,6 +6,7 @@ docs/
 
 .gitignore
 .eslintrc
-.eslintignore
 tsconfig.json
 config.json
+.env
+yarn-error.log

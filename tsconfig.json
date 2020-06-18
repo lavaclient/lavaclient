@@ -4,7 +4,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "declaration": false,
-    "inlineSourceMap": true,
+    "inlineSourceMap": false,
     "newLine": "lf",
     "pretty": true,
     "strict": true,
