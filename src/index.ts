@@ -1,4 +1,5 @@
-export * from "./lib/Manager";
-export * from "./lib/Player";
-export * from "./lib/Socket";
-export { Structures, Plugin, Extend } from "./lib/Util";
+export * from "./structures/Manager";
+export * from "./structures/Player";
+export * from "./structures/Socket";
+export * from "./structures/Plugin";
+export { Structures, Extend } from "./Structures";

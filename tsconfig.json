@@ -11,14 +11,14 @@
     "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
     "disableSizeLimit": true,
-    "outDir": "build/",
+    "outDir": "dist/",
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["ES2019"],
     "types": ["node"],
     "removeComments": true
   },
-  "exclude": ["./build/"],
+  "exclude": ["./dist/", "./tests/"],
   "typedocOptions": {
     "name": "Lavaclient",
     "readme": "./README.md",

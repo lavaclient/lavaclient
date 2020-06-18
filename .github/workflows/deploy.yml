@@ -13,7 +13,7 @@ jobs:
       - name: Installation
         run: npm install
       - name: Build documentation
-        run: 'npm run build:docs'
+        run: 'yarn build:docs'
       - name: Deploy documentation
         if: success()
         uses: crazy-max/ghaction-github-pages@v1
