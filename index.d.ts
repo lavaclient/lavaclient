@@ -5,7 +5,17 @@
 //   ../ws
 
 import { EventEmitter } from "events";
-import { EqualizerBand, NodeStats, Track } from "@kyflx-dev/lavalink-types";
+import {
+  EqualizerBand,
+  Event,
+  NodeStats,
+  PlayerUpdate,
+  Track,
+  TrackEndEvent,
+  TrackStartEvent,
+  TrackStuckEvent,
+  WebSocketClosedEvent
+} from "@kyflx-dev/lavalink-types";
 import WebSocket from "ws";
 
 declare module "lavaclient" {
@@ -234,7 +244,14 @@ declare module "lavaclient" {
      */
     voiceUpdate(): Promise<void>;
 
-    On
+    on(event: "event", listener: (event: Event) => void): Player;
+    on(event: "playerUpdate", listener: (event: PlayerUpdate) => void): Player;
+
+    on(event: "end", listener: (event: TrackEndEvent) => void): Player;
+    on(event: "error", listener: (error: string) => void): Player;
+    on(event: "start", listener: (event: TrackStartEvent) => void): Player;
+    on(event: "stuck", listener: (event: TrackStuckEvent) => void): Player
+    on(event: "closed", listener: (event: WebSocketClosedEvent) => void): Player
 
     /**
      * Adds
