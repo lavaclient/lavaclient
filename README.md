@@ -56,7 +56,7 @@ client.on("ready", async () => {
 	await manager.init(client.user.id);
 	// Now to add our listeners.
 	manager.on("socketError", ({id}, error) => console.error(`${id} ran into an error`, error);
-	manager.on("socketReady", (node) => console.log(`${node.is} connected.`));
+	manager.on("socketReady", (node) => console.log(`${node.id} connected.`));
 	// There are two more like "socketClose" and "socketDisconnect"
 });
 
