@@ -1,8 +1,5 @@
 import { Manager } from "./Manager";
 
-/**
- * A plugin class used for making Lavaclient Plugins.
- */
 export abstract class Plugin {
   /**
    * The manager that loaded this plugin.
@@ -12,6 +9,7 @@ export abstract class Plugin {
   /**
    * Called when this plugin is loaded.
    * @param manager The manager that loaded this plugin.
+   * @since 3.0.0
    */
   public load(manager: Manager): void {
     this.manager = manager;
@@ -20,7 +18,7 @@ export abstract class Plugin {
 
   /**
    * Called when the manager is initialized.
-   * @since 2.0.0
+   * @since 3.0.0
    */
   public init(): void {
     return;

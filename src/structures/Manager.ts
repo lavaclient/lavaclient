@@ -1,36 +1,11 @@
+import * as http from "http";
 import { EventEmitter } from "events";
-import { Plugin } from "./Plugin";
-import { Socket, SocketData, SocketOptions } from "./Socket";
-import { ConnectOptions, Player, PlayerData } from "./Player";
 import { Structures } from "../Structures";
 
-export type Send = (guildId: string, payload: any) => any;
-
-export interface ManagerOptions {
-  send: Send;
-  shards?: number;
-  userId?: string;
-  defaultSocketOptions?: SocketOptions;
-}
-
-
-export interface VoiceServer {
-  token: string;
-  guild_id: string;
-  endpoint: string;
-}
-
-export interface VoiceState {
-  channel_id?: string;
-  guild_id: string;
-  user_id: string;
-  session_id: string;
-  deaf?: boolean;
-  mute?: boolean;
-  self_deaf?: boolean;
-  self_mute?: boolean;
-  suppress?: boolean;
-}
+import type { LoadTrackResponse } from "@kyflx-dev/lavalink-types";
+import type { Socket, SocketData, SocketOptions } from "./Socket";
+import type { Plugin } from "./Plugin";
+import type { Player } from "./Player";
 
 export class Manager extends EventEmitter {
   /**
@@ -43,7 +18,7 @@ export class Manager extends EventEmitter {
   public readonly players: Map<string, Player>;
 
   /**
-   * The plugins this manager was created with.
+   * The options this manager was created with.
    */
   public options: ManagerOptions;
   /**
@@ -89,6 +64,13 @@ export class Manager extends EventEmitter {
 
     if (this.shards < 1)
       throw new TypeError("Manager: Shard count must be 1 or greater.");
+
+    if (options.plugins && options.plugins.length) {
+      for (const plugin of options.plugins) {
+        this.plugins.push(plugin);
+        plugin.load(this);
+      }
+    }
   }
 
   public get ideal(): Socket[] {
@@ -99,16 +81,6 @@ export class Manager extends EventEmitter {
       );
   }
 
-  /**
-   * Register a plugin for use.
-   * @param plugin
-   * @since 2.x.x
-   */
-  public use(plugin: Plugin): Manager {
-    this.plugins.push(plugin);
-    plugin.load(this);
-    return this;
-  }
 
   /**
    * Initializes this manager. Connects all provided sockets.
@@ -129,6 +101,17 @@ export class Manager extends EventEmitter {
         this.sockets.set(node.id, socket);
       }
     }
+  }
+
+  /**
+   * Register a plugin for use.
+   * @param plugin
+   * @since 2.x.x
+   */
+  public use(plugin: Plugin): Manager {
+    this.plugins.push(plugin);
+    plugin.load(this);
+    return this;
   }
 
   /**
@@ -164,26 +147,24 @@ export class Manager extends EventEmitter {
 
   /**
    * Create a player.
-   * @param data The data to give the created player.
-   * @param options Options used when connecting to a voice channel.
+   * @param guild The guild this player is for.
+   * @param socket The socket to use, default to ideal. Used for load balancing
    * @since 2.1.0
    */
-  public async create(
-    data: PlayerData & { socket?: string },
-    options: ConnectOptions & { noConnect?: boolean } = {}
-  ): Promise<Player> {
-    const existing = this.players.get(data.guild);
+  public async create(guild: string, socket?: string): Promise<Player> {
+    const existing = this.players.get(guild);
     if (existing) return existing;
 
-    const socket = data.socket ? this.sockets.get(data.socket) : this.ideal[0];
-    if (!socket || !socket.connected)
+    let sock = this.sockets.get(socket);
+    if (socket && (!sock || !sock.connected))
       throw new Error("Manager#create(): You didn't provide a valid socket.");
 
-    const player = new (Structures.get("player"))(socket, data);
-    this.players.set(data.guild, player);
+    sock = this.ideal[0];
+    if (!sock || !sock.connected)
+      throw new Error("Manager#create(): No available sockets.")
 
-    if (!options.noConnect && data.channel)
-      await player.connect(data.channel, options);
+    const player = new (Structures.get("player"))(sock, guild);
+    this.players.set(guild, player);
 
     return player;
   }
@@ -200,4 +181,74 @@ export class Manager extends EventEmitter {
       return this.players.delete(guild);
     } else return false;
   }
+
+  /**
+   * Search lavalink for songs.
+   * @param query The search query.
+   * @param socket The socket to use .- Load Balancing.
+   */
+  public async search(query: string, socket?: string): Promise<LoadTrackResponse> {
+    return new Promise((resolve, reject) => {
+      let sock = this.sockets.get(socket);
+      if (socket && (!sock || !sock.connected))
+        throw new Error("Manager#search(): You didn't provide a valid socket.");
+
+      sock = this.ideal[0];
+      if (!sock || !sock.connected)
+        throw new Error("Manager#create(): No available sockets.")
+
+      let data = "";
+      const resp = http.get(`http://${sock.host}:${sock.port}/loadtracks?identifier=${query}`, {
+        headers: {
+          Authorization: sock.password
+        }
+      }, (res) => {
+        res.on("data", (chunk) => data += chunk);
+        res.on("error", (e) => {
+          resp.abort();
+          reject(e);
+        });
+       res.on("end", () => {
+         resp.abort();
+
+         try {
+           data = JSON.parse(data);
+         } catch (e) {
+           reject(e);
+           return;
+         }
+
+         resolve(data as any);
+       })
+      });
+    });
+  }
+}
+
+export type Send = (guildId: string, payload: any) => any;
+
+export interface ManagerOptions {
+  send: Send;
+  shards?: number;
+  userId?: string;
+  defaultSocketOptions?: SocketOptions;
+  plugins?: Plugin[];
+}
+
+export interface VoiceServer {
+  token: string;
+  guild_id: string;
+  endpoint: string;
+}
+
+export interface VoiceState {
+  channel_id?: string;
+  guild_id: string;
+  user_id: string;
+  session_id: string;
+  deaf?: boolean;
+  mute?: boolean;
+  self_deaf?: boolean;
+  self_mute?: boolean;
+  suppress?: boolean;
 }

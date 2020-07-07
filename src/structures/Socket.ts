@@ -1,27 +1,7 @@
-import { NodeStats } from "@kyflx-dev/lavalink-types";
 import WebSocket from "ws";
-import { Manager } from "./Manager";
 
-export interface SocketData {
-  id: string;
-  host: string;
-  port: string | number;
-  password: string;
-  options?: SocketOptions;
-}
-
-export interface SocketOptions {
-  retryDelay?: number;
-  maxTries?: number;
-  resumeKey?: string;
-  resumeTimeout?: number;
-}
-
-interface Sendable {
-  res: (...args: any[]) => any;
-  rej: (...args: any[]) => any;
-  data: string;
-}
+import type { NodeStats } from "@kyflx-dev/lavalink-types";
+import type { Manager } from "./Manager";
 
 export class Socket {
   /**
@@ -118,6 +98,10 @@ export class Socket {
     }, manager.options.defaultSocketOptions ?? {});
   }
 
+  /**
+   * Get the string representation of this socket.
+   * @since 3.0.0
+   */
   public toString(): string {
     return this.id;
   }
@@ -219,7 +203,9 @@ export class Socket {
    */
   private async _close(code: number, reason: string): Promise<void> {
     this.manager.emit("socketClose", this, code, reason);
-    await this._reconnect();
+    if (code !== 1000 && reason !== "destroy") {
+      await this._reconnect();
+    }
   }
 
   /**
@@ -282,3 +268,25 @@ export class Socket {
     }
   }
 }
+
+interface Sendable {
+  res: (...args: any[]) => any;
+  rej: (...args: any[]) => any;
+  data: string;
+}
+
+export interface SocketData {
+  id: string;
+  host: string;
+  port: string | number;
+  password: string;
+  options?: SocketOptions;
+}
+
+export interface SocketOptions {
+  retryDelay?: number;
+  maxTries?: number;
+  resumeKey?: string;
+  resumeTimeout?: number;
+}
+

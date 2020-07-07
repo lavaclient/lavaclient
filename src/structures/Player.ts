@@ -1,23 +1,8 @@
 import { EventEmitter } from "events";
-import { Socket } from "./Socket";
-import { EqualizerBand, Event, PlayerUpdate, Track } from "@kyflx-dev/lavalink-types";
-import { Manager, VoiceServer, VoiceState } from "./Manager";
 
-export interface PlayerData {
-  channel?: string;
-  guild: string;
-}
-
-export interface PlayOptions {
-  startTime?: number;
-  endTime?: number;
-  noReplace?: boolean;
-}
-
-export interface ConnectOptions {
-  selfDeaf?: boolean;
-  selfMute?: boolean;
-}
+import type { EqualizerBand, Event, PlayerUpdate, Track } from "@kyflx-dev/lavalink-types";
+import type { Socket } from "./Socket";
+import type { Manager, VoiceServer, VoiceState } from "./Manager";
 
 export class Player extends EventEmitter {
   /**
@@ -29,10 +14,9 @@ export class Player extends EventEmitter {
    */
   public readonly guild: string;
   /**
-   * The voice channel id in which this player is connected to.
+   * The id of the voice channel this player is connected to.
    */
   public channel: string | null;
-
   /**
    * Whether this player is paused or not.
    */
@@ -62,20 +46,26 @@ export class Player extends EventEmitter {
    */
   public equalizer: EqualizerBand[];
 
-  private _connected: boolean;
+  /**
+   * The voice state for this player.
+   * @internal
+   */
   private _state: VoiceState;
+  /**
+   * The voice server for this player.
+   * @internal
+   */
   private _server: VoiceServer;
 
   /**
    * @param socket The socket this player belongs to.
-   * @param data Player Data.
+   * @param guild The guild that this player is for.
    */
-  public constructor(socket: Socket, data: PlayerData) {
+  public constructor(socket: Socket, guild: string) {
     super();
 
     this.socket = socket;
-    this.guild = data.guild;
-    this.channel = data.channel;
+    this.guild = guild;
 
     this.paused = false;
     this.track = null;
@@ -86,6 +76,16 @@ export class Player extends EventEmitter {
     this.equalizer = [];
 
     this._setup();
+  }
+
+  private _connected: boolean;
+
+  /**
+   * Whether this player is connected or not.
+   * @since 3.0.6
+   */
+  public get connected(): boolean {
+    return this._connected;
   }
 
   /**
@@ -102,7 +102,7 @@ export class Player extends EventEmitter {
    * @param options Options for self mute, self deaf, or force connecting.
    * @since 2.1.x
    */
-  public async connect(channel: string | Record<string, any>, options: ConnectOptions & { force?: boolean } = {}): Promise<Player> {
+  public async connect(channel: string | Record<string, any>, options: ConnectOptions = {}): Promise<Player> {
     if (this._connected && !options.force)
       throw new Error(`Player#connect (${this.guild}): Already Connected. You can append the force option but this isn't recommended.`);
 
@@ -124,9 +124,13 @@ export class Player extends EventEmitter {
 
   /**
    * Disconnect from the voice channel.
+   * @param remove Whether to remove the player from the manager.
    * @since 2.1.x
    */
-  public async disconnect(): Promise<this> {
+  public async disconnect(remove = false): Promise<this> {
+    if (remove)
+      this.manager.players.delete(this.guild);
+
     await this.socket.manager.send(this.guild, {
       op: 4,
       d: {
@@ -273,7 +277,7 @@ export class Player extends EventEmitter {
   /**
    * Send a voice update to lavalink.
    * @since 2.1.x
-   * @private
+   * @internal
    */
   public voiceUpdate(): Promise<void> {
     if (!this._server || !this._state) return;
@@ -288,7 +292,7 @@ export class Player extends EventEmitter {
 
   /**
    * Adds event listeners to this player.
-   * @private
+   * @internal
    */
   protected _setup(): void {
     this.on("event", async (event: Event) => {
@@ -320,4 +324,16 @@ export class Player extends EventEmitter {
       this.timestamp = update.state.time;
     });
   }
+}
+
+export interface PlayOptions {
+  startTime?: number;
+  endTime?: number;
+  noReplace?: boolean;
+}
+
+export interface ConnectOptions {
+  selfDeaf?: boolean;
+  selfMute?: boolean;
+  force?: boolean;
 }

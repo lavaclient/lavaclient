@@ -3,7 +3,7 @@
     "target": "ES2019",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "declaration": false,
+    "declaration": true,
     "inlineSourceMap": false,
     "newLine": "lf",
     "pretty": true,
@@ -16,7 +16,6 @@
     "moduleResolution": "node",
     "lib": ["ES2019"],
     "types": ["node"],
-    "removeComments": true
   },
   "exclude": ["./dist/", "./tests/"],
   "typedocOptions": {

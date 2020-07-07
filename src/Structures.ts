@@ -1,11 +1,6 @@
 import { Socket } from "./structures/Socket";
 import { Player } from "./structures/Player";
 
-export interface Classes {
-  socket: typeof Socket;
-  player: typeof Player;
-}
-
 export class Structures {
   private static structures: Classes = {
     player: Player,
@@ -45,4 +40,9 @@ export function Extend<K extends keyof Classes>(name: K) {
   return <T extends Classes[K]>(target: T): T => {
     return Structures.extend(name, () => target);
   };
+}
+
+export interface Classes {
+  socket: typeof Socket;
+  player: typeof Player;
 }
