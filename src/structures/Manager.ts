@@ -204,22 +204,24 @@ export class Manager extends EventEmitter {
         }
       }, (res) => {
         res.on("data", (chunk) => data += chunk);
+
         res.on("error", (e) => {
           resp.abort();
           reject(e);
         });
-       res.on("end", () => {
-         resp.abort();
 
-         try {
-           data = JSON.parse(data);
-         } catch (e) {
-           reject(e);
-           return;
-         }
+        res.on("end", () => {
+          resp.abort();
 
-         resolve(data as any);
-       })
+          try {
+            data = JSON.parse(data);
+          } catch (e) {
+            reject(e);
+            return;
+          }
+
+          resolve(data as any);
+        })
       });
     });
   }
