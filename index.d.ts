@@ -102,14 +102,14 @@ declare namespace LavaClient {
      * @param socket The socket to use, default to ideal. Used for load balancing
      * @since 2.1.0
      */
-    create(guild: string, socket?: string): Promise<Player>;
+    create(guild: string | ObjectLiteral, socket?: string): Promise<Player>;
 
     /**
      * Destroys a player and leaves the connected voice channel.
      * @param guild The guild id of the player to destroy.
      * @since 2.1.0
      */
-    destroy(guild: string): Promise<boolean>;
+    destroy(guild: string | ObjectLiteral): Promise<boolean>;
 
     /**
      * Search lavalink for songs.
@@ -185,7 +185,7 @@ declare namespace LavaClient {
      * @param options Options for self mute, self deaf, or force connecting.
      * @since 2.1.x
      */
-    connect(channel: string | Record<string, any>, options?: ConnectOptions): Promise<Player>;
+    connect(channel: string | ObjectLiteral, options?: ConnectOptions): Promise<Player>;
 
     /**
      * Disconnect from the voice channel.
@@ -379,6 +379,8 @@ declare namespace LavaClient {
      */
     init(): void;
   }
+
+  export type ObjectLiteral = Record<string, any>;
 
   export type Send = (guildId: string, payload: any) => any;
 

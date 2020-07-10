@@ -7,6 +7,8 @@ import type { Socket, SocketData, SocketOptions } from "./Socket";
 import type { Plugin } from "./Plugin";
 import type { Player } from "./Player";
 
+type ObjectLiteral = Record<string, any>
+
 export class Manager extends EventEmitter {
   /**
    * A map of connected sockets.
@@ -151,8 +153,9 @@ export class Manager extends EventEmitter {
    * @param socket The socket to use, default to ideal. Used for load balancing
    * @since 2.1.0
    */
-  public async create(guild: string, socket?: string): Promise<Player> {
-    const existing = this.players.get(guild);
+  public async create(guild: string | ObjectLiteral, socket?: string): Promise<Player> {
+    const id = typeof guild === "string" ? guild : guild.id;
+    const existing = this.players.get(id);
     if (existing) return existing;
 
     let sock = this.sockets.get(socket);
@@ -163,8 +166,8 @@ export class Manager extends EventEmitter {
     if (!sock || !sock.connected)
       throw new Error("Manager#create(): No available sockets.")
 
-    const player = new (Structures.get("player"))(sock, guild);
-    this.players.set(guild, player);
+    const player = new (Structures.get("player"))(sock, id);
+    this.players.set(id, player);
 
     return player;
   }
@@ -174,11 +177,13 @@ export class Manager extends EventEmitter {
    * @param guild The guild id of the player to destroy.
    * @since 2.1.0
    */
-  public async destroy(guild: string): Promise<boolean> {
-    const player = this.players.get(guild);
+  public async destroy(guild: string | ObjectLiteral): Promise<boolean> {
+    const id = typeof guild === "string" ? guild : guild.id;
+    const player = this.players.get(id);
+
     if (player) {
       await player.destroy(true);
-      return this.players.delete(guild);
+      return this.players.delete(id);
     } else return false;
   }
 
