@@ -6,6 +6,7 @@ import type { LoadTrackResponse } from "@kyflx-dev/lavalink-types";
 import type { Socket, SocketData, SocketOptions } from "./Socket";
 import type { Plugin } from "./Plugin";
 import type { Player } from "./Player";
+import { URL } from "url";
 
 type ObjectLiteral = Record<string, any>
 
@@ -202,32 +203,18 @@ export class Manager extends EventEmitter {
       if (!sock || !sock.connected)
         throw new Error("Manager#create(): No available sockets.")
 
-      let data = "";
-      const resp = http.get(`http://${sock.host}:${sock.port}/loadtracks?identifier=${query}`, {
-        headers: {
-          Authorization: sock.password
-        }
-      }, (res) => {
+      const url = new URL(`http://${sock.host}:${sock.port}/loadtracks`);
+      url.searchParams.append("identifier", query);
+
+      const resp = http.get(url, { headers: { authorization: sock.password } }, (res) => {
+        let data = "";
         res.on("data", (chunk) => data += chunk);
-
-        res.on("error", (e) => {
-          resp.abort();
-          reject(e);
-        });
-
-        res.on("end", () => {
-          resp.abort();
-
-          try {
-            data = JSON.parse(data);
-          } catch (e) {
-            reject(e);
-            return;
-          }
-
-          resolve(data as any);
-        })
+        res.on("error", (e) => reject(e));
+        res.on("end", () => resolve(JSON.parse(data)))
       });
+
+      resp.on("error", e => reject(e));
+      resp.end();
     });
   }
 }

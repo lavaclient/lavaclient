@@ -75,7 +75,7 @@ client.on("ready", async () => {
 
 // add our listeners, There are two more like "socketClose" and "socketDisconnect".
 manager.on("socketError", ({ id }, error) => console.error(`${id} ran into an error`, error));
-manager.on("socketReady", (node) => console.log(`${node.is} connected.`));
+manager.on("socketReady", (node) => console.log(`${node.id} connected.`));
 
 // Lets make sure we're supplying voice updates to lavaclient.
 client.ws.on("VOICE_STATE_UPDATE", (upd) => manager.stateUpdate(upd));
