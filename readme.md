@@ -1,6 +1,6 @@
 # LavaClient
 
-[![discord server](logo)](https://discord.gg/BnQECNd) &bull; [![codacy rating](codacy)](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&utm_medium=referral&utm_content=Lavaclient/lavaclient&utm_campaign=Badge_Grade) &bull; [![npm version](version)](https://npmjs.com/lavaclient)
+[![discord server][discord]](https://discord.gg/BnQECNd) &bull; [![codacy rating][codacy]](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&utm_medium=referral&utm_content=Lavaclient/lavaclient&utm_campaign=Badge_Grade) &bull; [![npm version][version]](https://npmjs.com/lavaclient)
 
 A simple, easy-to-use, and flexible node.js lavalink client.
 
