@@ -21,7 +21,11 @@ Our Guides: <https://github.com/Lavaclient/lavaclient/tree/master/guides>
 
 ```
 npm install lavaclient
-# or
+```
+
+or
+
+```
 yarn add lavaclient
 ```
 

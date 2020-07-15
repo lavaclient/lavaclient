@@ -1,6 +1,6 @@
 # LavaClient Setup
 
-[Eris](#eris) &bull; [DiscordJS](#discord-js)
+[Eris](#eris) &bull; [DiscordJS](#discordjs)
 
 ## discord.js
 
