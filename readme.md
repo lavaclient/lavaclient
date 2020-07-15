@@ -4,7 +4,7 @@
 
 A simple, easy-to-use, and flexible node.js lavalink client.
 
-- **Flexible**: Lavaclient can be used with any discord library for node.js. Includes easy-to-use plugins and extendable structures like Player and Socket, making lavalink completely customizable.
+- **Flexible**: Lavaclient can be used with any discord library for node.js. Includes extendable structures like Player and Socket, making lavalink completely customizable.
 - **Plugins**: Provides a simple plugin class that can be loaded by the Manager, see the plugin guide.
 - **Easy-to-use**: LavaClient has a neat and user-friendly promise-based api.
 - **Lightweight**: Designed to be as light as possible, using only a few classes and dependencies.
