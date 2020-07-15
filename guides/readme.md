@@ -5,7 +5,9 @@
 
 *most of these guides assume you're using discord.js but any discord library would work.*
 
-- [Setup](/setup.md)
+- [Setup](setup.md)
+- [Plugins](plugins.md)
+- [Players](players.md)
 
 ---
 
