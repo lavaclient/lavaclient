@@ -4,7 +4,7 @@ export abstract class Plugin {
   /**
    * The manager that loaded this plugin.
    */
-  public manager: Manager;
+  public manager!: Manager;
 
   /**
    * Called when this plugin is loaded.

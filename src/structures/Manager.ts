@@ -1,14 +1,12 @@
 import * as http from "http";
+import { URL } from "url";
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 
-import type { LoadTrackResponse } from "@kyflx-dev/lavalink-types";
+import type { LoadTracksResponse } from "@lavaclient/types";
 import type { Socket, SocketData, SocketOptions } from "./Socket";
 import type { Plugin } from "./Plugin";
 import type { Player } from "./Player";
-import { URL } from "url";
-
-type ObjectLiteral = Record<string, any>
 
 export class Manager extends EventEmitter {
   /**
@@ -27,7 +25,7 @@ export class Manager extends EventEmitter {
   /**
    * The client's user id.
    */
-  public userId: string;
+  public userId: string | undefined;
   /**
    * A send method for sending voice state updates to discord.
    */
@@ -90,7 +88,7 @@ export class Manager extends EventEmitter {
    * @param userId The client user id.
    * @since 1.0.0
    */
-  public init(userId: string = this.userId): void {
+  public init(userId: string = this.userId!): void {
     if (!userId)
       throw new Error("Manager: Provide a userId, either pass it in Manager#init or in the manager options.");
 
@@ -123,11 +121,13 @@ export class Manager extends EventEmitter {
    * @since 1.0.0
    */
   public async serverUpdate(update: VoiceServer): Promise<void> {
-    if (this.players.has(update.guild_id)) {
-      const player = this.players.get(update.guild_id);
+    const player = this.players.get(update.guild_id);
+    if (player) {
       player.provide(update);
       await player.voiceUpdate()
     }
+
+    return;
   }
 
   /**
@@ -136,11 +136,12 @@ export class Manager extends EventEmitter {
    * @since 1.0.0
    */
   public async stateUpdate(update: VoiceState): Promise<void> {
-    if (update.user_id === this.userId && this.players.has(update.guild_id)) {
-      const player = this.players.get(update.guild_id);
+    const player = this.players.get(update.guild_id);
+    if (player && update.user_id === this.userId) {
       if (update.channel_id !== player.channel) {
         player.emit("move", update.channel_id);
-        player.channel = update.channel_id;
+        player.channel = update.channel_id!;
+        // await player.connect(update.channel_id!);
       }
 
       player.provide(update);
@@ -151,21 +152,17 @@ export class Manager extends EventEmitter {
   /**
    * Create a player.
    * @param guild The guild this player is for.
-   * @param socket The socket to use, default to ideal. Used for load balancing
    * @since 2.1.0
    */
-  public async create(guild: string | ObjectLiteral, socket?: string): Promise<Player> {
+  public async create(guild: string | ObjectLiteral): Promise<Player> {
     const id = typeof guild === "string" ? guild : guild.id;
+
     const existing = this.players.get(id);
     if (existing) return existing;
 
-    let sock = this.sockets.get(socket);
-    if (socket && (!sock || !sock.connected))
-      throw new Error("Manager#create(): You didn't provide a valid socket.");
-
-    sock = this.ideal[0];
-    if (!sock || !sock.connected)
-      throw new Error("Manager#create(): No available sockets.")
+    const sock = this.ideal[0]
+    if (!sock)
+      throw new Error("Manager#create(): No available nodes.");
 
     const player = new (Structures.get("player"))(sock, id);
     this.players.set(id, player);
@@ -191,22 +188,17 @@ export class Manager extends EventEmitter {
   /**
    * Search lavalink for songs.
    * @param query The search query.
-   * @param socket The socket to use .- Load Balancing.
    */
-  public async search(query: string, socket?: string): Promise<LoadTrackResponse> {
-    return new Promise((resolve, reject) => {
-      let sock = this.sockets.get(socket);
-      if (socket && (!sock || !sock.connected))
-        throw new Error("Manager#search(): You didn't provide a valid socket.");
-
-      sock = this.ideal[0];
-      if (!sock || !sock.connected)
+  public async search(query: string): Promise<LoadTracksResponse> {
+    return new Promise(async (resolve, reject) => {
+      const socket = this.ideal[0];
+      if (!socket)
         throw new Error("Manager#create(): No available sockets.")
 
-      const url = new URL(`http://${sock.host}:${sock.port}/loadtracks`);
+      const url = new URL(`http://${socket.host}:${socket.port}/loadtracks`);
       url.searchParams.append("identifier", query);
 
-      const resp = http.get(url, { headers: { authorization: sock.password } }, (res) => {
+      const resp = http.get(url, { headers: { authorization: socket.password } }, (res) => {
         let data = "";
         res.on("data", (chunk) => data += chunk);
         res.on("error", (e) => reject(e));
@@ -220,6 +212,8 @@ export class Manager extends EventEmitter {
 }
 
 export type Send = (guildId: string, payload: any) => any;
+
+export type ObjectLiteral = Record<string, any>;
 
 export interface ManagerOptions {
   send: Send;

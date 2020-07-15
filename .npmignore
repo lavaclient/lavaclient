@@ -1,12 +1,16 @@
 src/
 node_modules/
 tests/
-docs/
 .github/
+guides/
+.idea/
+dist/*.d.ts
 
 .gitignore
-.eslintrc
 tsconfig.json
-config.json
-.env
-yarn-error.log
+tsconfig.tsbuildinfo
+yarn.lock
+package-lock.json
+*.env
+LICENSE
+

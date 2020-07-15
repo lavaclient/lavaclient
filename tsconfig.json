@@ -1,25 +1,44 @@
 {
-  "compilerOptions": {
-    "target": "ES2019",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "declaration": false,
-    "inlineSourceMap": false,
-    "newLine": "lf",
-    "pretty": true,
-    "strict": true,
-    "strictNullChecks": false,
-    "forceConsistentCasingInFileNames": true,
-    "disableSizeLimit": true,
-    "outDir": "dist/",
-    "rootDir": "src/",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "lib": ["ES2019"],
-    "types": ["node"]
-  },
-  "exclude": ["./dist/", "./tests/", "node_modules"],
+  "exclude": ["./node_modules", "./dist"],
   "include": ["./src/**/*"],
+  "compilerOptions": {
+    /* Basic */
+    "lib": ["ES2020", "ES2019"],
+    "target": "ES2020",
+    "module": "CommonJS",
+    "skipLibCheck": true,
+
+    /* Compiling */
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "incremental": true,
+    "inlineSourceMap": true,
+    "declaration": false,
+    "allowSyntheticDefaultImports": true,
+    "removeComments": true,
+
+    /* Strict Options */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "pretty": true,
+
+    /* Types */
+    "types": ["node"],
+    "forceConsistentCasingInFileNames": true,
+
+    /* Module Resolution */
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
   "typedocOptions": {
     "name": "Lavaclient",
     "readme": "./README.md",

@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 
-import type { NodeStats } from "@kyflx-dev/lavalink-types";
+import type { NodeStats } from "@lavaclient/types";
 import type { Manager } from "./Manager";
 
 export class Socket {
@@ -23,7 +23,7 @@ export class Socket {
   /**
    * The authorization being used when connecting.
    */
-  public readonly password: string;
+  public readonly password!: string;
 
   /**
    * Total tries the node has used to reconnect.
@@ -32,7 +32,7 @@ export class Socket {
   /**213
    * The resume key being used for resuming.
    */
-  public resumeKey: string;
+  public resumeKey?: string;
   /**
    * The stats sent by lavalink.
    */
@@ -45,7 +45,7 @@ export class Socket {
   /**
    * The websocket instance for this socket.
    */
-  protected ws: WebSocket;
+  protected ws?: WebSocket;
   /**
    * The queue for sendables.
    */
@@ -83,7 +83,7 @@ export class Socket {
    * Whether this socket is connected or not.
    */
   public get connected(): boolean {
-    return this.ws && this.ws.readyState === WebSocket.OPEN;
+    return this.ws! && this.ws!.readyState === WebSocket.OPEN;
   }
 
   /**
@@ -124,8 +124,8 @@ export class Socket {
    * @param key The resume key.
    * @since 1.0.0
    */
-  public configureResuming(key: string = this.options.resumeKey): Promise<void> {
-    if (!key) key = Math.random().toString(36);
+  public async configureResuming(key: string | undefined = this.options.resumeKey): Promise<void> {
+    if (!key) return;
 
     this.resumeKey = key;
     return this.send({
@@ -140,11 +140,11 @@ export class Socket {
    * @param userId The user id to use.
    * @since 1.0.0
    */
-  public connect(userId: string = this.manager.userId): Socket {
+  public connect(userId: string = this.manager.userId!): Socket {
     if (this.ws) {
       this.ws.removeAllListeners();
       if (this.connected) this.ws.close();
-      this.ws = null;
+      delete this.ws;
     }
 
     const headers: Record<string, string> = {};
@@ -237,7 +237,7 @@ export class Socket {
    * @private
    */
   private _send({ data, res, rej }: Sendable): void {
-    return this.ws.send(data, (e) => {
+    return this.ws!.send(data, (e) => {
       if (e) {
         this.manager.emit("socketError", this, e);
         return rej(e);
@@ -253,14 +253,14 @@ export class Socket {
    * @private
    */
   private async _reconnect(): Promise<void> {
-    if (this.tries <= this.options.maxTries) {
+    if (this.tries <= this.options.maxTries!) {
       this.tries++;
       try {
         this.connect();
         this.tries = 0;
       } catch (e) {
         this.manager.emit("socketError", this, e);
-        setTimeout(() => this._reconnect(), this.options.retryDelay);
+        setTimeout(() => this._reconnect(), this.options.retryDelay!);
       }
     } else {
       this.manager.sockets.delete(this.id);

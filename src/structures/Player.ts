@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 
-import type { EqualizerBand, Event, PlayerUpdate, Track } from "@kyflx-dev/lavalink-types";
+import type { EqualizerBand, Event, PlayerUpdate, Track } from "@lavaclient/types";
 import type { Socket } from "./Socket";
 import type { Manager, VoiceServer, VoiceState } from "./Manager";
 
@@ -16,7 +16,7 @@ export class Player extends EventEmitter {
   /**
    * The id of the voice channel this player is connected to.
    */
-  public channel: string | null;
+  public channel: string | undefined;
   /**
    * Whether this player is paused or not.
    */
@@ -24,7 +24,7 @@ export class Player extends EventEmitter {
   /**
    * The current playing track.
    */
-  public track: string | null;
+  public track: string | undefined;
   /**
    * Whether this player is playing or not.
    */
@@ -32,7 +32,7 @@ export class Player extends EventEmitter {
   /**
    * The unix timestamp in which this player started playing.
    */
-  public timestamp: number | null;
+  public timestamp: number | undefined;
   /**
    * Track position in milliseconds.
    */
@@ -50,12 +50,12 @@ export class Player extends EventEmitter {
    * The voice state for this player.
    * @internal
    */
-  private _state: VoiceState;
+  private _state: VoiceState | undefined;
   /**
    * The voice server for this player.
    * @internal
    */
-  private _server: VoiceServer;
+  private _server: VoiceServer | undefined;
 
   /**
    * @param socket The socket this player belongs to.
@@ -68,12 +68,12 @@ export class Player extends EventEmitter {
     this.guild = guild;
 
     this.paused = false;
-    this.track = null;
     this.playing = false;
-    this.timestamp = null;
     this.position = 0;
     this.volume = 100;
     this.equalizer = [];
+
+    this._connected = false;
 
     this._setup();
   }
@@ -207,8 +207,8 @@ export class Player extends EventEmitter {
    * @since 1.x.x
    */
   public stop(): Promise<void> {
-    this.track = null;
-    this.timestamp = null;
+    delete this.track;
+    delete this.timestamp;
     this.position = 0;
 
     return this.socket.send({
@@ -279,7 +279,7 @@ export class Player extends EventEmitter {
    * @since 2.1.x
    * @internal
    */
-  public voiceUpdate(): Promise<void> {
+  public async voiceUpdate(): Promise<void> {
     if (!this._server || !this._state) return;
 
     return this.socket.send({
@@ -299,8 +299,8 @@ export class Player extends EventEmitter {
       switch (event.type) {
         case "TrackEndEvent":
           if (event.reason !== "REPLACED") this.playing = false;
-          this.track = null;
-          this.timestamp = null;
+          delete this.timestamp;
+          delete this.track;
           this.emit("end", event);
           break;
         case "TrackExceptionEvent":

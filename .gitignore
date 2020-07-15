@@ -1,5 +1,14 @@
-node_modules/
+# Folders
 dist/
 tests/
+.idea/
+
+# yarn/npm
+node_modules/
 package-lock.json
-config.json
+*.lock
+
+# Other
+*.env
+.npmignore
+tsconfig.tsbuildinfo
