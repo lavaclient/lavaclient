@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "build:docs": "typedoc",
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {

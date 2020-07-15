@@ -19,13 +19,9 @@ Our Guides: <https://github.com/Lavaclient/lavaclient/tree/master/guides>
 
 > node.js v12 or newer needed.
 
-```
+```sh
 npm install lavaclient
-```
-
-or
-
-```
+# or
 yarn add lavaclient
 ```
 
