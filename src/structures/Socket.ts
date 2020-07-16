@@ -26,10 +26,10 @@ export class Socket {
   public readonly password!: string;
 
   /**
-   * Total tries the node has used to reconnect.
+   * Total remaining tries this socket has for reconnecting
    */
-  public tries: number;
-  /**213
+  public remaining: number;
+  /**
    * The resume key being used for resuming.
    */
   public resumeKey?: string;
@@ -61,8 +61,8 @@ export class Socket {
     this.host = data.host;
     this.port = data.port.toString();
 
-    this.tries = 0;
     this.options = data.options ?? Socket.defaultSocketOptions(manager);
+    this.remaining = data.options?.maxTries! ?? 5;
     this.stats = {
       cpu: { cores: 0, lavalinkLoad: 0, systemLoad: 0 },
       frameStats: { deficit: 0, nulled: 0, sent: 0 },
@@ -253,18 +253,18 @@ export class Socket {
    * @private
    */
   private async _reconnect(): Promise<void> {
-    if (this.tries <= this.options.maxTries!) {
-      this.tries++;
+    if (this.remaining !== 0) {
+      this.remaining--;
       try {
         this.connect();
-        this.tries = 0;
+        this.remaining = this.options.maxTries!;
       } catch (e) {
         this.manager.emit("socketError", this, e);
         setTimeout(() => this._reconnect(), this.options.retryDelay!);
       }
     } else {
       this.manager.sockets.delete(this.id);
-      this.manager.emit("socketDisconnect", this, this.tries);
+      this.manager.emit("socketDisconnect", this, this.remaining);
     }
   }
 }

@@ -26,14 +26,12 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "build:docs": "typedoc",
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {
     "@types/node": "^14.0.23",
     "@types/ws": "^7.2.6",
     "dotenv": "^8.2.0",
-    "typedoc": "^0.17.8",
     "typescript": "^3.9.6"
   }
 }

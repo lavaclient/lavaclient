@@ -9,8 +9,6 @@ A simple, easy-to-use, and flexible node.js lavalink client.
 - **Easy-to-use**: LavaClient has a neat and user-friendly promise-based api.
 - **Lightweight**: Designed to be as light as possible, using only a few classes and dependencies.
 
-Our Guides: <https://github.com/Lavaclient/lavaclient/tree/master/guides>
-
 ## Installation
 
 > node.js v12 or newer needed.
@@ -22,6 +20,8 @@ yarn add lavaclient
 ```
 
 ## Usage
+
+> Documentation: <https://lavaclient.js.org>
 
 ```ts
 import LavaClient from "lavaclient";
