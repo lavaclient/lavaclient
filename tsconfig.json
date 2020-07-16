@@ -3,16 +3,14 @@
   "include": ["./src/**/*"],
   "compilerOptions": {
     /* Basic */
-    "lib": ["ES2020", "ES2019"],
-    "target": "ES2020",
+    "lib": ["ES2019"],
+    "target": "ES2019",
     "module": "CommonJS",
     "skipLibCheck": true,
 
     /* Compiling */
     "outDir": "./dist",
     "rootDir": "./src",
-    "incremental": true,
-    "inlineSourceMap": true,
     "declaration": false,
     "allowSyntheticDefaultImports": true,
     "removeComments": true,
@@ -29,20 +27,12 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "pretty": true,
 
     /* Types */
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
 
     /* Module Resolution */
-    "resolveJsonModule": true,
     "esModuleInterop": true
-  },
-  "typedocOptions": {
-    "name": "Lavaclient",
-    "readme": "./README.md",
-    "out": "docs",
-    "hideGenerator": true
   }
 }

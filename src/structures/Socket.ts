@@ -125,14 +125,16 @@ export class Socket {
    * @since 1.0.0
    */
   public async configureResuming(key: string | undefined = this.options.resumeKey): Promise<void> {
-    if (!key) return;
+    if (this.manager.resuming) {
+      if (!key) key = Math.random().toString(32);
 
-    this.resumeKey = key;
-    return this.send({
-      op: "configureResuming",
-      key,
-      timeout: this.options.resumeTimeout,
-    });
+      this.resumeKey = key;
+      return this.send({
+        op: "configureResuming",
+        key,
+        timeout: this.options.resumeTimeout,
+      });
+    }
   }
 
   /**
@@ -153,11 +155,11 @@ export class Socket {
     headers["Authorization"] = this.password;
     if (this.resumeKey) headers["Resume-Key"] = this.resumeKey;
 
-    this.ws = new WebSocket(`ws://${this.host}:${this.port}`, { headers })
-      .on("open", this._open.bind(this))
-      .on("error", this._error.bind(this))
-      .on("close", this._close.bind(this))
-      .on("message", this._message.bind(this));
+    this.ws = new WebSocket(`ws://${this.host}:${this.port}`, { headers });
+    this.ws.onclose = this._close.bind(this);
+    this.ws.onerror = this._error.bind(this);
+    this.ws.onmessage = this._message.bind(this);
+    this.ws.onopen = this._open.bind(this);
 
     return this;
   }
@@ -179,7 +181,8 @@ export class Socket {
   private _open(): void {
     this.flush()
       .then(() => this.configureResuming())
-      .catch((e) => this.manager.emit("socketError", this, e))
+      .catch((e) => this.manager.emit("socketError", this, e));
+
     this.manager.emit("socketReady", this);
   }
 
@@ -189,21 +192,21 @@ export class Socket {
    * @since 2.1.0
    * @private
    */
-  private async _error(error: any): Promise<void> {
-    this.manager.emit("socketError", this, error);
+  private async _error(error: WebSocket.ErrorEvent): Promise<void> {
+    this.manager.emit("socketError", this, error.error);
     await this._reconnect();
   }
 
   /**
    * WebSocket Close Listener.
-   * @param code The close code.
-   * @param reason The close reason.
+   * @param event The event that occurred..
    * @since 2.1.0
    * @private
    */
-  private async _close(code: number, reason: string): Promise<void> {
-    this.manager.emit("socketClose", this, code, reason);
-    if (code !== 1000 && reason !== "destroy") {
+  private async _close(event: WebSocket.CloseEvent): Promise<void> {
+    this.manager.emit("socketClose", this, event);
+
+    if (event.code !== 1000 && event.reason !== "destroy") {
       await this._reconnect();
     }
   }
@@ -214,7 +217,7 @@ export class Socket {
    * @since 2.1.0
    * @private
    */
-  private _message(data: WebSocket.Data): void {
+  private _message({ data }: WebSocket.MessageEvent): void {
     if (Array.isArray(data)) data = Buffer.concat(data);
     else if (data instanceof ArrayBuffer) data = Buffer.from(data);
 
@@ -264,29 +267,58 @@ export class Socket {
       }
     } else {
       this.manager.sockets.delete(this.id);
-      this.manager.emit("socketDisconnect", this, this.remaining);
+      this.manager.emit("socketDisconnect", this);
     }
   }
 }
 
-interface Sendable {
-  res: (...args: any[]) => any;
-  rej: (...args: any[]) => any;
-  data: string;
-}
-
 export interface SocketData {
+  /**
+   * The identifier of your lavalink node.
+   */
   id: string;
+  /**
+   * The hostname of your lavalink node.
+   */
   host: string;
+  /**
+   * The port of your lavalink node.
+   */
   port: string | number;
+  /**
+   * The password of your lavalink node.
+   */
   password: string;
+  /**
+   * Additional socket options.
+   */
   options?: SocketOptions;
 }
 
 export interface SocketOptions {
+  /**
+   * The delay in between reconnects.
+   */
   retryDelay?: number;
+  /**
+   * The amount of tries to use when reconnecting.
+   */
   maxTries?: number;
+  /**
+   * The resume key to use.
+   */
   resumeKey?: string;
+  /**
+   * The resume timeout to use.
+   */
   resumeTimeout?: number;
 }
 
+/**
+ * @internal
+ */
+export interface Sendable {
+  res: (...args: any[]) => any;
+  rej: (...args: any[]) => any;
+  data: string;
+}

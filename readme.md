@@ -21,7 +21,7 @@ yarn add lavaclient
 
 ## Usage
 
-> Documentation: <https://lavaclient.js.org>
+> Documentation: <https://lavaclient.github.io>
 
 ```ts
 import LavaClient from "lavaclient";

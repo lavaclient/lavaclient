@@ -1,8 +1,9 @@
-import * as http from "http";
+import { get } from "http";
 import { URL } from "url";
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 
+import type WebSocket from "ws";
 import type { LoadTracksResponse } from "@lavaclient/types";
 import type { Socket, SocketData, SocketOptions } from "./Socket";
 import type { Plugin } from "./Plugin";
@@ -34,6 +35,10 @@ export class Manager extends EventEmitter {
    * The number of shards the client is running on.
    */
   public shards: number;
+  /**
+   * If resuming is enabled.
+   */
+  public resuming: boolean;
 
   /**
    * An array of registered plugins.
@@ -55,6 +60,7 @@ export class Manager extends EventEmitter {
     this.sockets = new Map();
     this.players = new Map();
 
+    this.resuming = options.resuming ?? true;
     this.options = options;
     this.userId = options.userId;
     this.send = options.send;
@@ -154,7 +160,7 @@ export class Manager extends EventEmitter {
    * @param guild The guild this player is for.
    * @since 2.1.0
    */
-  public async create(guild: string | ObjectLiteral): Promise<Player> {
+  public create(guild: string | ObjectLiteral): Player {
     const id = typeof guild === "string" ? guild : guild.id;
 
     const existing = this.players.get(id);
@@ -198,7 +204,7 @@ export class Manager extends EventEmitter {
       const url = new URL(`http://${socket.host}:${socket.port}/loadtracks`);
       url.searchParams.append("identifier", query);
 
-      const resp = http.get(url, { headers: { authorization: socket.password } }, (res) => {
+      const resp = get(url, { headers: { authorization: socket.password } }, (res) => {
         let data = "";
         res.on("data", (chunk) => data += chunk);
         res.on("error", (e) => reject(e));
@@ -212,23 +218,69 @@ export class Manager extends EventEmitter {
 }
 
 export type Send = (guildId: string, payload: any) => any;
-
 export type ObjectLiteral = Record<string, any>;
 
-export interface ManagerOptions {
-  send: Send;
-  shards?: number;
-  userId?: string;
-  defaultSocketOptions?: SocketOptions;
-  plugins?: Plugin[];
+export interface Manager {
+  /**
+   * Emitted when a lavalink socket is ready.
+   */
+  on(event: "socketReady", listener: (socket: Socket) => any): this;
+
+  /**
+   * Emitted when a lavalink socket has ran into an error.
+   */
+  on(event: "socketError", listener: (socket: Socket, error: any) => any): this;
+
+  /**
+   * Emitted when a lavalink socket has been closed.
+   */
+  on(event: "socketClose", listener: (socket: Socket, event: WebSocket.CloseEvent) => any): this;
+
+  /**
+   * Emitted when a lavalink socket has ran out of reconnect tries.
+   */
+  on(event: "socketDisconnect", listener: (socket: Socket) => any): this;
 }
 
+export interface ManagerOptions {
+  /**
+   * A method used for sending discord voice updates.
+   */
+  send: Send;
+  /**
+   * The number of shards the client has.
+   */
+  shards?: number;
+  /**
+   * The user id of the bot (not-recommended, provide it in Manager#init)
+   */
+  userId?: string;
+  /**
+   * Default socket options to use.
+   */
+  defaultSocketOptions?: SocketOptions;
+  /**
+   * An array of plugins you want to use.
+   */
+  plugins?: Plugin[];
+  /**
+   * If you want to enable resuming.
+   */
+  resuming?: boolean
+}
+
+/**
+ * @internal
+ */
 export interface VoiceServer {
   token: string;
   guild_id: string;
   endpoint: string;
 }
 
+/**
+ * @internal
+ */
 export interface VoiceState {
   channel_id?: string;
   guild_id: string;
