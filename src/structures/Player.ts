@@ -78,7 +78,8 @@ export class Player extends EventEmitter {
     this.equalizer = [];
     this.connected = false;
 
-    this._setup();
+    this.on("playerUpdate", this._playerUpdate.bind(this));
+    this.on("event", this._event.bind(this));
   }
 
   /**
@@ -153,7 +154,7 @@ export class Player extends EventEmitter {
    * Change the volume of the player. You can omit the volume param to reset back to 100
    * @param volume May range from 0 to 1000, defaults to 100
    */
-  public setVolume(volume = 100): Promise<void> {
+  public setVolume(volume: number = 100): Promise<void> {
     if (volume < 0 || volume > 1000)
       throw new RangeError(`Player#setVolume (${this.guild}): Volume must be within the 0 to 1000 range.`);
 
@@ -242,10 +243,13 @@ export class Player extends EventEmitter {
   public async voiceUpdate(): Promise<void> {
     if (!this._server || !this._state) return;
 
-    return this.send("voiceUpdate", {
+    await this.send("voiceUpdate", {
       sessionId: this._state.session_id,
       event: this._server,
     });
+
+    delete this._state;
+    delete this._server;
   }
 
   /**
@@ -261,39 +265,40 @@ export class Player extends EventEmitter {
   }
 
   /**
-   * Adds event listeners to this player.
-   * @internal
+   * @private
    */
-  protected _setup(): void {
-    this.on("event", async (event: Lavalink.Event) => {
-      switch (event.type) {
-        case "TrackEndEvent":
-          if (event.reason !== "REPLACED") this.playing = false;
-          delete this.timestamp;
-          delete this.track;
-          this.emit("end", event);
-          break;
-        case "TrackExceptionEvent":
-          this.emit("error", event);
-          break;
-        case "TrackStartEvent":
-          this.playing = true;
-          this.track = event.track;
-          this.emit("start", event);
-          break;
-        case "TrackStuckEvent":
-          await this.stop();
-          this.emit("stuck", event);
-          break;
-        case "WebSocketClosedEvent":
-          this.emit("closed", event);
-          break;
-      }
-    }).on("playerUpdate", (update: Lavalink.PlayerUpdate) => {
-      if (!update.state) return;
-      this.position = update.state.position;
-      this.timestamp = update.state.time;
-    });
+  private _event(event: Lavalink.Event): void {
+    switch (event.type) {
+      case "TrackEndEvent":
+        if (event.reason !== "REPLACED") this.playing = false;
+        delete this.timestamp;
+        delete this.track;
+        this.emit("end", event);
+        break;
+      case "TrackExceptionEvent":
+        this.emit("error", event);
+        break;
+      case "TrackStartEvent":
+        this.playing = true;
+        this.track = event.track;
+        this.emit("start", event);
+        break;
+      case "TrackStuckEvent":
+        this.stop().then(() => this.emit("stuck", event));
+        break;
+      case "WebSocketClosedEvent":
+        this.emit("closed", event);
+        break;
+    }
+  }
+
+  /**
+   * @private
+   */
+  private _playerUpdate(update: Lavalink.PlayerUpdate): void {
+    if (!update.state) return;
+    this.position = update.state.position;
+    this.timestamp = update.state.time;
   }
 }
 

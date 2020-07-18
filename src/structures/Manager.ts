@@ -1,5 +1,4 @@
 import { get } from "http";
-import { URL } from "url";
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 
@@ -67,27 +66,24 @@ export class Manager extends EventEmitter {
     this.shards = options.shards ?? 1;
 
     if (!options.send || typeof options.send !== "function")
-      throw new TypeError("Manager: Please provide a send function for sending packets to discord.");
+      throw new TypeError("Please provide a send function for sending packets to discord.");
 
     if (this.shards < 1)
-      throw new TypeError("Manager: Shard count must be 1 or greater.");
+      throw new TypeError("Shard count must be 1 or greater.");
 
-    if (options.plugins && options.plugins.length) {
-      for (const plugin of options.plugins) {
-        this.plugins.push(plugin);
-        plugin.load(this);
-      }
-    }
+    if (options.plugins && options.plugins.length)
+      options.plugins.forEach((p) => {
+        this.plugins.push(p);
+        p.load(this);
+      });
   }
 
+  /**
+   * Ideal nodes to use.
+   */
   public get ideal(): Socket[] {
-    return [ ...this.sockets.values() ]
-      .sort((a, b) =>
-        (a.stats.cpu ? a.stats.cpu.systemLoad / a.stats.cpu.cores : 0) -
-        (b.stats.cpu ? b.stats.cpu.systemLoad / b.stats.cpu.cores : 0)
-      );
+    return [ ...this.sockets.values() ].sort((a, b) => a.penalties - b.penalties);
   }
-
 
   /**
    * Initializes this manager. Connects all provided sockets.
@@ -95,19 +91,16 @@ export class Manager extends EventEmitter {
    * @since 1.0.0
    */
   public init(userId: string = this.userId!): void {
-    if (!userId)
-      throw new Error("Manager: Provide a userId, either pass it in Manager#init or in the manager options.");
-
-    this.userId = userId;
     this.plugins.forEach((p) => p.init());
 
-    for (const node of this.nodes) {
-      if (!this.sockets.has(node.id)) {
-        const socket = new (Structures.get("socket"))(this, node);
-        socket.connect(userId);
-        this.sockets.set(node.id, socket);
-      }
-    }
+    if (!userId) throw new Error("Provide a client id for lavalink to use.");
+    else this.userId = userId;
+
+    this.nodes.forEach((s) => {
+      if (this.sockets.has(s.id)) return;
+      const socket = new (Structures.get("socket"))(this, s);
+      this.sockets.set(s.id, socket.connect());
+    })
   }
 
   /**
@@ -116,8 +109,8 @@ export class Manager extends EventEmitter {
    * @since 2.x.x
    */
   public use(plugin: Plugin): Manager {
-    this.plugins.push(plugin);
     plugin.load(this);
+    this.plugins.concat([ plugin ]);
     return this;
   }
 
@@ -147,7 +140,6 @@ export class Manager extends EventEmitter {
       if (update.channel_id !== player.channel) {
         player.emit("move", update.channel_id);
         player.channel = update.channel_id!;
-        // await player.connect(update.channel_id!);
       }
 
       player.provide(update);
@@ -201,10 +193,9 @@ export class Manager extends EventEmitter {
       if (!socket)
         throw new Error("Manager#create(): No available sockets.")
 
-      const url = new URL(`http://${socket.host}:${socket.port}/loadtracks`);
-      url.searchParams.append("identifier", query);
-
-      const resp = get(url, { headers: { authorization: socket.password } }, (res) => {
+      const resp = get(`http://${socket.host}:${socket.port}/loadtracks?identifier=${query}`, {
+        headers: { authorization: socket.password }
+      }, (res) => {
         let data = "";
         res.on("data", (chunk) => data += chunk);
         res.on("error", (e) => reject(e));
@@ -218,6 +209,7 @@ export class Manager extends EventEmitter {
 }
 
 export type Send = (guildId: string, payload: any) => any;
+
 export type ObjectLiteral = Record<string, any>;
 
 export interface Manager {

@@ -1,4 +1,4 @@
-export { Structures, Extend } from "./Structures";
+export { Structures } from "./Structures";
 
 export * from "./structures/Manager";
 export * from "./structures/Player";

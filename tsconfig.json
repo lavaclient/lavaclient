@@ -3,8 +3,8 @@
   "include": ["./src/**/*"],
   "compilerOptions": {
     /* Basic */
-    "lib": ["ES2019"],
-    "target": "ES2019",
+    "lib": ["ESNext"],
+    "target": "ESNext",
     "module": "CommonJS",
     "skipLibCheck": true,
 
@@ -12,7 +12,6 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": false,
-    "allowSyntheticDefaultImports": true,
     "removeComments": true,
 
     /* Strict Options */
@@ -30,7 +29,6 @@
 
     /* Types */
     "types": ["node"],
-    "forceConsistentCasingInFileNames": true,
 
     /* Module Resolution */
     "esModuleInterop": true

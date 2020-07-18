@@ -31,17 +31,6 @@ export class Structures {
   }
 }
 
-/**
- * A typescript helper decorator for extending structures.
- * @param name The name of the structure to extend.
- * @constructor
- */
-export function Extend<K extends keyof Classes>(name: K) {
-  return <T extends Classes[K]>(target: T): T => {
-    return Structures.extend(name, () => target);
-  };
-}
-
 export interface Classes {
   socket: typeof Socket;
   player: typeof Player;
