@@ -1,6 +1,6 @@
 import type { EventEmitter } from "events";
 import type WebSocket from "ws";
-import type Lavalink, { LoadTracksResponse, NodeStats } from "@lavaclient/types";
+import type Lavalink from "@lavaclient/types";
 
 export class Structures {
   /**
@@ -106,7 +106,7 @@ export class Manager extends EventEmitter {
    * Search lavalink for songs.
    * @param query The search query.
    */
-  search(query: string): Promise<LoadTracksResponse>;
+  search(query: string): Promise<Lavalink.LoadTracksResponse>;
 }
 
 export interface Manager {
@@ -355,7 +355,7 @@ export class Socket {
   /**
    * The stats sent by lavalink.
    */
-  stats: NodeStats;
+  stats: Lavalink.NodeStats;
   /**
    * The options this socket is using.
    */

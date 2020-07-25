@@ -38,7 +38,7 @@ const nodes = [
 const manager = new LavaClient.Manager(nodes, {
   send(id, payload) {
     sendPayloadToDiscord()
-    // check out our guides for an eris and discord.js examples.
+    // check out our guides for an eris and discord.js example.
   }
 });
 

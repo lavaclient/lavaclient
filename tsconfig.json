@@ -3,8 +3,8 @@
   "include": ["./src/**/*"],
   "compilerOptions": {
     /* Basic */
-    "lib": ["ESNext"],
-    "target": "ESNext",
+    "lib": ["ES2019"],
+    "target": "ES2019",
     "module": "CommonJS",
     "skipLibCheck": true,
 
@@ -31,6 +31,7 @@
     "types": ["node"],
 
     /* Module Resolution */
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "Node"
   }
 }
