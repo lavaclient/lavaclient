@@ -42,7 +42,7 @@ export class Manager extends EventEmitter {
   /**
    * An array of registered plugins.
    */
-  private readonly plugins: Plugin[] = [];
+  private plugins: Plugin[] = [];
   /**
    * The array of socket data this manager was created with.
    */
@@ -96,6 +96,7 @@ export class Manager extends EventEmitter {
     if (!userId) throw new Error("Provide a client id for lavalink to use.");
     else this.userId = userId;
 
+    this.plugins.forEach((p) => p.init());
     this.nodes.forEach((s) => {
       if (this.sockets.has(s.id)) return;
       const socket = new (Structures.get("socket"))(this, s);
@@ -110,7 +111,7 @@ export class Manager extends EventEmitter {
    */
   public use(plugin: Plugin): Manager {
     plugin.load(this);
-    this.plugins.concat([ plugin ]);
+    this.plugins = this.plugins.concat([ plugin ]);
     return this;
   }
 
