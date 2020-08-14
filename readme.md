@@ -11,7 +11,7 @@ A simple, easy-to-use, and flexible node.js lavalink client.
 
 ## Installation
 
-> node.js v12 or newer needed.
+> node.js v14 or newer needed.
 
 ```sh
 npm install lavaclient
@@ -21,7 +21,7 @@ yarn add lavaclient
 
 ## Usage
 
-> Documentation: <https://lavaclient.js.org/>
+> Documentation: <https://lavaclient.js.org/> *outdated (join our [support server](https://discord.gg/vuJxnYk) for updates)*
 
 ```ts
 import LavaClient from "lavaclient";

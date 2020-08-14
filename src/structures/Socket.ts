@@ -1,68 +1,98 @@
 import WebSocket from "ws";
 
 import type { NodeStats } from "@lavaclient/types";
-import type { Manager } from "./Manager";
+import type { Manager, ReconnectOptions } from "./Manager";
+
+export enum Status {
+  CONNECTED,
+  CONNECTING,
+  IDLE,
+  DISCONNECTED,
+  RECONNECTING
+}
 
 export class Socket {
   /**
-   * The manager this socket belongs to.
+   * The link manager instance.
    */
   public readonly manager: Manager;
+
   /**
-   * This sockets identifier.
+   * This lavalink nodes identifier.
    */
   public readonly id: string;
-  /**
-   * The host of the lavalink node we're connecting to.
-   */
-  public readonly host: string;
-  /**
-   * The port of the lavalink node we're connecting to.
-   */
-  public readonly port: string;
-  /**
-   * The authorization being used when connecting.
-   */
-  public readonly password!: string;
 
   /**
-   * Total remaining tries this socket has for reconnecting
+   * Number of remaining reconnect tries.
    */
-  public remaining: number;
+  public remainingTries: number;
+
   /**
-   * The resume key being used for resuming.
+   * The status of this lavalink node.
    */
-  public resumeKey?: string;
+  public status: Status;
+
   /**
-   * The stats sent by lavalink.
+   * Hostname of the lavalink node.
+   */
+  public host: string;
+
+  /**
+   * Port of the lavalink node.
+   */
+  public port?: number;
+
+  /**
+   * Password of the lavalink node.
+   */
+  public password!: string
+
+  /**
+   * The performance stats of this player.
    */
   public stats: NodeStats;
-  /**
-   * The options this socket is using.
-   */
-  public options: SocketOptions;
 
   /**
-   * The websocket instance for this socket.
+   * The resume key.
    */
-  protected ws?: WebSocket;
-  /**
-   * The queue for sendables.
-   */
-  protected queue: Sendable[] = [];
+  public resumeKey?: string;
 
   /**
-   * @param manager The manager this socket belongs to.
-   * @param data Data to use.
+   * Whether or not this lavalink node uses an ssl.
+   */
+  public secure: boolean;
+
+  /**
+   * The timeout for reconnecting.
+   */
+  private reconnectTimeout!: NodeJS.Timeout;
+
+  /**
+   * WebSocket instance for this socket.
+   */
+  private ws?: WebSocket;
+
+  /**
+   * Queue for outgoing messages.
+   */
+  private readonly queue: Payload[];
+
+  /**
+   * @param manager
+   * @param data
    */
   public constructor(manager: Manager, data: SocketData) {
     this.manager = manager;
     this.id = data.id;
-    this.host = data.host ?? "localhost";
-    this.port = (data.port ?? 2333).toString();
 
-    this.options = data.options ?? Socket.defaultSocketOptions(manager);
-    this.remaining = Number(data.options?.maxTries! ?? 5);
+    this.host = data.host;
+    this.port = data.port;
+    this.secure = data.secure ?? false;
+    Object.defineProperty(this, "password", { value: data.password ?? "youshallnotpass" });
+
+    this.remainingTries = Number(manager.options.reconnect.maxTries ?? 5);
+    this.status = Status.IDLE;
+    this.queue = [];
     this.stats = {
       cpu: { cores: 0, lavalinkLoad: 0, systemLoad: 0 },
       frameStats: { deficit: 0, nulled: 0, sent: 0 },
@@ -70,18 +100,30 @@ export class Socket {
       players: 0,
       playingPlayers: 0,
       uptime: 0
-    }
+    };
+  }
 
-    Object.defineProperty(this, "password", {
-      value: data.password ?? "youshallnotpass"
-    });
+  // @ts-ignore
+  /**
+   *
+   */
+  public get reconnection(): ReconnectOptions {
+    return this.manager.options.reconnect;
   }
 
   /**
-   * Whether this socket is connected or not.
+   * If this node is connected or not.
    */
   public get connected(): boolean {
-    return this.ws! && this.ws!.readyState === WebSocket.OPEN;
+    return this.ws !== undefined
+      && this.ws.readyState === WebSocket.OPEN;
+  }
+
+  /**
+   * The address of this lavalink node.
+   */
+  public get address(): string {
+    return `${this.host}${this.port ? `:${this.port}` : ""}`;
   }
 
   /**
@@ -92,8 +134,8 @@ export class Socket {
 
     let deficit = 0, nulled = 0;
     if (this.stats.frameStats?.deficit != -1) {
-      deficit = Math.pow(1.03, 500 * (this.stats.frameStats?.deficit! / 3000)) * 600 - 600;
-      nulled = (Math.pow(1.03, 500 * (this.stats.frameStats?.nulled! / 3000)) * 600 - 600) * 2;
+      deficit = Math.pow(1.03, 500 * ((this.stats.frameStats?.deficit ?? 0) / 3000)) * 600 - 600;
+      nulled = (Math.pow(1.03, 500 * ((this.stats.frameStats?.nulled ?? 0) / 3000)) * 600 - 600) * 2;
       nulled *= 2;
     }
 
@@ -101,229 +143,211 @@ export class Socket {
   }
 
   /**
-   * Get the default socket options.
-   * @param manager
-   */
-  private static defaultSocketOptions(manager: Manager): SocketOptions {
-    return Object.assign({
-      retryDelay: 5000,
-      maxTries: 3,
-      resumeTimeout: 60
-    }, manager.options.defaultSocketOptions ?? {});
-  }
-
-  /**
-   * Get the string representation of this socket.
-   * @since 3.0.0
-   */
-  public toString(): string {
-    return this.id;
-  }
-
-  /**
-   * Send data to the websocket.
-   * @param data Data to send. - JSON
+   * Send a message to lavalink.
+   * @param data The message data.
+   * @param priority If this message should be prioritized.
    * @since 1.0.0
    */
-  public send(data: any): Promise<void> {
-    return new Promise(async (res, rej) => {
-      const _data = JSON.stringify(data);
-      this.queue.push({ rej, res, data: _data });
-      if (this.connected) await this.checkQueue();
+  public async send(data: unknown, priority = false): Promise<void> {
+    return new Promise((resolve, reject) => {
+      data = JSON.stringify(data);
+      this.queue[priority ? "unshift" : "push"]({ data: data, reject, resolve });
+      if (this.connected) this._processQueue();
     });
   }
 
   /**
-   * Configure Lavalink Resuming.
-   * @param key The resume key.
+   * Connects to the lavalink node.
    * @since 1.0.0
    */
-  public async configureResuming(key: string | undefined = this.options.resumeKey): Promise<void> {
-    if (this.manager.resuming) {
-      if (!key) key = Math.random().toString(32);
+  public connect(): void {
+    if (this.status !== Status.RECONNECTING)
+      this.status = Status.CONNECTING;
 
-      this.resumeKey = key;
-      return this.send({
-        op: "configureResuming",
-        key,
-        timeout: this.options.resumeTimeout,
-      });
-    }
-  }
-
-  /**
-   * Connects to the WebSocket.
-   * @since 1.0.0
-   */
-  public connect(): this {
-    if (this.ws) {
-      if (this.connected) this.ws.close();
+    if (this.connected) {
+      this._cleanup();
+      this.ws?.close(1012);
       delete this.ws;
     }
 
-    const headers: Record<string, any> = {
-      "user-id": this.manager.userId!,
-      "num-shards": this.manager.shards,
-      authorization: this.password
+    const headers: Record<string, string | number> = {
+      authorization: this.password,
+      "num-shards": this.manager.options.shards as number,
+      "user-id": this.manager.userId as string,
     };
-    if (this.resumeKey) headers["Resume-Key"] = this.resumeKey;
+    if (this.resumeKey) headers["resume-key"] = this.resumeKey;
 
-    this.ws = new WebSocket(`ws://${this.host}:${this.port}`, { headers });
+    this.ws = new WebSocket(`ws${this.secure ? "s" : ""}://${this.address}`, { headers });
+    this.ws.onopen = this._open.bind(this);
+    this.ws.onmessage = this._message.bind(this);
     this.ws.onclose = this._close.bind(this);
     this.ws.onerror = this._error.bind(this);
-    this.ws.onmessage = this._message.bind(this);
-    this.ws.onopen = this._open.bind(this);
-
-    return this;
   }
 
   /**
-   * Flushes out the send queue.
-   * @since 1.0.0
+   * Reconnect to the lavalink node.
    */
-  protected async checkQueue(): Promise<void> {
-    if (this.queue.length === 0) return;
+  public reconnect(): void {
+    if (this.remainingTries !== 0) {
+      this.remainingTries -= 1;
+      this.status = Status.RECONNECTING;
 
-    while (this.queue.length > 0) {
-      const next = this.queue.shift();
-      if (!next) return;
-      this.ws!.send(next.data, (e) => {
-        if (e) {
-          this.manager.emit("socketError", this, e);
-          next.rej(e);
-        } else next.res();
-      });
+      try {
+        this.connect();
+        clearTimeout(this.reconnectTimeout);
+      } catch (e) {
+        this.manager.emit("socketError", this, e);
+        this.reconnectTimeout = setTimeout(() => {
+          this.reconnect();
+        }, this.reconnection.delay ?? 15000);
+      }
+    } else {
+      this.status = Status.DISCONNECTED;
+      this.manager.emit("socketDisconnect", this, "Ran out of reconnect tries.");
     }
   }
 
   /**
-   * WebSocket Open Listener.
-   * @since 2.1.0
+   * Configures lavalink resuming.
+   * @since 1.0.0
+   */
+  private async configureResuming(): Promise<void> {
+    if (this.reconnection !== null) {
+      this.resumeKey = this.manager.resuming.key ?? Math.random().toString(32);
+
+      return this.send({
+        op: "configureResuming",
+        timeout: this.manager.resuming.timeout ?? 60000,
+        key: this.resumeKey
+      }, true);
+    }
+  }
+
+  /**
+   * Handles the opening of the websocket.
    * @private
    */
   private async _open(): Promise<void> {
-    await this.checkQueue()
-    await this.configureResuming()
-
     this.manager.emit("socketReady", this);
+
+    await this._processQueue()
+      .then(() => this.configureResuming())
+      .catch((e) => this.manager.emit("socketError", this, e));
+
+    this.status = Status.CONNECTED;
   }
 
   /**
-   * WebSocket Error Listener.
-   * @param error The error received.
-   * @since 2.1.0
+   * Handles incoming messages from lavalink.
+   * @since 1.0.0
    * @private
    */
-  private async _error(error: WebSocket.ErrorEvent): Promise<void> {
-    this.manager.emit("socketError", this, error.error);
-    await this._reconnect();
-  }
+  private async _message({ data }: WebSocket.MessageEvent): Promise<void> {
+    if (data instanceof ArrayBuffer) data = Buffer.from(data);
+    else if (Array.isArray(data)) data = Buffer.concat(data);
 
-  /**
-   * WebSocket Close Listener.
-   * @param event The event that occurred..
-   * @since 2.1.0
-   * @private
-   */
-  private async _close(event: WebSocket.CloseEvent): Promise<void> {
-    if (event.code !== 1000 && event.reason !== "destroy") {
-      await this._reconnect();
-    } else this.manager.emit("socketClose", this);
-  }
-
-  /**
-   * WebSocket message listener
-   * @param data The message received.
-   * @since 2.1.0
-   * @private
-   */
-  private _message({ data }: WebSocket.MessageEvent): void {
-    if (Array.isArray(data)) data = Buffer.concat(data);
-    else if (data instanceof ArrayBuffer) data = Buffer.from(data);
-
+    let pk: any;
     try {
-      const pk = JSON.parse(data.toString());
-
-      if (pk.op === "stats") this.stats = pk;
-      if (["event", "playerUpdate"].includes(pk.op)) {
-        const player = this.manager.players.get(pk.guildId);
-        if (player) player.emit(pk.op, pk);
-      }
+      pk = JSON.parse(data.toString());
     } catch (e) {
       this.manager.emit("socketError", this, e);
       return;
     }
+
+    const player = this.manager.players.get(pk.guildId as string);
+    if (pk.guildId && player) await player.emit(pk.op, pk);
+    else if (pk.op === "stats") this.stats = pk;
   }
 
   /**
-   * Reconnects to the WebSocket.
+   * Handles the close of the websocket.
    * @since 1.0.0
    * @private
    */
-  private async _reconnect(): Promise<void> {
-    if (this.remaining !== 0) {
-      this.remaining--;
-      try {
-        this.connect();
-        this.remaining = this.options.maxTries!;
-      } catch (e) {
-        this.manager.emit("socketError", this, e);
-        setTimeout(() => this._reconnect(), this.options.retryDelay!);
-      }
-    } else {
-      this.manager.sockets.delete(this.id);
-      this.manager.emit("socketClose", this);
+  private _close(event: WebSocket.CloseEvent): void {
+    if (this.remainingTries === this.reconnection.maxTries)
+      this.manager.emit("socketClose", event);
+
+    if (event.code !== 1000 && event.reason !== "destroy") {
+      if (this.reconnection.auto) this.reconnect();
     }
+  }
+
+  /**
+   * Handles a websocket error.
+   * @since 1.0.0
+   * @private
+   */
+  private _error(event: WebSocket.ErrorEvent): void {
+    const error = event.error ? event.error : event.message;
+    this.manager.emit("socketError", this, error);
+  }
+
+  /**
+   * @private
+   */
+  private async _processQueue(): Promise<void> {
+    if (this.queue.length === 0) return;
+
+    while (this.queue.length > 0) {
+      const payload = this.queue.shift();
+      if (!payload) return;
+      await this._send(payload);
+    }
+  }
+
+  /**
+   * @private
+   */
+  private async _send(payload: Payload): Promise<void> {
+    return this.ws!.send(payload.data, err => {
+      if (err) payload.reject(err);
+      else payload.resolve();
+    });
+  }
+
+  /**
+   * Cleans up the websocket listeners.
+   * @since 1.0.0
+   * @private
+   */
+  private _cleanup(): void {
+    delete this.ws!.onclose;
+    delete this.ws!.onopen;
+    delete this.ws!.onmessage;
+    delete this.ws!.onerror;
   }
 }
 
 export interface SocketData {
   /**
-   * The identifier of your lavalink node.
+   * The ID of this lavalink node.
    */
   id: string;
+
   /**
-   * The hostname of your lavalink node.
+   * The host of this lavalink node.
    */
-  host?: string;
+  host: string;
+
   /**
-   * The port of your lavalink node.
+   * Whether or not this node is secured via ssl.
    */
-  port?: string | number;
+  secure?: boolean;
+
   /**
-   * The password of your lavalink node.
+   * The port of this lavalink node.
    */
-  password?: string;
+  port?: number;
+
   /**
-   * Additional socket options.
+   * The password of this lavalink node.
    */
-  options?: SocketOptions;
+  password?: string
 }
 
-export interface SocketOptions {
-  /**
-   * The delay in between reconnects.
-   */
-  retryDelay?: number;
-  /**
-   * The amount of tries to use when reconnecting.
-   */
-  maxTries?: number;
-  /**
-   * The resume key to use.
-   */
-  resumeKey?: string;
-  /**
-   * The resume timeout to use.
-   */
-  resumeTimeout?: number;
-}
-
-/**
- * @internal
- */
-export interface Sendable {
-  res: (...args: any[]) => any;
-  rej: (...args: any[]) => any;
-  data: string;
+export interface Payload {
+  resolve: (...args: any[]) => unknown;
+  reject: (...args: unknown[]) => unknown;
+  data: unknown;
 }

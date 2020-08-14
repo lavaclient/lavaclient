@@ -1,18 +1,26 @@
-import { get } from "http";
+import * as https from "https";
+import * as http from "http";
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 
 import type WebSocket from "ws";
 import type { LoadTracksResponse } from "@lavaclient/types";
-import type { Socket, SocketData, SocketOptions } from "./Socket";
+import type { Socket, SocketData } from "./Socket";
 import type { Plugin } from "./Plugin";
 import type { Player } from "./Player";
+
+const defaults = {
+  resuming: { key: Math.random().toString(32), timeout: 60000 },
+  reconnect: { auto: true, delay: 15000, maxTries: 5 },
+  shards: 1,
+} as ManagerOptions
 
 export class Manager extends EventEmitter {
   /**
    * A map of connected sockets.
    */
   public readonly sockets: Map<string, Socket>;
+
   /**
    * A map of connected players.
    */
@@ -21,28 +29,28 @@ export class Manager extends EventEmitter {
   /**
    * The options this manager was created with.
    */
-  public options: ManagerOptions;
+  public options: Required<ManagerOptions>;
+
   /**
    * The client's user id.
    */
   public userId: string | undefined;
+
   /**
    * A send method for sending voice state updates to discord.
    */
   public send: Send;
+
   /**
-   * The number of shards the client is running on.
+   * Resume options.
    */
-  public shards: number;
-  /**
-   * If resuming is enabled.
-   */
-  public resuming: boolean;
+  public resuming: ResumeOptions;
 
   /**
    * An array of registered plugins.
    */
   private plugins: Plugin[] = [];
+
   /**
    * The array of socket data this manager was created with.
    */
@@ -55,27 +63,30 @@ export class Manager extends EventEmitter {
   public constructor(nodes: SocketData[], options: ManagerOptions) {
     super();
 
-    this.nodes = nodes;
+    options = Object.assign(options, defaults);
+
     this.sockets = new Map();
     this.players = new Map();
+    this.nodes = nodes;
 
-    this.resuming = options.resuming ?? true;
-    this.options = options;
+    this.options = options as Required<ManagerOptions>;
     this.userId = options.userId;
     this.send = options.send;
-    this.shards = options.shards ?? 1;
+    this.resuming = (typeof options.resuming === "boolean"
+      ? !options.resuming ? null : defaults.resuming
+      : options.resuming ?? defaults.resuming) as ResumeOptions;
 
     if (!options.send || typeof options.send !== "function")
       throw new TypeError("Please provide a send function for sending packets to discord.");
 
-    if (this.shards < 1)
+    if (this.options.shards! < 1)
       throw new TypeError("Shard count must be 1 or greater.");
 
     if (options.plugins && options.plugins.length)
-      options.plugins.forEach((p) => {
-        this.plugins.push(p);
-        p.load(this);
-      });
+      for (const plugin of options.plugins) {
+        this.plugins.push(plugin);
+        plugin.load(this);
+      }
   }
 
   /**
@@ -91,17 +102,19 @@ export class Manager extends EventEmitter {
    * @since 1.0.0
    */
   public init(userId: string = this.userId!): void {
-    this.plugins.forEach((p) => p.init());
-
     if (!userId) throw new Error("Provide a client id for lavalink to use.");
     else this.userId = userId;
 
-    this.plugins.forEach((p) => p.init());
-    this.nodes.forEach((s) => {
-      if (this.sockets.has(s.id)) return;
-      const socket = new (Structures.get("socket"))(this, s);
-      this.sockets.set(s.id, socket.connect());
-    })
+    for (const plugin of this.plugins)
+      plugin.init();
+
+    for (const s of this.nodes) {
+      if (!this.sockets.has(s.id)) {
+        const socket = new (Structures.get("socket"))(this, s);
+        socket.connect();
+        this.sockets.set(s.id, socket);
+      }
+    }
   }
 
   /**
@@ -153,13 +166,13 @@ export class Manager extends EventEmitter {
    * @param guild The guild this player is for.
    * @since 2.1.0
    */
-  public create(guild: string | ObjectLiteral): Player {
+  public create(guild: string | Dictionary): Player {
     const id = typeof guild === "string" ? guild : guild.id;
 
     const existing = this.players.get(id);
     if (existing) return existing;
 
-    const sock = this.ideal[0]
+    const sock = this.ideal[0];
     if (!sock)
       throw new Error("Manager#create(): No available nodes.");
 
@@ -174,7 +187,7 @@ export class Manager extends EventEmitter {
    * @param guild The guild id of the player to destroy.
    * @since 2.1.0
    */
-  public async destroy(guild: string | ObjectLiteral): Promise<boolean> {
+  public async destroy(guild: string | Dictionary): Promise<boolean> {
     const id = typeof guild === "string" ? guild : guild.id;
     const player = this.players.get(id);
 
@@ -194,24 +207,27 @@ export class Manager extends EventEmitter {
       if (!socket)
         throw new Error("Manager#create(): No available sockets.")
 
-      const resp = get(`http://${socket.host}:${socket.port}/loadtracks?identifier=${query}`, {
-        headers: { authorization: socket.password }
+      const { request } = socket.secure ? https : http;
+      let res = request(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${query}`, {
+        headers: {
+          authorization: socket.password
+        }
       }, (res) => {
-        let data = "";
-        res.on("data", (chunk) => data += chunk);
+        let data = Buffer.alloc(0);
+        res.on("data", (chunk) => data = Buffer.concat([ data, chunk ]));
         res.on("error", (e) => reject(e));
-        res.on("end", () => resolve(JSON.parse(data)))
+        res.on("end", () => resolve(JSON.parse(data.toString())))
       });
 
-      resp.on("error", e => reject(e));
-      resp.end();
+      res.on("error", e => reject(e));
+      res.end();
     });
   }
 }
 
 export type Send = (guildId: string, payload: any) => any;
 
-export type ObjectLiteral = Record<string, any>;
+export type Dictionary<V = any> = Record<string, V>;
 
 export interface Manager {
   /**
@@ -240,26 +256,60 @@ export interface ManagerOptions {
    * A method used for sending discord voice updates.
    */
   send: Send;
+
   /**
    * The number of shards the client has.
    */
   shards?: number;
+
   /**
    * The user id of the bot (not-recommended, provide it in Manager#init)
    */
   userId?: string;
-  /**
-   * Default socket options to use.
-   */
-  defaultSocketOptions?: SocketOptions;
+
   /**
    * An array of plugins you want to use.
    */
   plugins?: Plugin[];
+
   /**
    * If you want to enable resuming.
    */
-  resuming?: boolean
+  resuming?: ResumeOptions | boolean;
+
+  /**
+   * Options for reconnection.
+   */
+  reconnect?: ReconnectOptions;
+}
+
+export interface ReconnectOptions {
+  /**
+   * The total amount of reconnect tries
+   */
+  maxTries?: number;
+
+  /**
+   * Whether or not reconnection's are automatically done.
+   */
+  auto?: boolean;
+
+  /**
+   * The delay between socket reconnection's.
+   */
+  delay?: number;
+}
+
+export interface ResumeOptions {
+  /**
+   * The resume timeout.
+   */
+  timeout?: number;
+
+  /**
+   * The resume key to use. If omitted a random one will be assigned.
+   */
+  key?: string;
 }
 
 /**

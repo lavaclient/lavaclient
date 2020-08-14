@@ -1,4 +1,4 @@
-import { Manager } from "./Manager";
+import type { Manager } from "./Manager";
 
 export abstract class Plugin {
   /**

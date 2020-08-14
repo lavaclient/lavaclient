@@ -19,6 +19,11 @@ export class Structures {
   static get<K extends keyof Classes>(name: K): Classes[K];
 }
 
+export interface Classes {
+  socket: typeof Socket;
+  player: typeof Player;
+}
+
 export class Manager extends EventEmitter {
   /**
    * A map of connected sockets.
@@ -31,7 +36,7 @@ export class Manager extends EventEmitter {
   /**
    * The options this manager was created with.
    */
-  options: ManagerOptions;
+  options: Required<ManagerOptions>;
   /**
    * The client's user id.
    */
@@ -41,13 +46,9 @@ export class Manager extends EventEmitter {
    */
   send: Send;
   /**
-   * The number of shards the client is running on.
+   * Resume options.
    */
-  shards: number;
-  /**
-   * If resuming is enabled.
-   */
-  resuming: boolean;
+  resuming: ResumeOptions;
 
   /**
    * @param nodes An array of sockets to connect to.
@@ -93,14 +94,14 @@ export class Manager extends EventEmitter {
    * @param guild The guild this player is for.
    * @since 2.1.0
    */
-  create(guild: string | ObjectLiteral): Player;
+  create(guild: string | Dictionary): Player;
 
   /**
    * Destroys a player and leaves the connected voice channel.
    * @param guild The guild id of the player to destroy.
    * @since 2.1.0
    */
-  destroy(guild: string | ObjectLiteral): Promise<boolean>;
+  destroy(guild: string | Dictionary): Promise<boolean>;
 
   /**
    * Search lavalink for songs.
@@ -108,6 +109,9 @@ export class Manager extends EventEmitter {
    */
   search(query: string): Promise<Lavalink.LoadTracksResponse>;
 }
+
+export type Send = (guildId: string, payload: any) => any;
+export type Dictionary<V = any> = Record<string, V>;
 
 export interface Manager {
   /**
@@ -131,15 +135,92 @@ export interface Manager {
   on(event: "socketDisconnect", listener: (socket: Socket) => any): this;
 }
 
-export class Player extends EventEmitter {
+export interface ManagerOptions {
   /**
-   * The socket this player belongs to.
+   * A method used for sending discord voice updates.
    */
-  readonly socket: Socket;
+  send: Send;
+  /**
+   * The number of shards the client has.
+   */
+  shards?: number;
+  /**
+   * The user id of the bot (not-recommended, provide it in Manager#init)
+   */
+  userId?: string;
+  /**
+   * An array of plugins you want to use.
+   */
+  plugins?: Plugin[];
+  /**
+   * If you want to enable resuming.
+   */
+  resuming?: ResumeOptions | boolean;
+  /**
+   * Options for reconnection.
+   */
+  reconnect?: ReconnectOptions;
+}
+
+export interface ReconnectOptions {
+  /**
+   * The total amount of reconnect tries
+   */
+  maxTries?: number;
+  /**
+   * Whether or not reconnection's are automatically done.
+   */
+  auto?: boolean;
+  /**
+   * The delay between socket reconnection's.
+   */
+  delay?: number;
+}
+
+export interface ResumeOptions {
+  /**
+   * The resume timeout.
+   */
+  timeout?: number;
+  /**
+   * The resume key to use. If omitted a random one will be assigned.
+   */
+  key?: string;
+}
+
+/**
+ * @internal
+ */
+export interface VoiceServer {
+  token: string;
+  guild_id: string;
+  endpoint: string;
+}
+
+/**
+ * @internal
+ */
+export interface VoiceState {
+  channel_id?: string;
+  guild_id: string;
+  user_id: string;
+  session_id: string;
+  deaf?: boolean;
+  mute?: boolean;
+  self_deaf?: boolean;
+  self_mute?: boolean;
+  suppress?: boolean;
+}
+
+export class Player extends EventEmitter {
   /**
    * The id of the guild this player belongs to.
    */
   readonly guild: string;
+  /**
+   * The socket this player belongs to.
+   */
+  socket: Socket;
   /**
    * The id of the voice channel this player is connected to.
    */
@@ -195,14 +276,20 @@ export class Player extends EventEmitter {
    * @param options Options for self mute, self deaf, or force connecting.
    * @since 2.1.x
    */
-  connect(channel: string | Record<string, any>, options?: ConnectOptions): Promise<Player>;
+  connect(channel: string | null | Record<string, any>, options?: ConnectOptions): this;
 
   /**
    * Disconnect from the voice channel.
-   * @param remove Whether to remove the player from the manager.
    * @since 2.1.x
    */
-  disconnect(remove?: boolean): Promise<this>;
+  disconnect(): this;
+
+  /**
+   * Moves this player to another socket.
+   * @param socket The socket to move to.
+   * @since 3.0.14
+   */
+  move(socket: Socket): Promise<Player>;
 
   /**
    * Plays the specified base64 track.
@@ -210,52 +297,52 @@ export class Player extends EventEmitter {
    * @param options Play options to send along with the track.
    * @since 1.x.x
    */
-  play(track: string | Lavalink.Track, options?: PlayOptions): Promise<void>;
+  play(track: string | Lavalink.Track, options?: PlayOptions): Promise<this>;
 
   /**
    * Change the volume of the player. You can omit the volume param to reset back to 100
    * @param volume May range from 0 to 1000, defaults to 100
    */
-  setVolume(volume?: number): Promise<void>;
+  setVolume(volume?: number): Promise<this>;
 
   /**
    * Change the paused state of this player. `true` to pause, `false` to resume.
    * @param state Pause state, defaults to true.
    * @since 1.x.x
    */
-  pause(state?: boolean): Promise<void>;
+  pause(state?: boolean): Promise<this>;
 
   /**
    * Resumes the player, if paused.
    * @since 1.x.x
    */
-  resume(): Promise<void>;
+  resume(): Promise<this>;
 
   /**
    * Stops the current playing track.
    * @since 1.x.x
    */
-  stop(): Promise<void>;
+  stop(): Promise<this>;
 
   /**
    * Seek to a position in the current song.
    * @param position The position to seek to in milliseconds.
    */
-  seek(position: number): Promise<void>;
+  seek(position: number): Promise<this>;
 
   /**
    * Sets the equalizer of this player.
    * @param bands Equalizer bands to use.
    * @since 2.1.x
    */
-  setEqualizer(bands: Lavalink.EqualizerBand[]): Promise<void>;
+  setEqualizer(bands: Lavalink.EqualizerBand[]): Promise<this>;
 
   /**
    * Destroy this player.
    * @param disconnect Disconnect from the voice channel.
    * @since 1.x.x
    */
-  destroy(disconnect?: boolean): Promise<void>;
+  destroy(disconnect?: boolean): Promise<this>;
 
   /**
    * Provide a voice update from discord.
@@ -274,19 +361,15 @@ export class Player extends EventEmitter {
 
   /**
    * Send data to lavalink as this player.
-   * @param op
-   * @param data
+   * @param op The operation.
+   * @param data The data.
+   * @param priority Whether or not this is a prioritized operation.
    * @since 1.0.0
    */
-  send(op: string, data?: ObjectLiteral): Promise<void>;
+  send(op: string, data?: Dictionary, priority?: boolean): Promise<this>;
 }
 
 export interface Player {
-  /**
-   * Emitted whenever the player sends a payload.
-   */
-  on(event: "raw", listener: (op: string, data: ObjectLiteral) => any): this;
-
   /**
    * When the player receives an update from lavalink.
    */
@@ -323,153 +406,6 @@ export interface Player {
   on(event: "stuck", listener: (event: Lavalink.TrackStuckEvent) => any): this;
 }
 
-export class Socket {
-  /**
-   * The manager this socket belongs to.
-   */
-  readonly manager: Manager;
-  /**
-   * This sockets identifier.
-   */
-  readonly id: string;
-  /**
-   * The host of the lavalink node we're connecting to.
-   */
-  readonly host: string;
-  /**
-   * The port of the lavalink node we're connecting to.
-   */
-  readonly port: string;
-  /**
-   * The authorization being used when connecting.
-   */
-  readonly password: string;
-  /**
-   * Total remaining tries this socket has for reconnecting
-   */
-  remaining: number;
-  /**
-   * The resume key being used for resuming.
-   */
-  resumeKey?: string;
-  /**
-   * The stats sent by lavalink.
-   */
-  stats: Lavalink.NodeStats;
-  /**
-   * The options this socket is using.
-   */
-  options: SocketOptions;
-  /**
-   * The websocket instance for this socket.
-   */
-  protected ws?: WebSocket;
-  /**
-   * The queue for sendables.
-   */
-  protected queue: Sendable[];
-
-  /**
-   * @param manager The manager this socket belongs to.
-   * @param data Data to use.
-   */
-  constructor(manager: Manager, data: SocketData);
-
-  /**
-   * Whether this socket is connected or not.
-   */
-  get connected(): boolean;
-
-  /**
-   * Get the total penalty count for this node.
-   */
-  get penalties(): number;
-
-  /**
-   * Get the string representation of this socket.
-   * @since 3.0.0
-   */
-  toString(): string;
-
-  /**
-   * Send data to the websocket.
-   * @param data Data to send. - JSON
-   * @since 1.0.0
-   */
-  send(data: any): Promise<void>;
-
-  /**
-   * Configure Lavalink Resuming.
-   * @param key The resume key.
-   * @since 1.0.0
-   */
-  configureResuming(key?: string | undefined): Promise<void>;
-
-  /**
-   * Connects to the WebSocket.
-   * @since 1.0.0
-   */
-  connect(): this;
-
-  /**
-   * Flushes out the send queue.
-   * @since 1.0.0
-   */
-  protected checkQueue(): Promise<void>;
-}
-
-export abstract class Plugin {
-  /**
-   * The manager that loaded this plugin.
-   */
-  manager: Manager;
-
-  /**
-   * Called when this plugin is loaded.
-   * @param manager The manager that loaded this plugin.
-   * @since 3.0.0
-   */
-  load(manager: Manager): void;
-
-  /**
-   * Called when the manager is initialized.
-   * @since 3.0.0
-   */
-  init(): void;
-}
-
-export type Send = (guildId: string, payload: any) => any;
-
-export type ObjectLiteral = Record<string, any>;
-
-/**
- * @internal
- */
-export interface Sendable {
-  res: (...args: any[]) => any;
-  rej: (...args: any[]) => any;
-  data: string;
-}
-
-export interface SocketOptions {
-  /**
-   * The delay in between reconnects.
-   */
-  retryDelay?: number;
-  /**
-   * The amount of tries to use when reconnecting.
-   */
-  maxTries?: number;
-  /**
-   * The resume key to use.
-   */
-  resumeKey?: string;
-  /**
-   * The resume timeout to use.
-   */
-  resumeTimeout?: number;
-}
-
 export interface PlayOptions {
   /**
    * The number of milliseconds to offset the track by.
@@ -494,87 +430,150 @@ export interface ConnectOptions {
    * If you want to self mute the bot.
    */
   selfMute?: boolean;
-  /**
-   * Whether to force connect the bot.
-   */
-  force?: boolean;
 }
 
-/**
- * @internal
- */
-export interface VoiceServer {
-  token: string;
-  guild_id: string;
-  endpoint: string;
+export enum Status {
+  CONNECTED = 0,
+  CONNECTING = 1,
+  IDLE = 2,
+  DISCONNECTED = 3,
+  RECONNECTING = 4
 }
 
-/**
- * @internal
- */
-export interface VoiceState {
-  channel_id?: string;
-  guild_id: string;
-  user_id: string;
-  session_id: string;
-  deaf?: boolean;
-  mute?: boolean;
-  self_deaf?: boolean;
-  self_mute?: boolean;
-  suppress?: boolean;
-}
+export class Socket {
+  /**
+   * The link manager instance.
+   */
+  readonly manager: Manager;
+  /**
+   * This lavalink nodes identifier.
+   */
+  readonly id: string;
+  /**
+   * Number of remaining reconnect tries.
+   */
+  remainingTries: number;
+  /**
+   * The status of this lavalink node.
+   */
+  status: Status;
+  /**
+   * Hostname of the lavalink node.
+   */
+  host: string;
+  /**
+   * Port of the lavalink node.
+   */
+  port?: number;
+  /**
+   * Password of the lavalink node.
+   */
+  password: string;
+  /**
+   * The performance stats of this player.
+   */
+  stats: Lavalink.NodeStats;
+  /**
+   * The resume key.
+   */
+  resumeKey?: string;
+  /**
+   * Whether or not this lavalink node uses an ssl.
+   */
+  secure: boolean;
 
-export interface Classes {
-  socket: typeof Socket;
-  player: typeof Player;
-}
+  /**
+   * @param manager
+   * @param data
+   */
+  constructor(manager: Manager, data: SocketData);
 
-export interface ManagerOptions {
   /**
-   * A method used for sending discord voice updates.
+   *
    */
-  send: Send;
+  get reconnection(): ReconnectOptions;
+
   /**
-   * The number of shards the client has.
+   * If this node is connected or not.
    */
-  shards?: number;
+  get connected(): boolean;
+
   /**
-   * The user id of the bot (not-recommended, provide it in Manager#init)
+   * The address of this lavalink node.
    */
-  userId?: string;
+  get address(): string;
+
   /**
-   * Default socket options to use.
+   * Get the total penalty count for this node.
    */
-  defaultSocketOptions?: SocketOptions;
+  get penalties(): number;
+
   /**
-   * An array of plugins you want to use.
+   * Send a message to lavalink.
+   * @param data The message data.
+   * @param priority If this message should be prioritized.
+   * @since 1.0.0
    */
-  plugins?: Plugin[];
+  send(data: unknown, priority?: boolean): Promise<void>;
+
   /**
-   * If you want to enable resuming.
+   * Connects to the lavalink node.
+   * @since 1.0.0
    */
-  resuming?: boolean;
+  connect(): void;
+
+  /**
+   * Reconnect to the lavalink node.
+   */
+  reconnect(): void;
 }
 
 export interface SocketData {
   /**
-   * The identifier of your lavalink node.
+   * The ID of this lavalink node.
    */
   id: string;
   /**
-   * The hostname of your lavalink node.
+   * The host of this lavalink node.
    */
-  host?: string;
+  host: string;
   /**
-   * The port of your lavalink node.
+   * Whether or not this node is secured via ssl.
    */
-  port?: string | number;
+  secure?: boolean;
   /**
-   * The password of your lavalink node.
+   * The port of this lavalink node.
+   */
+  port?: number;
+  /**
+   * The password of this lavalink node.
    */
   password?: string;
-  /**
-   * Additional socket options.
-   */
-  options?: SocketOptions;
 }
+
+export interface Payload {
+  resolve: (...args: any[]) => unknown;
+  reject: (...args: unknown[]) => unknown;
+  data: unknown;
+}
+
+export abstract class Plugin {
+  /**
+   * The manager that loaded this plugin.
+   */
+  manager: Manager;
+
+  /**
+   * Called when this plugin is loaded.
+   * @param manager The manager that loaded this plugin.
+   * @since 3.0.0
+   */
+  load(manager: Manager): void;
+
+  /**
+   * Called when the manager is initialized.
+   * @since 3.0.0
+   */
+  init(): void;
+}
+

@@ -2,49 +2,59 @@ import { EventEmitter } from "events";
 
 import type Lavalink from "@lavaclient/types";
 import type { Socket } from "./Socket";
-import type { Manager, ObjectLiteral, VoiceServer, VoiceState } from "./Manager";
+import type { Dictionary, Manager, VoiceServer, VoiceState } from "./Manager";
 
 export class Player extends EventEmitter {
-  /**
-   * The socket this player belongs to.
-   */
-  public readonly socket: Socket;
   /**
    * The id of the guild this player belongs to.
    */
   public readonly guild: string;
+
+  /**
+   * The socket this player belongs to.
+   */
+  public socket: Socket;
+
   /**
    * The id of the voice channel this player is connected to.
    */
   public channel: string | undefined;
+
   /**
    * Whether this player is paused or not.
    */
   public paused: boolean;
+
   /**
    * The current playing track.
    */
   public track: string | undefined;
+
   /**
    * Whether this player is playing or not.
    */
   public playing: boolean;
+
   /**
    * The unix timestamp in which this player started playing.
    */
   public timestamp: number | undefined;
+
   /**
    * Track position in milliseconds.
    */
   public position: number;
+
   /**
    * The current volume of this player.
    */
   public volume: number;
+
   /**
    * Equalizer bands this player is using.
    */
   public equalizer: Lavalink.EqualizerBand[];
+
   /**
    * If this player is connected to a voice channel.
    */
@@ -55,6 +65,7 @@ export class Player extends EventEmitter {
    * @internal
    */
   private _state: VoiceState | undefined;
+
   /**
    * The voice server for this player.
    * @internal
@@ -96,12 +107,9 @@ export class Player extends EventEmitter {
    * @param options Options for self mute, self deaf, or force connecting.
    * @since 2.1.x
    */
-  public async connect(channel: string | Record<string, any>, options: ConnectOptions = {}): Promise<Player> {
-    if (this.connected && !options.force)
-      throw new Error(`Player#connect (${this.guild}): Already Connected. You can append the force option but this isn't recommended.`);
-
-    const channelId = typeof channel === "object" ? channel.id : channel;
-    await this.socket.manager.send(this.guild, {
+  public connect(channel: string | null | Record<string, any>, options: ConnectOptions = {}): this {
+    const channelId = typeof channel === "object" ? channel!.id : channel;
+    this.socket.manager.send(this.guild, {
       op: 4,
       d: {
         guild_id: this.guild,
@@ -112,28 +120,28 @@ export class Player extends EventEmitter {
     });
 
     this.channel = channelId;
-    this.connected = true;
+    this.connected = !!channelId;
     return this;
   }
 
   /**
    * Disconnect from the voice channel.
-   * @param remove Whether to remove the player from the manager.
    * @since 2.1.x
    */
-  public async disconnect(remove = false): Promise<this> {
-    if (remove)
-      this.manager.players.delete(this.guild);
+  public disconnect(): this {
+    return this.connect(null);
+  }
 
-    await this.socket.manager.send(this.guild, {
-      op: 4,
-      d: {
-        guild_id: this.guild,
-        channel_id: null,
-        self_deaf: null,
-        self_mute: null
-      }
-    });
+  /**
+   * Moves this player to another socket.
+   * @param socket The socket to move to.
+   * @since 3.0.14
+   */
+  public async move(socket: Socket): Promise<Player> {
+    this.socket = socket;
+
+    await this.destroy();
+    if (this.channel) this.connect(this.channel);
 
     return this;
   }
@@ -144,7 +152,7 @@ export class Player extends EventEmitter {
    * @param options Play options to send along with the track.
    * @since 1.x.x
    */
-  public play(track: string | Lavalink.Track, options: PlayOptions = {}): Promise<void> {
+  public play(track: string | Lavalink.Track, options: PlayOptions = {}): Promise<this> {
     return this.send("play", Object.assign({
       track: typeof track === "object" ? track.track : track
     }, options))
@@ -154,7 +162,7 @@ export class Player extends EventEmitter {
    * Change the volume of the player. You can omit the volume param to reset back to 100
    * @param volume May range from 0 to 1000, defaults to 100
    */
-  public setVolume(volume: number = 100): Promise<void> {
+  public setVolume(volume: number = 100): Promise<this> {
     if (volume < 0 || volume > 1000)
       throw new RangeError(`Player#setVolume (${this.guild}): Volume must be within the 0 to 1000 range.`);
 
@@ -168,7 +176,7 @@ export class Player extends EventEmitter {
    * @param state Pause state, defaults to true.
    * @since 1.x.x
    */
-  public pause(state = true): Promise<void> {
+  public pause(state = true): Promise<this> {
     this.paused = state;
     this.playing = !state;
     return this.send("pause", { pause: state });
@@ -178,7 +186,7 @@ export class Player extends EventEmitter {
    * Resumes the player, if paused.
    * @since 1.x.x
    */
-  public resume(): Promise<void> {
+  public resume(): Promise<this> {
     return this.pause(false);
   }
 
@@ -186,7 +194,7 @@ export class Player extends EventEmitter {
    * Stops the current playing track.
    * @since 1.x.x
    */
-  public stop(): Promise<void> {
+  public stop(): Promise<this> {
     delete this.track;
     delete this.timestamp;
     this.position = 0;
@@ -198,7 +206,7 @@ export class Player extends EventEmitter {
    * Seek to a position in the current song.
    * @param position The position to seek to in milliseconds.
    */
-  public seek(position: number): Promise<void> {
+  public seek(position: number): Promise<this> {
     if (!this.track) throw new Error(`Player#seek() ${this.guild}: Not playing anything.`);
     return this.send("seek", { position });
   }
@@ -208,7 +216,7 @@ export class Player extends EventEmitter {
    * @param bands Equalizer bands to use.
    * @since 2.1.x
    */
-  public setEqualizer(bands: Lavalink.EqualizerBand[]): Promise<void> {
+  public setEqualizer(bands: Lavalink.EqualizerBand[]): Promise<this> {
     this.equalizer = bands ?? [];
     return this.send("equalizer", { bands });
   }
@@ -218,7 +226,7 @@ export class Player extends EventEmitter {
    * @param disconnect Disconnect from the voice channel.
    * @since 1.x.x
    */
-  public async destroy(disconnect = false): Promise<void> {
+  public async destroy(disconnect = false): Promise<this> {
     if (disconnect) await this.disconnect();
     return this.send("destroy");
   }
@@ -246,7 +254,7 @@ export class Player extends EventEmitter {
     await this.send("voiceUpdate", {
       sessionId: this._state.session_id,
       event: this._server,
-    });
+    }, true);
 
     delete this._state;
     delete this._server;
@@ -254,20 +262,20 @@ export class Player extends EventEmitter {
 
   /**
    * Send data to lavalink as this player.
-   * @param op
-   * @param data
+   * @param op The operation.
+   * @param data The data.
+   * @param priority Whether or not this is a prioritized operation.
    * @since 1.0.0
    */
-  public send(op: string, data: ObjectLiteral = {}): Promise<void> {
-    data = { op, guildId: this.guild, ...data }
-    this.emit(`raw`, op, data)
-    return this.socket.send(data);
+  public async send(op: string, data: Dictionary = {}, priority = false): Promise<this> {
+    await this.socket.send({ op, ...data, guildId: this.guild }, priority);
+    return this;
   }
 
   /**
    * @private
    */
-  private _event(event: Lavalink.Event): void {
+  private async _event(event: Lavalink.Event): Promise<void> {
     switch (event.type) {
       case "TrackEndEvent":
         if (event.reason !== "REPLACED") this.playing = false;
@@ -284,7 +292,8 @@ export class Player extends EventEmitter {
         this.emit("start", event);
         break;
       case "TrackStuckEvent":
-        this.stop().then(() => this.emit("stuck", event));
+        await this.stop()
+        this.emit("stuck", event);
         break;
       case "WebSocketClosedEvent":
         this.emit("closed", event);
@@ -303,11 +312,6 @@ export class Player extends EventEmitter {
 }
 
 export interface Player {
-  /**
-   * Emitted whenever the player sends a payload.
-   */
-  on(event: "raw", listener: (op: string, data: ObjectLiteral) => any): this;
-
   /**
    * When the player receives an update from lavalink.
    */
@@ -368,8 +372,4 @@ export interface ConnectOptions {
    * If you want to self mute the bot.
    */
   selfMute?: boolean;
-  /**
-   * Whether to force connect the bot.
-   */
-  force?: boolean;
 }
