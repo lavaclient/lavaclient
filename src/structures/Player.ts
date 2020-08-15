@@ -108,7 +108,7 @@ export class Player extends EventEmitter {
    * @since 2.1.x
    */
   public connect(channel: string | null | Record<string, any>, options: ConnectOptions = {}): this {
-    const channelId = typeof channel === "object" ? channel!.id : channel;
+    const channelId = typeof channel === "object" ? channel?.id : channel;
     this.socket.manager.send(this.guild, {
       op: 4,
       d: {
