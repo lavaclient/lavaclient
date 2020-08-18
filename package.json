@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
   "main": "dist/index.js",
   "types": "index.d.ts",
@@ -36,6 +36,6 @@
     "typescript": "^3.9.7"
   },
   "engines": {
-    "node": ">=14"
+    "node": "14.x.x"
   }
 }
