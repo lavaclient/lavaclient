@@ -113,7 +113,7 @@ export class Player extends EventEmitter {
       op: 4,
       d: {
         guild_id: this.guild,
-        channel_id: channelId,
+        channel_id: channelId ? channelId : null,
         self_deaf: options.selfDeaf ?? false,
         self_mute: options.selfMute ?? false
       }
