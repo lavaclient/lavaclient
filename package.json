@@ -33,7 +33,7 @@
     "@types/ws": "^7.2.6",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
-    "typescript": "^3.9.7"
+    "typescript": "^4.0.2"
   },
   "engines": {
     "node": "14.x.x"
