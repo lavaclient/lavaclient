@@ -3,8 +3,9 @@ import * as http from "http";
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 
-import type WebSocket from "ws";
 import type { LoadTracksResponse } from "@lavaclient/types";
+import type WebSocket from "ws";
+
 import type { Socket, SocketData } from "./Socket";
 import type { Plugin } from "./Plugin";
 import type { Player } from "./Player";
@@ -76,17 +77,20 @@ export class Manager extends EventEmitter {
       ? !options.resuming ? null : defaults.resuming
       : options.resuming ?? defaults.resuming) as ResumeOptions;
 
-    if (!options.send || typeof options.send !== "function")
+    if (!options.send || typeof options.send !== "function") {
       throw new TypeError("Please provide a send function for sending packets to discord.");
+    }
 
-    if (this.options.shards! < 1)
+    if (this.options.shards! < 1) {
       throw new TypeError("Shard count must be 1 or greater.");
+    }
 
-    if (options.plugins && options.plugins.length)
+    if (options.plugins && options.plugins.length) {
       for (const plugin of options.plugins) {
         this.plugins.push(plugin);
         plugin.load(this);
       }
+    }
   }
 
   /**
@@ -102,17 +106,26 @@ export class Manager extends EventEmitter {
    * @since 1.0.0
    */
   public init(userId: string = this.userId!): void {
-    if (!userId) throw new Error("Provide a client id for lavalink to use.");
-    else this.userId = userId;
+    if (!userId) {
+      throw new Error("Provide a client id for lavalink to use.");
+    } else {
+      this.userId = userId;
+    }
 
-    for (const plugin of this.plugins)
+    for (const plugin of this.plugins) {
       plugin.init();
+    }
 
     for (const s of this.nodes) {
       if (!this.sockets.has(s.id)) {
         const socket = new (Structures.get("socket"))(this, s);
-        socket.connect();
-        this.sockets.set(s.id, socket);
+
+        try {
+          socket.connect();
+          this.sockets.set(s.id, socket);
+        } catch (e) {
+          this.emit("socketError", e, socket);
+        }
       }
     }
   }
@@ -173,8 +186,9 @@ export class Manager extends EventEmitter {
     if (existing) return existing;
 
     const sock = this.ideal[0];
-    if (!sock)
+    if (!sock) {
       throw new Error("Manager#create(): No available nodes.");
+    }
 
     const player = new (Structures.get("player"))(sock, id);
     this.players.set(id, player);
@@ -194,7 +208,9 @@ export class Manager extends EventEmitter {
     if (player) {
       await player.destroy(true);
       return this.players.delete(id);
-    } else return false;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -204,8 +220,9 @@ export class Manager extends EventEmitter {
   public async search(query: string): Promise<LoadTracksResponse> {
     return new Promise(async (resolve, reject) => {
       const socket = this.ideal[0];
-      if (!socket)
+      if (!socket) {
         throw new Error("Manager#create(): No available sockets.")
+      }
 
       const { request } = socket.secure ? https : http;
       let res = request(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${query}`, {
@@ -238,12 +255,12 @@ export interface Manager {
   /**
    * Emitted when a lavalink socket has ran into an error.
    */
-  on(event: "socketError", listener: (socket: Socket, error: any) => any): this;
+  on(event: "socketError", listener: (error: any, socket: Socket) => any): this;
 
   /**
    * Emitted when a lavalink socket has been closed.
    */
-  on(event: "socketClose", listener: (socket: Socket, event: WebSocket.CloseEvent) => any): this;
+  on(event: "socketClose", listener: (event: WebSocket.CloseEvent, socket: Socket) => any): this;
 
   /**
    * Emitted when a lavalink socket has ran out of reconnect tries.
