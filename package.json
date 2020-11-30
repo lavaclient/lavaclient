@@ -21,7 +21,7 @@
     "easy"
   ],
   "dependencies": {
-    "@lavaclient/types": "1.0.2",
+    "@lavaclient/types": "1.0.4",
     "ws": "^7.3.1"
   },
   "scripts": {
