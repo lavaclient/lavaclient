@@ -1,6 +1,6 @@
 import type { EventEmitter } from "events";
-import type WebSocket from "ws";
 import type Lavalink from "@lavaclient/types";
+import type WebSocket from "ws";
 
 export class Structures {
   /**
@@ -22,6 +22,7 @@ export class Structures {
 export interface Classes {
   socket: typeof Socket;
   player: typeof Player;
+  filters: typeof Filters;
 }
 
 export class Manager extends EventEmitter {
@@ -80,21 +81,22 @@ export class Manager extends EventEmitter {
    * @param update The voice server update sent by Discord.
    * @since 1.0.0
    */
-  serverUpdate(update: VoiceServer): Promise<void>;
+  serverUpdate(update: DiscordVoiceServer): Promise<void>;
 
   /**
    * Used for providing voice state updates to lavalink
    * @param update The voice state update sent by Discord.
    * @since 1.0.0
    */
-  stateUpdate(update: VoiceState): Promise<void>;
+  stateUpdate(update: DiscordVoiceState): Promise<void>;
 
   /**
    * Create a player.
    * @param guild The guild this player is for.
+   * @param socket The socket to use.
    * @since 2.1.0
    */
-  create(guild: string | Dictionary): Player;
+  create(guild: string | Dictionary, socket?: Socket): Player;
 
   /**
    * Destroys a player and leaves the connected voice channel.
@@ -122,12 +124,12 @@ export interface Manager {
   /**
    * Emitted when a lavalink socket has ran into an error.
    */
-  on(event: "socketError", listener: (socket: Socket, error: any) => any): this;
+  on(event: "socketError", listener: (error: any, socket: Socket) => any): this;
 
   /**
    * Emitted when a lavalink socket has been closed.
    */
-  on(event: "socketClose", listener: (socket: Socket, event: WebSocket.CloseEvent) => any): this;
+  on(event: "socketClose", listener: (event: WebSocket.CloseEvent, socket: Socket) => any): this;
 
   /**
    * Emitted when a lavalink socket has ran out of reconnect tries.
@@ -191,7 +193,7 @@ export interface ResumeOptions {
 /**
  * @internal
  */
-export interface VoiceServer {
+export interface DiscordVoiceServer {
   token: string;
   guild_id: string;
   endpoint: string;
@@ -200,16 +202,11 @@ export interface VoiceServer {
 /**
  * @internal
  */
-export interface VoiceState {
+export interface DiscordVoiceState {
   channel_id?: string;
   guild_id: string;
   user_id: string;
   session_id: string;
-  deaf?: boolean;
-  mute?: boolean;
-  self_deaf?: boolean;
-  self_mute?: boolean;
-  suppress?: boolean;
 }
 
 export class Player extends EventEmitter {
@@ -265,6 +262,12 @@ export class Player extends EventEmitter {
   constructor(socket: Socket, guild: string);
 
   /**
+   * The filters instance
+   * @since 3.2.0
+   */
+  get filters(): Filters;
+
+  /**
    * The head manager of everything.
    * @since 2.1.0
    */
@@ -297,67 +300,61 @@ export class Player extends EventEmitter {
    * @param options Play options to send along with the track.
    * @since 1.x.x
    */
-  play(track: string | Lavalink.Track, options?: PlayOptions): Promise<this>;
+  play(track: string | Lavalink.Track, options?: PlayOptions): this;
 
   /**
    * Change the volume of the player. You can omit the volume param to reset back to 100
    * @param volume May range from 0 to 1000, defaults to 100
    */
-  setVolume(volume?: number): Promise<this>;
+  setVolume(volume?: number): this;
 
   /**
    * Change the paused state of this player. `true` to pause, `false` to resume.
    * @param state Pause state, defaults to true.
    * @since 1.x.x
    */
-  pause(state?: boolean): Promise<this>;
+  pause(state?: boolean): this;
 
   /**
    * Resumes the player, if paused.
    * @since 1.x.x
    */
-  resume(): Promise<this>;
+  resume(): this;
 
   /**
    * Stops the current playing track.
    * @since 1.x.x
    */
-  stop(): Promise<this>;
+  stop(): this;
 
   /**
    * Seek to a position in the current song.
    * @param position The position to seek to in milliseconds.
    */
-  seek(position: number): Promise<this>;
+  seek(position: number): this;
 
   /**
    * Sets the equalizer of this player.
    * @param bands Equalizer bands to use.
    * @since 2.1.x
+   *
+   * @deprecated Please use Filters#equalizer and Filters#apply
    */
-  setEqualizer(bands: Lavalink.EqualizerBand[]): Promise<this>;
+  setEqualizer(bands: Lavalink.EqualizerBand[]): this;
 
   /**
    * Destroy this player.
    * @param disconnect Disconnect from the voice channel.
    * @since 1.x.x
    */
-  destroy(disconnect?: boolean): Promise<this>;
+  destroy(disconnect?: boolean): this;
 
   /**
    * Provide a voice update from discord.
-   * @param update
    * @since 1.x.x
    * @private
    */
-  provide(update: VoiceState | VoiceServer): this;
-
-  /**
-   * Send a voice update to lavalink.
-   * @since 2.1.x
-   * @internal
-   */
-  voiceUpdate(): Promise<void>;
+  handleVoiceUpdate(update: DiscordVoiceState | DiscordVoiceServer): Promise<this>;
 
   /**
    * Send data to lavalink as this player.
@@ -366,7 +363,7 @@ export class Player extends EventEmitter {
    * @param priority Whether or not this is a prioritized operation.
    * @since 1.0.0
    */
-  send(op: string, data?: Dictionary, priority?: boolean): Promise<this>;
+  send(op: string, data?: Dictionary, priority?: boolean): this;
 }
 
 export interface Player {
@@ -375,35 +372,49 @@ export interface Player {
    */
   on(event: "playerUpdate", listener: (update: Lavalink.PlayerUpdate) => any): this;
 
+  once(event: "playerUpdate", listener: (update: Lavalink.PlayerUpdate) => any): this;
+
   /**
    * Emitted when the player receives a player event.
    */
   on(event: "event", listener: (event: Lavalink.Event) => any): this;
+
+  once(event: "event", listener: (event: Lavalink.Event) => any): this;
 
   /**
    * Emitted when the websocket was closed.
    */
   on(event: "closed", listener: (event: Lavalink.WebSocketClosedEvent) => any): this;
 
+  once(event: "closed", listener: (event: Lavalink.WebSocketClosedEvent) => any): this;
+
   /**
    * Emitted when a track stops.
    */
   on(event: "end", listener: (event: Lavalink.TrackEndEvent) => any): this;
+
+  once(event: "end", listener: (event: Lavalink.TrackEndEvent) => any): this;
 
   /**
    * Emitted when the player has ran into an exception.
    */
   on(event: "error", listener: (event: Lavalink.TrackExceptionEvent) => any): this;
 
+  once(event: "error", listener: (event: Lavalink.TrackExceptionEvent) => any): this;
+
   /**
    * Emitted when a player has started a track.
    */
   on(event: "start", listener: (event: Lavalink.TrackStartEvent) => any): this;
 
+  once(event: "start", listener: (event: Lavalink.TrackStartEvent) => any): this;
+
   /**
    * Emitted when a track is stuck.
    */
   on(event: "stuck", listener: (event: Lavalink.TrackStuckEvent) => any): this;
+
+  once(event: "stuck", listener: (event: Lavalink.TrackStuckEvent) => any): this;
 }
 
 export interface PlayOptions {
@@ -423,7 +434,7 @@ export interface PlayOptions {
 
 export interface ConnectOptions {
   /**
-   * If you wanna self deafen the bot.
+   * If you wanna self deafen the bot
    */
   selfDeaf?: boolean;
   /**
@@ -442,7 +453,7 @@ export enum Status {
 
 export class Socket {
   /**
-   * The link manager instance.
+   * The manager instance.
    */
   readonly manager: Manager;
   /**
@@ -489,7 +500,7 @@ export class Socket {
   constructor(manager: Manager, data: SocketData);
 
   /**
-   *
+   * The reconnection options
    */
   get reconnection(): ReconnectOptions;
 
@@ -514,7 +525,7 @@ export class Socket {
    * @param priority If this message should be prioritized.
    * @since 1.0.0
    */
-  send(data: unknown, priority?: boolean): Promise<void>;
+  send(data: unknown, priority?: boolean): void;
 
   /**
    * Connects to the lavalink node.
@@ -551,12 +562,6 @@ export interface SocketData {
   password?: string;
 }
 
-export interface Payload {
-  resolve: (...args: any[]) => unknown;
-  reject: (...args: unknown[]) => unknown;
-  data: unknown;
-}
-
 export abstract class Plugin {
   /**
    * The manager that loaded this plugin.
@@ -575,5 +580,101 @@ export abstract class Plugin {
    * @since 3.0.0
    */
   init(): void;
+}
+
+export class Filters implements Lavalink.FilterMap {
+  /**
+   * The default volume configuration
+   */
+  static DEFAULT_VOLUME: Lavalink.VolumeFilter;
+
+  /**
+   * The default configuration for timescale..
+   */
+  static DEFAULT_TIMESCALE: Lavalink.TimescaleFilter;
+
+  /**
+   * The default karaoke configuration.
+   */
+  static DEFAULT_KARAOKE: Lavalink.KaraokeFilter;
+
+  /**
+   * The default tremolo configuration.
+   */
+  static DEFAULT_TREMOLO: Lavalink.TremoloFilter;
+
+  /**
+   * The player this filters instance is for..
+   */
+  readonly player: Player;
+
+  /**
+   * The timescale filter.
+   * @private
+   */
+  timescale?: Lavalink.TimescaleFilter | null;
+
+  /**
+   * The karaoke filter.
+   * @private
+   */
+  karaoke?: Lavalink.KaraokeFilter | null;
+
+  /**
+   * The equalizer filter.
+   * @private
+   */
+  equalizer: Lavalink.EqualizerFilter;
+
+  /**
+   * The volume filter.
+   * @private
+   */
+  volume: Lavalink.VolumeFilter;
+
+  /**
+   * The tremolo filter.
+   */
+  tremolo: Lavalink.TremoloFilter | null;
+
+  /**
+   * @param player The player instance.
+   */
+  constructor(player: Player);
+
+  /**
+   * Whether the equalizer filter is enabled.
+   * Checks if any of the provided bans doesn't have a gain of 0.0, 0.0 being the default gain.
+   */
+  get isEqualizerEnabled(): boolean;
+
+  /**
+   * Whether the tremolo filter is enabled or not.
+   * Checks if it's null or the depth does not equal 0.0.
+   */
+  get isTremoloEnabled(): boolean;
+
+  /**
+   * Whether the karaoke filter is enabled or not.
+   * Checks if the karaoke property does not equal null.
+   */
+  get isKaraokeEnabled(): boolean;
+
+  /**
+   * Whether the timescale filter is enabled.
+   * Checks if the property does not equal and if any of it's properties doesn't equal 1.0
+   */
+  get isTimescaleEnabled(): boolean;
+
+  /**
+   * The filters payload.
+   */
+  get payload(): Lavalink.FilterMap;
+
+  /**
+   * Applies the filters to the player.
+   * @param prioritize Whether to prioritize the payload.
+   */
+  apply(prioritize?: boolean): this;
 }
 
