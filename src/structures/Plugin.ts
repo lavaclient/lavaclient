@@ -4,14 +4,14 @@ export abstract class Plugin {
   /**
    * The manager that loaded this plugin.
    */
-  public manager!: Manager;
+  manager!: Manager;
 
   /**
    * Called when this plugin is loaded.
    * @param manager The manager that loaded this plugin.
    * @since 3.0.0
    */
-  public load(manager: Manager): void {
+  load(manager: Manager): void {
     this.manager = manager;
     return;
   }
@@ -20,7 +20,7 @@ export abstract class Plugin {
    * Called when the manager is initialized.
    * @since 3.0.0
    */
-  public init(): void {
+  init(): void {
     return;
   }
 }
