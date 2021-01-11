@@ -15,7 +15,7 @@ export class Structures {
    * @param extend The extender function.
    * @since 2.0.0
    */
-  public static extend<K extends keyof Classes, E extends Classes[K]>(
+  static extend<K extends keyof Classes, E extends Classes[K]>(
     name: K,
     extend: (base: Classes[K]) => E
   ): E {
@@ -28,7 +28,7 @@ export class Structures {
    * @param name The structure to get.
    * @since 2.0.0
    */
-  public static get<K extends keyof Classes>(name: K): Classes[K] {
+  static get<K extends keyof Classes>(name: K): Classes[K] {
     return this.structures[name];
   }
 }

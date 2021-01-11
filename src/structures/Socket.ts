@@ -15,52 +15,52 @@ export class Socket {
   /**
    * The manager instance.
    */
-  public readonly manager: Manager;
+  readonly manager: Manager;
 
   /**
    * This lavalink nodes identifier.
    */
-  public readonly id: string;
+  readonly id: string;
 
   /**
    * Number of remaining reconnect tries.
    */
-  public remainingTries: number;
+  remainingTries: number;
 
   /**
    * The status of this lavalink node.
    */
-  public status: Status;
+  status: Status;
 
   /**
    * Hostname of the lavalink node.
    */
-  public host: string;
+  host: string;
 
   /**
    * Port of the lavalink node.
    */
-  public port?: number;
+  port?: number;
 
   /**
    * Password of the lavalink node.
    */
-  public password!: string
+  password!: string;
 
   /**
    * The performance stats of this player.
    */
-  public stats: NodeStats;
+  stats: NodeStats;
 
   /**
    * The resume key.
    */
-  public resumeKey?: string;
+  resumeKey?: string;
 
   /**
    * Whether or not this lavalink node uses an ssl.
    */
-  public secure: boolean;
+  secure: boolean;
 
   /**
    * The timeout for reconnecting.
@@ -81,7 +81,7 @@ export class Socket {
    * @param manager
    * @param data
    */
-  public constructor(manager: Manager, data: SocketData) {
+  constructor(manager: Manager, data: SocketData) {
     this.manager = manager;
     this.id = data.id;
 
@@ -94,26 +94,39 @@ export class Socket {
     this.status = Status.IDLE;
     this.queue = [];
     this.stats = {
-      cpu: { cores: 0, lavalinkLoad: 0, systemLoad: 0 },
-      frameStats: { deficit: 0, nulled: 0, sent: 0 },
-      memory: { allocated: 0, free: 0, reservable: 0, used: 0 },
+      cpu: {
+        cores: 0,
+        lavalinkLoad: 0,
+        systemLoad: 0,
+      },
+      frameStats: {
+        deficit: 0,
+        nulled: 0,
+        sent: 0,
+      },
+      memory: {
+        allocated: 0,
+        free: 0,
+        reservable: 0,
+        used: 0,
+      },
       players: 0,
       playingPlayers: 0,
-      uptime: 0
+      uptime: 0,
     };
   }
 
   /**
    * The reconnection options
    */
-  public get reconnection(): ReconnectOptions {
+  get reconnection(): ReconnectOptions {
     return this.manager.options.reconnect;
   }
 
   /**
    * If this node is connected or not.
    */
-  public get connected(): boolean {
+  get connected(): boolean {
     return this.ws !== undefined
       && this.ws.readyState === WebSocket.OPEN;
   }
@@ -121,14 +134,14 @@ export class Socket {
   /**
    * The address of this lavalink node.
    */
-  public get address(): string {
+  get address(): string {
     return `${this.host}${this.port ? `:${this.port}` : ""}`;
   }
 
   /**
    * Get the total penalty count for this node.
    */
-  public get penalties() {
+  get penalties() {
     const cpu = Math.pow(1.05, 100 * this.stats.cpu.systemLoad) * 10 - 10;
 
     let deficit = 0, nulled = 0;
@@ -147,17 +160,19 @@ export class Socket {
    * @param priority If this message should be prioritized.
    * @since 1.0.0
    */
-  public send(data: unknown, priority = false) {
+  send(data: unknown, priority = false) {
     data = JSON.stringify(data);
     this.queue[priority ? "unshift" : "push"](data);
-    if (this.connected) this._processQueue();
+    if (this.connected) {
+      this._processQueue();
+    }
   }
 
   /**
    * Connects to the lavalink node.
    * @since 1.0.0
    */
-  public connect(): void {
+  connect(): void {
     if (this.status !== Status.RECONNECTING) {
       this.status = Status.CONNECTING;
     }
@@ -172,7 +187,7 @@ export class Socket {
       authorization: this.password,
       "Num-Shards": this.manager.options.shards as number,
       "User-ID": this.manager.userId as string,
-      "Client-Name": "lavaclient"
+      "Client-Name": "lavaclient",
     };
 
     if (this.resumeKey) {
@@ -189,7 +204,7 @@ export class Socket {
   /**
    * Reconnect to the lavalink node.
    */
-  public reconnect(): void {
+  reconnect(): void {
     if (this.remainingTries !== 0) {
       this.remainingTries -= 1;
       this.status = Status.RECONNECTING;
@@ -220,7 +235,7 @@ export class Socket {
       return this.send({
         op: "configureResuming",
         timeout: this.manager.resuming.timeout ?? 60000,
-        key: this.resumeKey
+        key: this.resumeKey,
       }, true);
     }
   }
@@ -277,7 +292,9 @@ export class Socket {
     }
 
     if (event.code !== 1000 && event.reason !== "destroy") {
-      if (this.reconnection.auto) this.reconnect();
+      if (this.reconnection.auto) {
+        this.reconnect();
+      }
     }
   }
 
@@ -301,7 +318,9 @@ export class Socket {
 
     while (this.queue.length > 0) {
       const payload = this.queue.shift();
-      if (!payload) return;
+      if (!payload) {
+        return;
+      }
       this._send(payload);
     }
   }
@@ -322,10 +341,12 @@ export class Socket {
    * @private
    */
   private _cleanup(): void {
-    delete this.ws!.onclose;
-    delete this.ws!.onopen;
-    delete this.ws!.onmessage;
-    delete this.ws!.onerror;
+    if (this.ws) {
+      this.ws.onclose =
+        this.ws.onerror =
+          this.ws.onopen =
+            this.ws.onmessage = () => void 0;
+    }
   }
 }
 

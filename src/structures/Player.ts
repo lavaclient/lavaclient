@@ -4,75 +4,75 @@ import { Structures } from "../Structures";
 import type Lavalink from "@lavaclient/types";
 import type { Filters } from "./Filters";
 import type { Socket } from "./Socket";
-import type { Dictionary, Manager, VoiceServer, VoiceState } from "./Manager";
+import type { Dictionary, Manager, DiscordVoiceServer, DiscordVoiceState } from "./Manager";
 
 export class Player extends EventEmitter {
   /**
    * The id of the guild this player belongs to.
    */
-  public readonly guild: string;
+  readonly guild: string;
 
   /**
    * The socket this player belongs to.
    */
-  public socket: Socket;
+  socket: Socket;
 
   /**
    * The id of the voice channel this player is connected to.
    */
-  public channel: string | undefined;
+  channel: string | undefined;
 
   /**
    * Whether this player is paused or not.
    */
-  public paused: boolean;
+  paused: boolean;
 
   /**
    * The current playing track.
    */
-  public track: string | undefined;
+  track: string | undefined;
 
   /**
    * Whether this player is playing or not.
    */
-  public playing: boolean;
+  playing: boolean;
 
   /**
    * The unix timestamp in which this player started playing.
    */
-  public timestamp: number | undefined;
+  timestamp: number | undefined;
 
   /**
    * Track position in milliseconds.
    */
-  public position: number;
+  position: number;
 
   /**
    * The current volume of this player.
    */
-  public volume: number;
+  volume: number;
 
   /**
    * Equalizer bands this player is using.
    */
-  public equalizer: Lavalink.EqualizerBand[];
+  equalizer: Lavalink.EqualizerBand[];
 
   /**
    * If this player is connected to a voice channel.
    */
-  public connected: boolean;
+  connected: boolean;
 
   /**
    * The voice state for this player.
    * @internal
    */
-  private _state: VoiceState | undefined;
+  private _sessionId: string | undefined;
 
   /**
    * The voice server for this player.
    * @internal
    */
-  private _server: VoiceServer | undefined;
+  private _server: DiscordVoiceServer | undefined;
 
   /**
    * The filters instance.
@@ -84,7 +84,7 @@ export class Player extends EventEmitter {
    * @param socket The socket this player belongs to.
    * @param guild The guild that this player is for.
    */
-  public constructor(socket: Socket, guild: string) {
+  constructor(socket: Socket, guild: string) {
     super();
 
     this.socket = socket;
@@ -105,7 +105,7 @@ export class Player extends EventEmitter {
    * The filters instance
    * @since 3.2.0
    */
-  public get filters(): Filters {
+  get filters(): Filters {
     if (!this.#filters) {
       this.#filters = new (Structures.get("filters"))(this);
     }
@@ -117,7 +117,7 @@ export class Player extends EventEmitter {
    * The head manager of everything.
    * @since 2.1.0
    */
-  public get manager(): Manager {
+  get manager(): Manager {
     return this.socket.manager;
   }
 
@@ -127,21 +127,20 @@ export class Player extends EventEmitter {
    * @param options Options for self mute, self deaf, or force connecting.
    * @since 2.1.x
    */
-  public connect(channel: string | null | Record<string, any>, options: ConnectOptions = {}): this {
+  connect(channel: string | null | Record<string, any>, options: ConnectOptions = {}): this {
     const channelId = typeof channel === "object"
       ? channel?.id
       : channel;
 
     this.channel = channelId;
-    this.connected = !!channelId;
     this.socket.manager.send(this.guild, {
       op: 4,
       d: {
         guild_id: this.guild,
         channel_id: channelId ?? null,
         self_deaf: options.selfDeaf ?? false,
-        self_mute: options.selfMute ?? false
-      }
+        self_mute: options.selfMute ?? false,
+      },
     });
 
     return this;
@@ -151,7 +150,7 @@ export class Player extends EventEmitter {
    * Disconnect from the voice channel.
    * @since 2.1.x
    */
-  public disconnect(): this {
+  disconnect(): this {
     return this.connect(null);
   }
 
@@ -160,11 +159,13 @@ export class Player extends EventEmitter {
    * @param socket The socket to move to.
    * @since 3.0.14
    */
-  public async move(socket: Socket): Promise<Player> {
+  async move(socket: Socket): Promise<Player> {
     this.socket = socket;
 
     await this.destroy();
-    if (this.channel) this.connect(this.channel);
+    if (this.channel) {
+      this.connect(this.channel);
+    }
 
     return this;
   }
@@ -175,17 +176,16 @@ export class Player extends EventEmitter {
    * @param options Play options to send along with the track.
    * @since 1.x.x
    */
-  public play(track: string | Lavalink.Track, options: PlayOptions = {}): this {
-    return this.send("play", Object.assign({
-      track: typeof track === "object" ? track.track : track
-    }, options))
+  play(track: string | Lavalink.Track, options: PlayOptions = {}): this {
+    track = typeof track === "string" ? track : track.track;
+    return this.send("play", Object.assign({ track }, options));
   }
 
   /**
    * Change the volume of the player. You can omit the volume param to reset back to 100
    * @param volume May range from 0 to 1000, defaults to 100
    */
-  public setVolume(volume: number = 100): this {
+  setVolume(volume: number = 100): this {
     if (volume < 0 || volume > 1000) {
       throw new RangeError(`Player#setVolume (${this.guild}): Volume must be within the 0 to 1000 range.`);
     }
@@ -198,7 +198,7 @@ export class Player extends EventEmitter {
    * @param state Pause state, defaults to true.
    * @since 1.x.x
    */
-  public pause(state = true): this {
+  pause(state = true): this {
     this.paused = state;
     this.playing = !state;
     return this.send("pause", { pause: state });
@@ -208,7 +208,7 @@ export class Player extends EventEmitter {
    * Resumes the player, if paused.
    * @since 1.x.x
    */
-  public resume(): this {
+  resume(): this {
     return this.pause(false);
   }
 
@@ -216,7 +216,7 @@ export class Player extends EventEmitter {
    * Stops the current playing track.
    * @since 1.x.x
    */
-  public stop(): this {
+  stop(): this {
     delete this.track;
     delete this.timestamp;
     this.position = 0;
@@ -228,8 +228,10 @@ export class Player extends EventEmitter {
    * Seek to a position in the current song.
    * @param position The position to seek to in milliseconds.
    */
-  public seek(position: number): this {
-    if (!this.track) throw new Error(`Player#seek() ${this.guild}: Not playing anything.`);
+  seek(position: number): this {
+    if (!this.track) {
+      throw new Error(`Player#seek() ${this.guild}: Not playing anything.`);
+    }
     return this.send("seek", { position });
   }
 
@@ -240,7 +242,7 @@ export class Player extends EventEmitter {
    *
    * @deprecated Please use Filters#equalizer and Filters#apply
    */
-  public setEqualizer(bands: Lavalink.EqualizerBand[]): this {
+  setEqualizer(bands: Lavalink.EqualizerBand[]): this {
     this.filters.equalizer = bands;
     this.filters.apply();
     return this;
@@ -251,7 +253,7 @@ export class Player extends EventEmitter {
    * @param disconnect Disconnect from the voice channel.
    * @since 1.x.x
    */
-  public destroy(disconnect = false): this {
+  destroy(disconnect = false): this {
     if (disconnect) {
       this.disconnect();
     }
@@ -264,31 +266,22 @@ export class Player extends EventEmitter {
    * @since 1.x.x
    * @private
    */
-  public provide(update: VoiceState | VoiceServer): this {
-    if ("token" in update) {
-      this._server = update;
-    } else {
-      this._state = update;
+  async handleVoiceUpdate(update: DiscordVoiceState | DiscordVoiceServer): Promise<this> {
+    "token" in update
+      ? this._server = update
+      : this._sessionId = update.session_id;
+
+    if (this._sessionId && this._server) {
+      await this.send("voiceUpdate", {
+        sessionId: this._sessionId,
+        event: this._server,
+      });
+
+      this.connected = true;
+      this._server = this._sessionId = undefined;
     }
 
     return this;
-  }
-
-  /**
-   * Send a voice update to lavalink.
-   * @since 2.1.x
-   * @internal
-   */
-  public async voiceUpdate(): Promise<void> {
-    if (!this._server || !this._state) return;
-
-    await this.send("voiceUpdate", {
-      sessionId: this._state.session_id,
-      event: this._server,
-    }, true);
-
-    delete this._state;
-    delete this._server;
   }
 
   /**
@@ -298,8 +291,10 @@ export class Player extends EventEmitter {
    * @param priority Whether or not this is a prioritized operation.
    * @since 1.0.0
    */
-  public send(op: string, data: Dictionary = {}, priority = false): this {
-    this.socket.send({ op, ...data, guildId: this.guild }, priority);
+  send(op: string, data: Dictionary = {}, priority = false): this {
+    data.guildId ??= this.guild;
+    this.socket.send({ op, ...data }, priority);
+
     return this;
   }
 
@@ -309,10 +304,13 @@ export class Player extends EventEmitter {
   private async _event(event: Lavalink.Event): Promise<void> {
     switch (event.type) {
       case "TrackEndEvent":
-        if (event.reason !== "REPLACED") this.playing = false;
-        delete this.timestamp;
-        delete this.track;
+        if (event.reason !== "REPLACED") {
+          this.playing = false;
+        }
+
+        this.timestamp = this.track = undefined;
         this.emit("end", event);
+
         break;
       case "TrackExceptionEvent":
         this.emit("error", event);
@@ -323,7 +321,7 @@ export class Player extends EventEmitter {
         this.emit("start", event);
         break;
       case "TrackStuckEvent":
-        await this.stop()
+        await this.stop();
         this.emit("stuck", event);
         break;
       case "WebSocketClosedEvent":
@@ -336,7 +334,10 @@ export class Player extends EventEmitter {
    * @private
    */
   private _playerUpdate(update: Lavalink.PlayerUpdate): void {
-    if (!update.state) return;
+    if (!update.state) {
+      return;
+    }
+
     this.position = update.state.position;
     this.timestamp = update.state.time;
   }
@@ -347,36 +348,43 @@ export interface Player {
    * When the player receives an update from lavalink.
    */
   on(event: "playerUpdate", listener: (update: Lavalink.PlayerUpdate) => any): this;
+  once(event: "playerUpdate", listener: (update: Lavalink.PlayerUpdate) => any): this;
 
   /**
    * Emitted when the player receives a player event.
    */
   on(event: "event", listener: (event: Lavalink.Event) => any): this;
+  once(event: "event", listener: (event: Lavalink.Event) => any): this;
 
   /**
    * Emitted when the websocket was closed.
    */
   on(event: "closed", listener: (event: Lavalink.WebSocketClosedEvent) => any): this;
+  once(event: "closed", listener: (event: Lavalink.WebSocketClosedEvent) => any): this;
 
   /**
    * Emitted when a track stops.
    */
   on(event: "end", listener: (event: Lavalink.TrackEndEvent) => any): this;
+  once(event: "end", listener: (event: Lavalink.TrackEndEvent) => any): this;
 
   /**
    * Emitted when the player has ran into an exception.
    */
   on(event: "error", listener: (event: Lavalink.TrackExceptionEvent) => any): this;
+  once(event: "error", listener: (event: Lavalink.TrackExceptionEvent) => any): this;
 
   /**
    * Emitted when a player has started a track.
    */
   on(event: "start", listener: (event: Lavalink.TrackStartEvent) => any): this;
+  once(event: "start", listener: (event: Lavalink.TrackStartEvent) => any): this;
 
   /**
    * Emitted when a track is stuck.
    */
   on(event: "stuck", listener: (event: Lavalink.TrackStuckEvent) => any): this;
+  once(event: "stuck", listener: (event: Lavalink.TrackStuckEvent) => any): this;
 }
 
 export interface PlayOptions {
@@ -384,10 +392,12 @@ export interface PlayOptions {
    * The number of milliseconds to offset the track by.
    */
   startTime?: number;
+
   /**
    * The number of milliseconds at which point the track should stop playing
    */
   endTime?: number;
+
   /**
    * This operation will be ignored if a track is already playing or paused.
    */
@@ -396,9 +406,10 @@ export interface PlayOptions {
 
 export interface ConnectOptions {
   /**
-   * If you wanna self deafen the bot.
+   * If you wanna self deafen the bot
    */
   selfDeaf?: boolean;
+
   /**
    * If you want to self mute the bot.
    */

@@ -11,41 +11,48 @@ import type { Plugin } from "./Plugin";
 import type { Player } from "./Player";
 
 const defaults = {
-  resuming: { key: Math.random().toString(32), timeout: 60000 },
-  reconnect: { auto: true, delay: 15000, maxTries: 5 },
+  resuming: {
+    key: Math.random().toString(32),
+    timeout: 60000,
+  },
+  reconnect: {
+    auto: true,
+    delay: 15000,
+    maxTries: 5,
+  },
   shards: 1,
-} as ManagerOptions
+} as ManagerOptions;
 
 export class Manager extends EventEmitter {
   /**
    * A map of connected sockets.
    */
-  public readonly sockets: Map<string, Socket>;
+  readonly sockets: Map<string, Socket>;
 
   /**
    * A map of connected players.
    */
-  public readonly players: Map<string, Player>;
+  readonly players: Map<string, Player>;
 
   /**
    * The options this manager was created with.
    */
-  public options: Required<ManagerOptions>;
+  options: Required<ManagerOptions>;
 
   /**
    * The client's user id.
    */
-  public userId: string | undefined;
+  userId: string | undefined;
 
   /**
    * A send method for sending voice state updates to discord.
    */
-  public send: Send;
+  send: Send;
 
   /**
    * Resume options.
    */
-  public resuming: ResumeOptions;
+  resuming: ResumeOptions;
 
   /**
    * An array of registered plugins.
@@ -61,7 +68,7 @@ export class Manager extends EventEmitter {
    * @param nodes An array of sockets to connect to.
    * @param options
    */
-  public constructor(nodes: SocketData[], options: ManagerOptions) {
+  constructor(nodes: SocketData[], options: ManagerOptions) {
     super();
 
     options = Object.assign(options, defaults);
@@ -96,7 +103,7 @@ export class Manager extends EventEmitter {
   /**
    * Ideal nodes to use.
    */
-  public get ideal(): Socket[] {
+  get ideal(): Socket[] {
     return [ ...this.sockets.values() ].sort((a, b) => a.penalties - b.penalties);
   }
 
@@ -105,7 +112,7 @@ export class Manager extends EventEmitter {
    * @param userId The client user id.
    * @since 1.0.0
    */
-  public init(userId: string = this.userId!): void {
+  init(userId: string = this.userId!): void {
     if (!userId) {
       throw new Error("Provide a client id for lavalink to use.");
     } else {
@@ -135,7 +142,7 @@ export class Manager extends EventEmitter {
    * @param plugin
    * @since 2.x.x
    */
-  public use(plugin: Plugin): Manager {
+  use(plugin: Plugin): Manager {
     plugin.load(this);
     this.plugins = this.plugins.concat([ plugin ]);
     return this;
@@ -146,11 +153,10 @@ export class Manager extends EventEmitter {
    * @param update The voice server update sent by Discord.
    * @since 1.0.0
    */
-  public async serverUpdate(update: VoiceServer): Promise<void> {
+  async serverUpdate(update: DiscordVoiceServer): Promise<void> {
     const player = this.players.get(update.guild_id);
     if (player) {
-      player.provide(update);
-      await player.voiceUpdate()
+      await player.handleVoiceUpdate(update);
     }
 
     return;
@@ -161,7 +167,7 @@ export class Manager extends EventEmitter {
    * @param update The voice state update sent by Discord.
    * @since 1.0.0
    */
-  public async stateUpdate(update: VoiceState): Promise<void> {
+  async stateUpdate(update: DiscordVoiceState): Promise<void> {
     const player = this.players.get(update.guild_id);
     if (player && update.user_id === this.userId) {
       if (update.channel_id !== player.channel) {
@@ -169,28 +175,29 @@ export class Manager extends EventEmitter {
         player.channel = update.channel_id!;
       }
 
-      player.provide(update);
-      await player.voiceUpdate();
+      await player.handleVoiceUpdate(update);
     }
   }
 
   /**
    * Create a player.
    * @param guild The guild this player is for.
+   * @param socket The socket to use.
    * @since 2.1.0
    */
-  public create(guild: string | Dictionary): Player {
-    const id = typeof guild === "string" ? guild : guild.id;
+  create(guild: string | Dictionary, socket: Socket = this.ideal[0]): Player {
+    const id = typeof guild === "string" ? guild : guild.id,
+      existing = this.players.get(id);
 
-    const existing = this.players.get(id);
-    if (existing) return existing;
+    if (existing) {
+      return existing;
+    }
 
-    const sock = this.ideal[0];
-    if (!sock) {
+    if (!socket) {
       throw new Error("Manager#create(): No available nodes.");
     }
 
-    const player = new (Structures.get("player"))(sock, id);
+    const player = new (Structures.get("player"))(socket, id);
     this.players.set(id, player);
 
     return player;
@@ -201,7 +208,7 @@ export class Manager extends EventEmitter {
    * @param guild The guild id of the player to destroy.
    * @since 2.1.0
    */
-  public async destroy(guild: string | Dictionary): Promise<boolean> {
+  async destroy(guild: string | Dictionary): Promise<boolean> {
     const id = typeof guild === "string" ? guild : guild.id;
     const player = this.players.get(id);
 
@@ -217,23 +224,23 @@ export class Manager extends EventEmitter {
    * Search lavalink for songs.
    * @param query The search query.
    */
-  public async search(query: string): Promise<LoadTracksResponse> {
+  async search(query: string): Promise<LoadTracksResponse> {
     return new Promise(async (resolve, reject) => {
       const socket = this.ideal[0];
       if (!socket) {
-        throw new Error("Manager#create(): No available sockets.")
+        throw new Error("Manager#create(): No available sockets.");
       }
 
       const { request } = socket.secure ? https : http;
       let res = request(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${query}`, {
         headers: {
-          authorization: socket.password
-        }
+          authorization: socket.password,
+        },
       }, (res) => {
         let data = Buffer.alloc(0);
         res.on("data", (chunk) => data = Buffer.concat([ data, chunk ]));
         res.on("error", (e) => reject(e));
-        res.on("end", () => resolve(JSON.parse(data.toString())))
+        res.on("end", () => resolve(JSON.parse(data.toString())));
       });
 
       res.on("error", e => reject(e));
@@ -332,7 +339,7 @@ export interface ResumeOptions {
 /**
  * @internal
  */
-export interface VoiceServer {
+export interface DiscordVoiceServer {
   token: string;
   guild_id: string;
   endpoint: string;
@@ -341,14 +348,9 @@ export interface VoiceServer {
 /**
  * @internal
  */
-export interface VoiceState {
+export interface DiscordVoiceState {
   channel_id?: string;
   guild_id: string;
   user_id: string;
   session_id: string;
-  deaf?: boolean;
-  mute?: boolean;
-  self_deaf?: boolean;
-  self_mute?: boolean;
-  suppress?: boolean;
 }
