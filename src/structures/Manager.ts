@@ -232,7 +232,7 @@ export class Manager extends EventEmitter {
       }
 
       const { request } = socket.secure ? https : http;
-      let res = request(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${query}`, {
+      let res = request(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${encodeURIComponent(query)}`, {
         headers: {
           authorization: socket.password,
         },
