@@ -1,12 +1,5 @@
-import { Socket } from "./structures/Socket";
-import { Player } from "./structures/Player";
-import { Filters } from "./structures/Filters";
-
 export class Structures {
   private static structures: Classes = {
-    player: Player,
-    socket: Socket,
-    filters: Filters
   };
 
   /**
@@ -34,7 +27,4 @@ export class Structures {
 }
 
 export interface Classes {
-  socket: typeof Socket;
-  player: typeof Player;
-  filters: typeof Filters;
 }
