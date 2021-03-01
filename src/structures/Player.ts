@@ -242,9 +242,14 @@ export class Player extends EventEmitter {
    *
    * @deprecated Please use Filters#equalizer and Filters#apply
    */
-  setEqualizer(bands: Lavalink.EqualizerBand[]): this {
-    this.filters.equalizer = bands;
-    this.filters.apply();
+  setEqualizer(bands: Lavalink.EqualizerBand[], asFilter: Boolean = false): this {
+    if (asFilter) {
+      this.filters.equalizer = bands;
+      this.filters.apply();
+    } else {
+      this.send("equalizer", { bands })
+    }
+
     return this;
   }
 
