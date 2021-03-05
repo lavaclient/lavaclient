@@ -47,8 +47,18 @@ await manager.init("your client id.");
 // Use these two methods when receiving voice state and server updates.
 await manager.stateUpdate(<update>);
 await manager.serverUpdate(<update>);
-
 ```
+
+## Bot Showcase
+
+> Here's a few bots that use Lavaclient in production!
+
+- [Stereo](https://top.gg/bot/725808086933176410/vote) by [@Sxmurai](https://github.com/Sxmurai)
+- [Asuna](https://top.gg/bot/420907324945989632) by [NekoJade](https://github.com/Jade3375)
+
+If you'd like your bot listed just join our discord and ask `2D#5773`!
+
+---
 
 [discord]: https://discordapp.com/api/guilds/733105160628469793/embed.png
 [codacy]: https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299
