@@ -6,7 +6,7 @@
   "types": "index.d.ts",
   "repository": "git@github.com:Lavaclient/lavaclient.git",
   "author": "MeLike2D",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "private": false,
   "homepage": "https://lavaclient.js.org/",
   "keywords": [
