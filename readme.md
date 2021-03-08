@@ -4,10 +4,10 @@
 
 A simple, easy-to-use, and flexible node.js lavalink client.
 
-- **Flexible**: Lavaclient can be used with any discord library for node.js. Each class can be changed relatively easily, making lavaclient completely customizable.
-- **Plugins**: Provides a simple plugin class that can be loaded by the Manager, see the plugin guide.
+- **Flexible**: LavaClient doesn't depend on a specific Discord library. Each class can be changed relatively easily, allowing everything to be customized.
+- **Plugins**: Provides a simple `Plugin` class that the Manager can load, you can view the [Plugins Guide](https://lavaclient.js.org/guide/plugins.html) for a basic implementation.
 - **Easy-to-use**: LavaClient has a neat and user-friendly promise-based api.
-- **Lightweight**: Designed to be small and performant, it's a great choice for any sized project.
+- **Performant**: Designed to be small and performant, it's a great choice for any sized project.
 
 ## Installation
 
@@ -53,7 +53,7 @@ await manager.serverUpdate(<update>);
 
 > Here's a few bots that use Lavaclient in production!
 
-- [Stereo](https://top.gg/bot/725808086933176410/vote) by [@Sxmurai](https://github.com/Sxmurai)
+- [Stereo](https://top.gg/bot/725808086933176410) by [@Sxmurai](https://github.com/Sxmurai)
 - [Asuna](https://top.gg/bot/420907324945989632) by [NekoJade](https://github.com/Jade3375)
 
 If you'd like your bot listed just join our discord and ask `2D#5773`!
@@ -64,6 +64,4 @@ If you'd like your bot listed just join our discord and ask `2D#5773`!
 [codacy]: https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299
 [version]: https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600
 
----
-
-[MeLike2D](https://melike2d.me/) &copy; 2020
+[melike2d](https://github.com/melike2d) &copy; 2020
