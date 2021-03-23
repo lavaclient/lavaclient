@@ -228,31 +228,10 @@ export class Manager extends EventEmitter {
     if (!socket) {
       throw new Error("Manager#create(): No available sockets.");
     }
-    
+
     return fetch(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${encodeURIComponent(query)}`)
       .header('authorization', socket.password)
-      .json<LoadTracksResponse>();
-    // return new Promise(async (resolve, reject) => {
-    //   const socket = this.ideal[0];
-    //   if (!socket) {
-    //     throw new Error("Manager#create(): No available sockets.");
-    //   }
-
-    //   const { request } = socket.secure ? https : http;
-    //   let res = request(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${encodeURIComponent(query)}`, {
-    //     headers: {
-    //       authorization: socket.password,
-    //     },
-    //   }, (res) => {
-    //     let data = Buffer.alloc(0);
-    //     res.on("data", (chunk) => data = Buffer.concat([ data, chunk ]));
-    //     res.on("error", (e) => reject(e));
-    //     res.on("end", () => resolve(JSON.parse(data.toString())));
-    //   });
-
-    //   res.on("error", e => reject(e));
-    //   res.end();
-    // });
+      .json<LoadTracksResponse>();    
   }
 }
 
