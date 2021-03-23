@@ -1,5 +1,4 @@
-import * as https from "https";
-import * as http from "http";
+import fetch from 'petitio';
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 
@@ -225,27 +224,14 @@ export class Manager extends EventEmitter {
    * @param query The search query.
    */
   async search(query: string): Promise<LoadTracksResponse> {
-    return new Promise(async (resolve, reject) => {
-      const socket = this.ideal[0];
-      if (!socket) {
-        throw new Error("Manager#create(): No available sockets.");
-      }
+    const socket = this.ideal[0];
+    if (!socket) {
+      throw new Error("Manager#create(): No available sockets.");
+    }
 
-      const { request } = socket.secure ? https : http;
-      let res = request(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${encodeURIComponent(query)}`, {
-        headers: {
-          authorization: socket.password,
-        },
-      }, (res) => {
-        let data = Buffer.alloc(0);
-        res.on("data", (chunk) => data = Buffer.concat([ data, chunk ]));
-        res.on("error", (e) => reject(e));
-        res.on("end", () => resolve(JSON.parse(data.toString())));
-      });
-
-      res.on("error", e => reject(e));
-      res.end();
-    });
+    return fetch(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${encodeURIComponent(query)}`)
+      .header('authorization', socket.password)
+      .json<LoadTracksResponse>();    
   }
 }
 
