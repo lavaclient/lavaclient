@@ -1,5 +1,5 @@
 {
-  "name": "@dicedtomato/lavaclient",
+  "name": "lavaclient",
   "version": "3.2.6",
   "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
   "main": "dist/index.js",
