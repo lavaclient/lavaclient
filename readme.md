@@ -54,7 +54,6 @@ await manager.serverUpdate(<update>);
 > Here's a few bots that use Lavaclient in production!
 
 - [Stereo](https://top.gg/bot/725808086933176410) by [@Sxmurai](https://github.com/Sxmurai)
-- [Asuna](https://top.gg/bot/420907324945989632) by [NekoJade](https://github.com/Jade3375)
 
 If you'd like your bot listed just join our discord and ask `2D#5773`!
 
