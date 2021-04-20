@@ -1,6 +1,6 @@
 # LavaClient
 
-[![discord server][discord]](https://discord.gg/vuJxnYk) &bull; [![codacy rating][codacy]](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&utm_medium=referral&utm_content=Lavaclient/lavaclient&utm_campaign=Badge_Grade) &bull; [![npm version][version]](https://npmjs.com/lavaclient)
+[![discord server][discord]](https://discord.gg/CH9ubGPMV6) &bull; [![codacy rating][codacy]](https://www.codacy.com/gh/Lavaclient/lavaclient?utm_source=github.com&utm_medium=referral&utm_content=Lavaclient/lavaclient&utm_campaign=Badge_Grade) &bull; [![npm version][version]](https://npmjs.com/lavaclient)
 
 A simple, easy-to-use, and flexible node.js lavalink client.
 
@@ -21,7 +21,7 @@ yarn add lavaclient
 
 ## Usage
 
-> Documentation: <https://lavaclient.js.org/> *outdated (join our [support server](https://discord.gg/vuJxnYk) for updates)*
+> Documentation: <https://lavaclient.js.org/> *outdated (join our [support server](https://discord.gg/CH9ubGPMV6) for updates)*
 
 ```ts
 import LavaClient from "lavaclient";
@@ -59,7 +59,7 @@ If you'd like your bot listed just join our discord and ask `2D#5773`!
 
 ---
 
-[discord]: https://discordapp.com/api/guilds/733105160628469793/embed.png
+[discord]: https://discordapp.com/api/guilds/830616783199010857/embed.png
 [codacy]: https://api.codacy.com/project/badge/Grade/fe049eb85ee74900ae764fc5af6a6299
 [version]: https://img.shields.io/npm/v/lavaclient.svg?maxAge=3600
 
