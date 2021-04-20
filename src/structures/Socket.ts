@@ -229,7 +229,7 @@ export class Socket {
    * @since 1.0.0
    */
   private configureResuming() {
-    if (this.reconnection !== null) {
+    if (this.manager.resuming !== null) {
       this.resumeKey = this.manager.resuming.key ?? Math.random().toString(32);
 
       return this.send({
