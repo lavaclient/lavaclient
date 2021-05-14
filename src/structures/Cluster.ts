@@ -6,6 +6,6 @@ export class Lavaclient extends EventEmitter {
   }
 }
 
-export interface LavaclientOptions {
+export interface ClusterOptions {
 
 }
