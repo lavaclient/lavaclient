@@ -189,7 +189,8 @@ export class Player extends EventEmitter {
     if (volume < 0 || volume > 1000) {
       throw new RangeError(`Player#setVolume (${this.guild}): Volume must be within the 0 to 1000 range.`);
     }
-
+    
+    this.volume = volume
     return this.send("volume", { volume });
   }
 
