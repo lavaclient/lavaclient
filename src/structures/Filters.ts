@@ -1,23 +1,16 @@
 import type { Player } from "./Player";
-import type {
-  EqualizerFilter,
-  Filters as FilterMap,
-  KaraokeFilter,
-  TimescaleFilter,
-  TremoloFilter,
-  VolumeFilter
-} from "@lavaclient/types";
+import Lavalink from "@lavaclient/types";
 
-export class Filters implements FilterMap {
+export class Filters {
   /**
    * The default volume configuration
    */
-  static DEFAULT_VOLUME: VolumeFilter = 1;
+  static DEFAULT_VOLUME: Lavalink.VolumeFilter = 1;
 
   /**
    * The default configuration for timescale..
    */
-  static DEFAULT_TIMESCALE: TimescaleFilter = {
+  static DEFAULT_TIMESCALE: Lavalink.TimescaleFilter = {
     rate: 1,
     speed: 1,
     pitch: 1
@@ -26,7 +19,7 @@ export class Filters implements FilterMap {
   /**
    * The default karaoke configuration.
    */
-  static DEFAULT_KARAOKE: KaraokeFilter = {
+  static DEFAULT_KARAOKE: Lavalink.KaraokeFilter = {
     level: 1,
     monoLevel: 1,
     filterBand: 220,
@@ -36,7 +29,7 @@ export class Filters implements FilterMap {
   /**
    * The default tremolo configuration.
    */
-  static DEFAULT_TREMOLO: TremoloFilter = {
+  static DEFAULT_TREMOLO: Lavalink.TremoloFilter = {
     depth: .5,
     frequency: 2
   }
@@ -48,33 +41,44 @@ export class Filters implements FilterMap {
 
   /**
    * The timescale filter.
-   * @private
    */
-  timescale?: TimescaleFilter | null;
+  timescale?: Lavalink.TimescaleFilter;
 
   /**
    * The karaoke filter.
-   * @private
    */
-  karaoke?: KaraokeFilter | null;
+  karaoke?: Lavalink.KaraokeFilter;
 
   /**
    * The equalizer filter.
-   * @private
    */
-  equalizer: EqualizerFilter;
+  equalizer: Lavalink.EqualizerFilter;
+
+  /**
+   * The distortion filter.
+   */
+  distortion?: Lavalink.DistortionFilter;
 
   /**
    * The volume filter.
-   * @private
    */
-  volume: VolumeFilter;
+  volume: Lavalink.VolumeFilter;
 
   /**
    * The tremolo filter.
    */
-  tremolo: TremoloFilter | null;
+  tremolo?: Lavalink.TremoloFilter;
 
+  /**
+   * The rotation filter.
+   */
+  rotation?: Lavalink.RotationFilter;
+
+  /**
+   * The vibrato filter.
+   */
+  vibrato?: Lavalink.VibratoFilter;
+  
   /**
    * @param player The player instance.
    */
@@ -83,9 +87,17 @@ export class Filters implements FilterMap {
 
     this.volume = 1;
     this.equalizer = [];
-    this.tremolo = null;
-    this.karaoke = null;
-    this.timescale = null;
+  }
+
+  /**
+   * Whether the rotation filter is enabled.
+   */
+  get isRotationEnabled(): boolean {
+    return !!this.rotation; // TODO: check if it's actually enabled, or not.
+  }
+
+  get isDistortionEnabled(): boolean {
+    return !!this.distortion; // TODO: check if it's actually enabled, or not.
   }
 
   /**
@@ -93,7 +105,7 @@ export class Filters implements FilterMap {
    * Checks if any of the provided bans doesn't have a gain of 0.0, 0.0 being the default gain.
    */
   get isEqualizerEnabled(): boolean {
-    return this.equalizer.some(band => band.gain !== 0.0);
+    return this.equalizer?.some(band => band.gain !== 0.0);
   }
 
   /**
@@ -123,22 +135,30 @@ export class Filters implements FilterMap {
   /**
    * The filters payload.
    */
-  get payload(): FilterMap {
-    const payload: FilterMap = {
-      volume: this.volume,
-      equalizer: this.equalizer
+  get payload(): Partial<Lavalink.FilterData> {
+    const payload: Partial<Lavalink.FilterData> = {
+      [Lavalink.Filter.Volume]: this.volume,
+      [Lavalink.Filter.Equalizer]: this.equalizer
     }
 
     if (this.isTimescaleEnabled) {
-      payload.timescale = this.timescale;
+      payload[Lavalink.Filter.Timescale] = this.timescale;
     }
 
     if (this.isKaraokeEnabled) {
-      payload.karaoke = this.karaoke;
+      payload[Lavalink.Filter.Karaoke] = this.karaoke;
     }
 
     if (this.isTremoloEnabled) {
-      payload.tremolo = this.tremolo;
+      payload[Lavalink.Filter.Tremolo] = this.tremolo;
+    }
+
+    if (this.isDistortionEnabled) {
+      payload[Lavalink.Filter.Distortion] = this.distortion;
+    }
+
+    if (this.isRotationEnabled) {
+      payload[Lavalink.Filter.Rotation] = this.rotation;
     }
 
     return payload;

@@ -2,7 +2,7 @@ import fetch from 'petitio';
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 
-import type { LoadTracksResponse } from "@lavaclient/types";
+import type Lavalink from "@lavaclient/types";
 import type WebSocket from "ws";
 
 import type { Socket, SocketData } from "./Socket";
@@ -223,7 +223,7 @@ export class Manager extends EventEmitter {
    * Search lavalink for songs.
    * @param query The search query.
    */
-  async search(query: string): Promise<LoadTracksResponse> {
+  async search(query: string): Promise<Lavalink.LoadTracksResponse> {
     const socket = this.ideal[0];
     if (!socket) {
       throw new Error("Manager#create(): No available sockets.");
@@ -231,7 +231,7 @@ export class Manager extends EventEmitter {
 
     return fetch(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${encodeURIComponent(query)}`)
       .header('authorization', socket.password)
-      .json<LoadTracksResponse>();    
+      .json<Lavalink.LoadTracksResponse>();    
   }
 }
 

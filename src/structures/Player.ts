@@ -297,8 +297,9 @@ export class Player extends EventEmitter {
    * @param priority Whether or not this is a prioritized operation.
    * @since 1.0.0
    */
-  send(op: string, data: Dictionary = {}, priority = false): this {
+  send(op: Lavalink.OpCode, data: Dictionary = {}, priority = false): this {
     data.guildId ??= this.guild;
+    // @ts-expect-error
     this.socket.send({ op, ...data }, priority);
 
     return this;
@@ -307,7 +308,7 @@ export class Player extends EventEmitter {
   /**
    * @private
    */
-  private async _event(event: Lavalink.Event): Promise<void> {
+  private async _event(event: Lavalink.PlayerEvent): Promise<void> {
     switch (event.type) {
       case "TrackEndEvent":
         if (event.reason !== "REPLACED") {
@@ -344,7 +345,7 @@ export class Player extends EventEmitter {
       return;
     }
 
-    this.position = update.state.position;
+    this.position = update.state.position ?? -1;
     this.timestamp = update.state.time;
   }
 }
@@ -359,8 +360,8 @@ export interface Player {
   /**
    * Emitted when the player receives a player event.
    */
-  on(event: "event", listener: (event: Lavalink.Event) => any): this;
-  once(event: "event", listener: (event: Lavalink.Event) => any): this;
+  on(event: "event", listener: (event: Lavalink.PlayerEvent) => any): this;
+  once(event: "event", listener: (event: Lavalink.PlayerEvent) => any): this;
 
   /**
    * Emitted when the websocket was closed.

@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 
-import type { NodeStats } from "@lavaclient/types";
+import type Lavalink from "@lavaclient/types";
 import type { Manager, ReconnectOptions } from "./Manager";
 
 export enum Status {
@@ -50,7 +50,7 @@ export class Socket {
   /**
    * The performance stats of this player.
    */
-  stats: NodeStats;
+  stats: Lavalink.StatsData;
 
   /**
    * The resume key.
@@ -160,9 +160,11 @@ export class Socket {
    * @param priority If this message should be prioritized.
    * @since 1.0.0
    */
-  send(data: unknown, priority = false) {
-    data = JSON.stringify(data);
-    this.queue[priority ? "unshift" : "push"](data);
+  send(data: Lavalink.OutgoingMessage, priority = false) {
+    const json = JSON.stringify(data);
+    this.queue[priority ? "unshift" : "push"](json);
+
+    /* process the queue if we're connected to the lavalink node. */
     if (this.connected) {
       this._processQueue();
     }
