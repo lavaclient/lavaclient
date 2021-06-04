@@ -4,6 +4,7 @@ tests/
 .github/
 guides/
 .idea/
+docs/
 dist/*.d.ts
 
 .gitignore
