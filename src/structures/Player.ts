@@ -284,7 +284,6 @@ export class Player extends EventEmitter {
       });
 
       this.connected = true;
-      this._server = this._sessionId;
     }
 
     return this;
