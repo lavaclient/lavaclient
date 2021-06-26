@@ -103,7 +103,7 @@ export class Manager extends EventEmitter {
    * Ideal nodes to use.
    */
   get ideal(): Socket[] {
-    return [ ...this.sockets.values() ].sort((a, b) => a.penalties - b.penalties);
+    return [ ...this.sockets.values() ].filter(node => node.connected).sort((a, b) => a.penalties - b.penalties);
   }
 
   /**
