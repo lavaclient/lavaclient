@@ -1,6 +1,6 @@
 {
   "name": "lavaclient",
-  "version": "3.3.0",
+  "version": "3.4.2",
   "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
   "main": "dist/index.js",
   "types": "index.d.ts",
@@ -32,6 +32,8 @@
   "devDependencies": {
     "@types/node": "^15.12.1",
     "@types/ws": "^7.2.6",
+    "discord.js": "^13.0.0",
+    "dotenv": "^10.0.0",
     "typedoc": "^0.21.0",
     "typedoc-plugin-markdown": "^3.9.0",
     "typescript": "4.3.x"
