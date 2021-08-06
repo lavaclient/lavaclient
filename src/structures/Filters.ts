@@ -1,5 +1,6 @@
+import * as Lavalink from "@lavaclient/types";
+
 import type { Player } from "./Player";
-import Lavalink from "@lavaclient/types";
 
 export class Filters {
   /**
@@ -78,7 +79,7 @@ export class Filters {
    * The vibrato filter.
    */
   vibrato?: Lavalink.VibratoFilter;
-  
+
   /**
    * @param player The player instance.
    */
