@@ -4,13 +4,20 @@ import { Structures } from "../Structures";
 import type Lavalink from "@lavaclient/types";
 import type { Filters } from "./Filters";
 import type { Socket } from "./Socket";
-import type { Dictionary, Manager, DiscordVoiceServer, DiscordVoiceState } from "./Manager";
+import type {
+  DiscordSnowflake,
+  Dictionary,
+  Manager,
+  DiscordVoiceServer,
+  DiscordVoiceState,
+  DiscordResource
+} from "./Manager";
 
 export class Player extends EventEmitter {
   /**
    * The id of the guild this player belongs to.
    */
-  readonly guild: string;
+  readonly guild: DiscordSnowflake;
 
   /**
    * The socket this player belongs to.
@@ -20,7 +27,7 @@ export class Player extends EventEmitter {
   /**
    * The id of the voice channel this player is connected to.
    */
-  channel: string | undefined;
+  channel?: DiscordSnowflake;
 
   /**
    * Whether this player is paused or not.
@@ -30,7 +37,7 @@ export class Player extends EventEmitter {
   /**
    * The current playing track.
    */
-  track: string | undefined;
+  track?: string;
 
   /**
    * Whether this player is playing or not.
@@ -40,7 +47,7 @@ export class Player extends EventEmitter {
   /**
    * The unix timestamp in which this player started playing.
    */
-  timestamp: number | undefined;
+  timestamp?: number;
 
   /**
    * Track position in milliseconds.
@@ -66,13 +73,13 @@ export class Player extends EventEmitter {
    * The voice state for this player.
    * @internal
    */
-  private _sessionId: string | undefined;
+  private _sessionId?: string;
 
   /**
    * The voice server for this player.
    * @internal
    */
-  private _server: DiscordVoiceServer | undefined;
+  private _server?: DiscordVoiceServer;
 
   /**
    * The filters instance.
@@ -84,7 +91,7 @@ export class Player extends EventEmitter {
    * @param socket The socket this player belongs to.
    * @param guild The guild that this player is for.
    */
-  constructor(socket: Socket, guild: string) {
+  constructor(socket: Socket, guild: DiscordSnowflake) {
     super();
 
     this.socket = socket;
@@ -127,7 +134,7 @@ export class Player extends EventEmitter {
    * @param options Options for self mute, self deaf, or force connecting.
    * @since 2.1.x
    */
-  connect(channel: string | null | Record<string, any>, options: ConnectOptions = {}): this {
+  connect(channel: DiscordSnowflake | DiscordResource | null, options: ConnectOptions = {}): this {
     const channelId = typeof channel === "object"
       ? channel?.id
       : channel;
@@ -189,7 +196,7 @@ export class Player extends EventEmitter {
     if (volume < 0 || volume > 1000) {
       throw new RangeError(`Player#setVolume (${this.guild}): Volume must be within the 0 to 1000 range.`);
     }
-    
+
     this.volume = volume
     return this.send("volume", { volume });
   }
@@ -239,11 +246,12 @@ export class Player extends EventEmitter {
   /**
    * Sets the equalizer of this player.
    * @param bands Equalizer bands to use.
+   * @param asFilter Whether to use the filters api instead.
    * @since 2.1.x
    *
    * @deprecated Please use Filters#equalizer and Filters#apply
    */
-  setEqualizer(bands: Lavalink.EqualizerBand[], asFilter: Boolean = false): this {
+  setEqualizer(bands: Lavalink.EqualizerBand[], asFilter = false): this {
     if (asFilter) {
       this.filters.equalizer = bands;
       this.filters.apply();

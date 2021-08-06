@@ -31,7 +31,7 @@ export class Manager extends EventEmitter {
   /**
    * A map of connected players.
    */
-  readonly players: Map<string, Player>;
+  readonly players: Map<DiscordSnowflake, Player>;
 
   /**
    * The options this manager was created with.
@@ -41,7 +41,7 @@ export class Manager extends EventEmitter {
   /**
    * The client's user id.
    */
-  userId: string | undefined;
+  userId?: DiscordSnowflake;
 
   /**
    * A send method for sending voice state updates to discord.
@@ -111,7 +111,7 @@ export class Manager extends EventEmitter {
    * @param userId The client user id.
    * @since 1.0.0
    */
-  init(userId: string = this.userId!): void {
+  init(userId: DiscordSnowflake = this.userId!): void {
     if (!userId) {
       throw new Error("Provide a client id for lavalink to use.");
     } else {
@@ -184,8 +184,8 @@ export class Manager extends EventEmitter {
    * @param socket The socket to use.
    * @since 2.1.0
    */
-  create(guild: string | Dictionary, socket: Socket = this.ideal[0]): Player {
-    const id = typeof guild === "string" ? guild : guild.id,
+  create(guild: DiscordSnowflake | Dictionary, socket: Socket = this.ideal[0]): Player {
+    const id = typeof guild === "object" ? guild.id : guild,
       existing = this.players.get(id);
 
     if (existing) {
@@ -207,9 +207,9 @@ export class Manager extends EventEmitter {
    * @param guild The guild id of the player to destroy.
    * @since 2.1.0
    */
-  async destroy(guild: string | Dictionary): Promise<boolean> {
-    const id = typeof guild === "string" ? guild : guild.id;
-    const player = this.players.get(id);
+  async destroy(guild: DiscordSnowflake | Dictionary): Promise<boolean> {
+    const id = typeof guild === "object" ? guild.id : guild,
+        player = this.players.get(id);
 
     if (player) {
       await player.destroy(true);
@@ -231,11 +231,15 @@ export class Manager extends EventEmitter {
 
     return fetch(`http${socket.secure ? "s" : ""}://${socket.address}/loadtracks?identifier=${encodeURIComponent(query)}`)
       .header('authorization', socket.password)
-      .json<Lavalink.LoadTracksResponse>();    
+      .json<Lavalink.LoadTracksResponse>();
   }
 }
 
-export type Send = (guildId: string, payload: any) => any;
+export type DiscordResource = { id: DiscordSnowflake }
+
+export type DiscordSnowflake = `${bigint}`;
+
+export type Send = (guildId: DiscordSnowflake, payload: any) => any;
 
 export type Dictionary<V = any> = Record<string, V>;
 
@@ -275,7 +279,7 @@ export interface ManagerOptions {
   /**
    * The user id of the bot (not-recommended, provide it in Manager#init)
    */
-  userId?: string;
+  userId?: DiscordSnowflake;
 
   /**
    * An array of plugins you want to use.
@@ -327,7 +331,7 @@ export interface ResumeOptions {
  */
 export interface DiscordVoiceServer {
   token: string;
-  guild_id: string;
+  guild_id: DiscordSnowflake;
   endpoint: string;
 }
 
@@ -335,8 +339,8 @@ export interface DiscordVoiceServer {
  * @internal
  */
 export interface DiscordVoiceState {
-  channel_id?: string;
-  guild_id: string;
-  user_id: string;
+  channel_id?: DiscordSnowflake;
+  guild_id: DiscordSnowflake;
+  user_id: DiscordSnowflake;
   session_id: string;
 }
