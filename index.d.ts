@@ -44,7 +44,7 @@ export class Manager extends EventEmitter {
 export type DiscordResource = {
     id: DiscordSnowflake;
 };
-export type DiscordSnowflake = `${bigint}`;
+export type DiscordSnowflake = string;
 export type Send = (guildId: DiscordSnowflake, payload: any) => any;
 export type Dictionary<V = any> = Record<string, V>;
 

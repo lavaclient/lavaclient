@@ -8,9 +8,11 @@ docs/
 dist/*.d.ts
 
 .gitignore
+typedoc.json
 tsconfig.json
 tsconfig.tsbuildinfo
 yarn.lock
 package-lock.json
 *.env
 CODE_OF_CONDUCT.md
+2
