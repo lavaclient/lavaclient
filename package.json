@@ -1,0 +1,38 @@
+{
+    "name": "lavaclient",
+    "version": "4.0.0",
+    "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
+    "main": "dist/index.js",
+    "repository": "git@github.com:lavaclient/lavaclient.git",
+    "author": "melike2d <gino@dimensional.fun>",
+    "license": "MIT",
+    "private": false,
+    "keywords": [
+        "lavaclient",
+        "lavalink",
+        "easy-to-use",
+        "beginner-friendly",
+        "user-friendly",
+        "flexible",
+        "simple",
+        "lightweight",
+        "easy"
+    ],
+    "engines": {
+        "node": ">=14"
+    },
+    "devDependencies": {
+        "@types/ws": "^7.4.7",
+        "@typescript-eslint/eslint-plugin": "^4.29.1",
+        "@typescript-eslint/parser": "^4.29.1",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^3.4.0",
+        "typescript": "^4.3.5"
+    },
+    "dependencies": {
+        "@lavaclient/types": "^2.0.11",
+        "tslib": "^2.3.1",
+        "ws": "^8.1.0"
+    }
+}
