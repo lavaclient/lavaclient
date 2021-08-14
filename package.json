@@ -7,6 +7,9 @@
     "author": "melike2d <gino@dimensional.fun>",
     "license": "MIT",
     "private": false,
+    "scripts": {
+        "docs:gen": "typedoc --theme igniteui"
+    },
     "keywords": [
         "lavaclient",
         "lavalink",
@@ -30,6 +33,8 @@
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^3.4.0",
         "ts-node": "^10.2.0",
+        "typedoc": "^0.21.5",
+        "typedoc-scalefast-theme": "^1.0.3",
         "typescript": "^4.3.5"
     },
     "dependencies": {
