@@ -2,4 +2,89 @@
 
 > Flexible nodejs client
  
-- wip
+- **Easy-to-use:** LavaClient has a neat and user-friendly promise-based api.
+- **Performant:** Designed to be small and lightweight, it's a great choice for any project. 
+- **Library Independent:** LavaClient doesn't lock you into a specific discord library. Use anything you want!
+
+[**Support Server**](https://discord.gg/CH9ubGPMV6)
+
+## Installation
+
+[node.js lts](https://nodejs.org) or newer is required
+
+##### Stable
+
+```
+yarn add lavaclient # or npm install
+```
+
+##### Beta
+
+```
+yarn add lavaclient@beta # or npm install
+```
+
+## Usage
+
+### Setup
+
+```ts
+import { Node, Cluster } from "lavaclient";
+
+const info = { host: "localhost", port: 2333, password: "youshallnotpass" }
+
+const lavalink = new Node({
+    connection: info,
+    sendGatewayPayload: (id, payload) => sendWithDiscordLib(id, payload)
+});
+
+// or for clustering:
+
+const lavalink = new Cluster({
+    nodes: [ { id: "main", ...info } ],
+    sendGatewayPayload: (id, payload) => sendWithDiscordLib(id, payload)
+});
+
+lavalink.connect("870267613635309618");
+```
+
+### Handling Voice Updates
+
+Lavalink requires voice updates to play audio in a voice channel, this may vary from library to library.
+
+What you need for correctly sending voice updates to lavalink:
+
+1. A connection to the Discord gateway.
+2. **Raw** Voice *State* or *Server* updates
+3. Passing the data of the voice update to `(Cluster|Node)#handleVoiceUpdate`
+
+[comment]: <> (TODO: add link to djs v13 example)
+- [discord.js v13 example](#)
+
+### Playing Music
+
+```ts
+const results = await lavalink.rest.loadTracks("ytsearch:never gonna give you up");
+
+await lavalink
+    .createPlayer("830616783199010857")
+    .connect("830638203739308053")
+    .play(results.tracks[0]);
+```
+
+<sub>this is a very poo way of playing music btw...<sub/>
+
+---
+
+Need some more help? Join our [**Support Server**](https://discord.gg/CH9ubGPMV6)
+
+## Deno
+
+If you're looking for a [Deno](https://deno.land) variant of lavaclient... I've got you covered!!
+
+- **Lavadeno:** <https://github.com/lavaclient/lavadeno>
+
+---
+
+[melike2d](dimensional.fun) &copy; 2018 - 2021
+
