@@ -1,30 +1,30 @@
 <img src="assets/banner.png" align="center">
 
-> Flexible nodejs client
+> A lightweight and powerful lavalink client for nodejs.
  
-- **Easy-to-use:** LavaClient has a neat and user-friendly promise-based api.
-- **Performant:** Designed to be small and lightweight, it's a great choice for any project. 
-- **Library Independent:** LavaClient doesn't lock you into a specific discord library. Use anything you want!
+- **Easy-to-use:** lavaclient has a neat and user-friendly promise-based api.
+- **Performant:** designed to be small and lightweight, it's a great choice for any project. 
+- **Library Independent:** lavaclient doesn't lock you into a specific discord library. Use anything you want!
 
 [**Support Server**](https://discord.gg/CH9ubGPMV6)
 
-## Installation
+<h1 align="center">Installation</h1>
 
 [node.js lts](https://nodejs.org) or newer is required
 
 ##### Stable
 
-```
+```shell
 yarn add lavaclient # or npm install
 ```
 
 ##### Beta
 
-```
+```shell
 yarn add lavaclient@beta # or npm install
 ```
 
-## Usage
+<h2 align="center">Usage</h2>
 
 ### Setup
 
@@ -55,7 +55,7 @@ Lavalink requires voice updates to play audio in a voice channel, this may vary 
 What you need for correctly sending voice updates to lavalink:
 
 1. A connection to the Discord gateway.
-2. **Raw** Voice *State* or *Server* updates
+2. [**Raw** Voice *State* or *Server* updates](https://discord.com/developers/docs/topics/gateway#voice)
 3. Passing the data of the voice update to `(Cluster|Node)#handleVoiceUpdate`
 
 [comment]: <> (TODO: add link to djs v13 example)
@@ -72,13 +72,13 @@ await lavalink
     .play(results.tracks[0]);
 ```
 
-<sub>this is a very poo way of playing music btw...<sub/>
+<sub>this is a very poo way of playing music btw...</sub>
 
 ---
 
 Need some more help? Join our [**Support Server**](https://discord.gg/CH9ubGPMV6)
 
-## Deno
+<h2 align="center">Deno</h2>
 
 If you're looking for a [Deno](https://deno.land) variant of lavaclient... I've got you covered!!
 
