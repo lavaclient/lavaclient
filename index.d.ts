@@ -1,5 +1,6 @@
-import type { EventEmitter } from "events";
 import type * as Lavalink from "@lavaclient/types";
+import type { EventEmitter } from "events";
+import type { RequestInit } from "node-fetch";
 
 export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
     readonly node: N;
@@ -74,13 +75,16 @@ export interface Emitter<E extends Listeners> extends EventEmitter {
     on<K extends keyof E>(eventName: K, listener: E[K]): this;
     emit<K extends keyof E>(eventName: K, ...args: Parameters<E[K]>): boolean;
 }
+export {};
 
 export class Cluster extends Emitter<ClusterEvents> {
     readonly nodes: Map<String, ClusterNode>;
     readonly sendGatewayPayload: SendGatewayPayload;
     userId?: Snowflake;
     constructor(options: ClusterOptions);
+    get rest(): import("../node/REST").REST;
     get idealNodes(): ClusterNode[];
+    connect(user?: Snowflake | DiscordResource | undefined): void;
     createPlayer(guild: Snowflake | DiscordResource, nodeId?: string): Player<ClusterNode>;
     destroyPlayer(guild: Snowflake | DiscordResource): boolean;
     handleVoiceUpdate(update: VoiceServerUpdate | VoiceStateUpdate): void;
@@ -111,6 +115,7 @@ export class Node extends Emitter<NodeEvents> {
     static DEBUG_FORMAT: string;
     static DEBUG_FORMAT_PLAYER: string;
     static DEFAULT_STATS: Lavalink.StatsData;
+    readonly rest: REST;
     readonly conn: Connection;
     readonly players: Map<string, Player<this>>;
     readonly sendGatewayPayload: SendGatewayPayload;
@@ -201,5 +206,15 @@ export interface OutgoingPayload {
     resolve: () => void;
     reject: (error: Error) => void;
     data: Lavalink.OutgoingMessage;
+}
+
+export class REST {
+    readonly node: Node;
+    constructor(node: Node);
+    get baseUrl(): string;
+    loadTracks(identifier: string): Promise<Lavalink.LoadTracksResponse>;
+    decodeTracks(...tracks: string[]): Promise<Lavalink.TrackInfo[]>;
+    decodeTrack(track: string): Promise<Lavalink.TrackInfo>;
+    do<T>(endpoint: string, options?: Omit<RequestInit, "headers">): Promise<T>;
 }
 

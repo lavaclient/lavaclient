@@ -25,7 +25,6 @@
         "node": ">=14"
     },
     "devDependencies": {
-        "@types/node-fetch": "^2.5.12",
         "@types/ws": "^7.4.7",
         "@typescript-eslint/eslint-plugin": "^4.29.1",
         "@typescript-eslint/parser": "^4.29.1",
@@ -39,7 +38,7 @@
     },
     "dependencies": {
         "@lavaclient/types": "^2.0.11",
-        "node-fetch": "^2.6.1",
+        "phin": "^3.6.0",
         "ws": "^8.1.0"
     }
 }
