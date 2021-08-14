@@ -1,12 +1,13 @@
 import { Connection, ConnectionInfo } from "./Connection";
-import { Emitter, getId, Dictionary, DiscordResource, Snowflake } from "../Utils";
+import { Dictionary, DiscordResource, getId, Snowflake } from "../Utils";
 import { NodeState } from "./NodeState";
 import { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
+import { REST } from "./REST";
+import { EventBus, ListenerMap } from "@dimensional-fun/common";
 
 import type * as Lavalink from "@lavaclient/types";
-import type { IncomingMessage } from "@lavaclient/types";
 
-export class Node extends Emitter<NodeEvents> {
+export class Node extends EventBus<NodeEvents> {
     static DEBUG_FORMAT = "{topic}: {message}";
     static DEBUG_FORMAT_PLAYER = "[player {player}] {topic}: {message}";
     static DEFAULT_STATS: Lavalink.StatsData = {
@@ -31,22 +32,21 @@ export class Node extends Emitter<NodeEvents> {
         uptime: 0
     };
 
-    readonly conn: Connection;
     readonly players = new Map<Snowflake, Player<this>>();
-    readonly sendGatewayPayload: SendGatewayPayload;
+    readonly conn: Connection;
+    readonly rest = new REST(this)
 
-    state: NodeState;
-    stats: Lavalink.StatsData;
+    sendGatewayPayload: SendGatewayPayload;
+    state = NodeState.Idle;
+    stats = Node.DEFAULT_STATS;
     userId?: Snowflake;
 
     constructor(options: NodeOptions) {
         super();
 
         this.conn = new Connection(this, options.connection);
-        this.sendGatewayPayload = options.sendGatewayPayload;
 
-        this.state = NodeState.Idle;
-        this.stats = Node.DEFAULT_STATS;
+        this.sendGatewayPayload = options.sendGatewayPayload;
         this.userId = options.user && getId(options.user);
     }
 
@@ -106,12 +106,13 @@ export class Node extends Emitter<NodeEvents> {
 }
 
 export type SendGatewayPayload = (id: Snowflake, payload: { op: 4, d: Dictionary }) => void;
-export type NodeEvents = {
-    connect: (event: ConnectEvent) => void;
-    disconnect: (event: DisconnectEvent) => void;
-    error: (error: Error) => void;
-    debug: (message: string) => void;
-    raw: (message: IncomingMessage) => void;
+
+export interface NodeEvents extends ListenerMap {
+    connect: [ event: ConnectEvent ];
+    disconnect: [ event: DisconnectEvent ];
+    error: [  error: Error ];
+    debug: [ message: string ];
+    raw: [ message: Lavalink.IncomingMessage ];
 }
 
 export interface ConnectEvent {

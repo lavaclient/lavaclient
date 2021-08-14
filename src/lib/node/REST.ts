@@ -1,6 +1,6 @@
 import phin from "phin";
 
-import type { LoadTracksResponse, TrackInfo } from "@lavaclient/types";
+import type * as Lavalink from "@lavaclient/types";
 import type { Node } from "./Node";
 
 export class REST {
@@ -15,15 +15,15 @@ export class REST {
         return `http${this.info.secure ? "s" : ""}://${this.info.host}:${this.info.port}`;
     }
 
-    loadTracks(identifier: string): Promise<LoadTracksResponse> {
+    loadTracks(identifier: string): Promise<Lavalink.LoadTracksResponse> {
         return this.do(`/loadtracks?identifier=${encodeURIComponent(identifier)}`);
     }
 
-    decodeTracks(...tracks: string[]): Promise<TrackInfo[]> {
+    decodeTracks(...tracks: string[]): Promise<Lavalink.TrackInfo[]> {
         return this.do(`/decodetracks`, { method: "post", data: JSON.stringify(tracks) });
     }
 
-    decodeTrack(track: string): Promise<TrackInfo> {
+    decodeTrack(track: string): Promise<Lavalink.TrackInfo> {
         return this.do(`/decodetrack?track=${track}`);
     }
 

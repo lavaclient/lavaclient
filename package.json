@@ -1,6 +1,6 @@
 {
     "name": "lavaclient",
-    "version": "4.0.0-rc.6",
+    "version": "4.0.0-rc.9",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "main": "dist/index.js",
     "repository": "git@github.com:lavaclient/lavaclient.git",
@@ -8,7 +8,7 @@
     "license": "MIT",
     "private": false,
     "scripts": {
-        "docs:gen": "typedoc --theme igniteui"
+        "docs:gen": "typedoc --theme node_modules/typedoc-scalefast-theme/src"
     },
     "keywords": [
         "lavaclient",
@@ -37,6 +37,7 @@
         "typescript": "^4.3.5"
     },
     "dependencies": {
+        "@dimensional-fun/common": "^1.0.2",
         "@lavaclient/types": "^2.0.11",
         "phin": "^3.6.0",
         "ws": "^8.1.0"

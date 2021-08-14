@@ -24,6 +24,11 @@ export class Connection {
         return !!this[_socket] && this[_socket]!.readyState === WebSocket.OPEN;
     }
 
+    get canReconnect() {
+        const maxTries = this.info.reconnect?.tries === -1 ? Infinity : this.info.reconnect?.tries ?? 5;
+        return !!this.info.reconnect && maxTries <= this.reconnectTry;
+    }
+
     get uptime() {
         if (!this.connectedAt) return -1;
         return Date.now() - this.connectedAt;
@@ -125,10 +130,7 @@ export class Connection {
             return;
         }
 
-        const reconnecting = !!this.info.reconnect
-            && this.info.reconnect.tries === -1 ? true : (this.info.reconnect?.tries ?? 3) > this.reconnectTry
-            && this.node.state !== NodeState.Disconnecting;
-
+        const reconnecting = this.canReconnect && this.node.state !== NodeState.Disconnecting;
         this.node.emit("disconnect", { code, reason, wasClean, reconnecting });
         if (!reconnecting) {
             this.node.state = NodeState.Disconnected;

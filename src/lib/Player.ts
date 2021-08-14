@@ -1,4 +1,4 @@
-import { DiscordResource, Emitter, getId, Snowflake } from "./Utils";
+import { DiscordResource, getId, Snowflake } from "./Utils";
 import {
     EqualizerBand,
     Filter,
@@ -8,6 +8,7 @@ import {
     TrackEndReason,
     VoiceUpdateData
 } from "@lavaclient/types";
+import { EventBus, ListenerMap } from "@dimensional-fun/common";
 
 import type { Node } from "./node/Node";
 
@@ -16,7 +17,7 @@ const _voiceUpdate = Symbol.for("Player#_voiceUpdate");
 /** @internal */
 const _volume = Symbol.for("Player#_volume");
 
-export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
+export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
     static USE_FILTERS = false;
 
     readonly guildId: Snowflake;
@@ -115,9 +116,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
         return this;
     }
 
-    setEqualizer(gains: number[]): Promise<this>;
     setEqualizer(...gains: number[]): Promise<this>;
-    setEqualizer(bands: EqualizerBand[]): Promise<this>;
     setEqualizer(...bands: EqualizerBand[]): Promise<this>;
     async setEqualizer(
         arg0: number | EqualizerBand | (EqualizerBand | number)[],
@@ -213,10 +212,10 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
             case "TrackEndEvent":
                 if (event.reason !== "REPLACED") {
                     this.playing = false;
-                    this.playingSince = undefined;
+                    delete this.playingSince;
                 }
 
-                this.track = undefined;
+                delete this.track;
                 this.emit("trackEnd", event.track, event.reason);
                 break;
             case "TrackExceptionEvent":
@@ -235,13 +234,13 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
 
 export type PlayOptions = Omit<PlayData, "track">;
 
-export type PlayerEvents = {
-    trackStart: (track: string) => void;
-    trackEnd: (track: string | null, reason: TrackEndReason) => void;
-    trackException: (track: string | null, error: Error) => void;
-    trackStuck: (track: string | null, thresholdMs: number) => void;
-    channelLeave: (code: number, reason: string, byRemote: boolean) => void;
-    channelMove: (from: Snowflake | null, to: Snowflake | null) => void;
+export interface PlayerEvents extends ListenerMap {
+    trackStart: [ track: string ];
+    trackEnd: [ track: string | null, reason: TrackEndReason ];
+    trackException: [ track: string | null, error: Error ];
+    trackStuck: [ track: string | null, thresholdMs: number ];
+    channelLeave: [ code: number, reason: string, byRemote: boolean ];
+    channelMove: [ from: Snowflake | null, to: Snowflake | null ];
 }
 
 export interface ConnectOptions {

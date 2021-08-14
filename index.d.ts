@@ -1,8 +1,8 @@
+import type { EventBus, ListenerMap } from "@dimensional-fun/common";
 import type * as Lavalink from "@lavaclient/types";
-import type { EventEmitter } from "events";
-import type { RequestInit } from "node-fetch";
+import type phin from "phin";
 
-export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
+export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
     readonly node: N;
     static USE_FILTERS: boolean;
     readonly guildId: Snowflake;
@@ -27,9 +27,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
     seek(position: number): Promise<this>;
     destroy(): Promise<this>;
     setVolume(volume: number): Promise<this>;
-    setEqualizer(gains: number[]): Promise<this>;
     setEqualizer(...gains: number[]): Promise<this>;
-    setEqualizer(bands: Lavalink.EqualizerBand[]): Promise<this>;
     setEqualizer(...bands: Lavalink.EqualizerBand[]): Promise<this>;
     setFilters(): Promise<this>;
     setFilters(filters: Partial<Lavalink.FilterData>): Promise<this>;
@@ -38,14 +36,14 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
     handleEvent(event: Lavalink.PlayerEvent): void;
 }
 export type PlayOptions = Omit<Lavalink.PlayData, "track">;
-export type PlayerEvents = {
-    trackStart: (track: string) => void;
-    trackEnd: (track: string | null, reason: Lavalink.TrackEndReason) => void;
-    trackException: (track: string | null, error: Error) => void;
-    trackStuck: (track: string | null, thresholdMs: number) => void;
-    channelLeave: (code: number, reason: string, byRemote: boolean) => void;
-    channelMove: (from: Snowflake | null, to: Snowflake | null) => void;
-};
+export interface PlayerEvents extends ListenerMap {
+    trackStart: [track: string];
+    trackEnd: [track: string | null, reason: Lavalink.TrackEndReason];
+    trackException: [track: string | null, error: Error];
+    trackStuck: [track: string | null, thresholdMs: number];
+    channelLeave: [code: number, reason: string, byRemote: boolean];
+    channelMove: [from: Snowflake | null, to: Snowflake | null];
+}
 export interface ConnectOptions {
     deafened?: boolean;
     muted?: boolean;
@@ -66,23 +64,14 @@ export type Snowflake = string;
 export type DiscordResource = {
     id: Snowflake;
 };
-export type Dictionary<V = any, K extends string | number | symbol = string> = Record<K, V>;
-export class Emitter<E extends Listeners> extends EventEmitter {
-}
-type Listener<A extends Array<any> = any[]> = (...args: A) => void;
-type Listeners = Dictionary<Listener, string | symbol>;
-export interface Emitter<E extends Listeners> extends EventEmitter {
-    on<K extends keyof E>(eventName: K, listener: E[K]): this;
-    emit<K extends keyof E>(eventName: K, ...args: Parameters<E[K]>): boolean;
-}
-export {};
+export type Dictionary<V = any, K extends string | symbol = string> = Record<K, V>;
 
-export class Cluster extends Emitter<ClusterEvents> {
+export class Cluster extends EventBus<ClusterEvents> {
     readonly nodes: Map<String, ClusterNode>;
     readonly sendGatewayPayload: SendGatewayPayload;
     userId?: Snowflake;
     constructor(options: ClusterOptions);
-    get rest(): import("../node/REST").REST;
+    get rest(): REST;
     get idealNodes(): ClusterNode[];
     connect(user?: Snowflake | DiscordResource | undefined): void;
     createPlayer(guild: Snowflake | DiscordResource, nodeId?: string): Player<ClusterNode>;
@@ -90,12 +79,12 @@ export class Cluster extends Emitter<ClusterEvents> {
     handleVoiceUpdate(update: VoiceServerUpdate | VoiceStateUpdate): void;
     getNode(guild: Snowflake | DiscordResource): ClusterNode | null;
 }
-export type ClusterEvents = {
-    nodeConnect(node: ClusterNode, event: ConnectEvent): void;
-    nodeDisconnect(node: ClusterNode, event: DisconnectEvent): void;
-    nodeError(node: ClusterNode, error: Error): void;
-    nodeDebug(node: ClusterNode, message: string): void;
-};
+export interface ClusterEvents extends ListenerMap {
+    nodeConnect: [node: ClusterNode, event: ConnectEvent];
+    nodeDisconnect: [node: ClusterNode, event: DisconnectEvent];
+    nodeError: [node: ClusterNode, error: Error];
+    nodeDebug: [node: ClusterNode, message: string];
+}
 export interface ClusterOptions {
     nodes: ClusterNodeOptions[];
     sendGatewayPayload: SendGatewayPayload;
@@ -111,14 +100,14 @@ export class ClusterNode extends Node {
     constructor(cluster: Cluster, id: string, info: ConnectionInfo);
 }
 
-export class Node extends Emitter<NodeEvents> {
+export class Node extends EventBus<NodeEvents> {
     static DEBUG_FORMAT: string;
     static DEBUG_FORMAT_PLAYER: string;
     static DEFAULT_STATS: Lavalink.StatsData;
-    readonly rest: REST;
-    readonly conn: Connection;
     readonly players: Map<string, Player<this>>;
-    readonly sendGatewayPayload: SendGatewayPayload;
+    readonly conn: Connection;
+    readonly rest: REST;
+    sendGatewayPayload: SendGatewayPayload;
     state: NodeState;
     stats: Lavalink.StatsData;
     userId?: Snowflake;
@@ -134,13 +123,13 @@ export type SendGatewayPayload = (id: Snowflake, payload: {
     op: 4;
     d: Dictionary;
 }) => void;
-export type NodeEvents = {
-    connect: (event: ConnectEvent) => void;
-    disconnect: (event: DisconnectEvent) => void;
-    error: (error: Error) => void;
-    debug: (message: string) => void;
-    raw: (message: Lavalink.IncomingMessage) => void;
-};
+export interface NodeEvents extends ListenerMap {
+    connect: [event: ConnectEvent];
+    disconnect: [event: DisconnectEvent];
+    error: [error: Error];
+    debug: [message: string];
+    raw: [message: Lavalink.IncomingMessage];
+}
 export interface ConnectEvent {
     took: number;
     reconnect: boolean;
@@ -177,6 +166,7 @@ export class Connection {
     connectedAt?: number;
     constructor(node: Node, info: ConnectionInfo);
     get active(): boolean;
+    get canReconnect(): boolean;
     get uptime(): number;
     send(important: boolean, data: Lavalink.OutgoingMessage): Promise<void>;
     connect(): void;
@@ -215,6 +205,7 @@ export class REST {
     loadTracks(identifier: string): Promise<Lavalink.LoadTracksResponse>;
     decodeTracks(...tracks: string[]): Promise<Lavalink.TrackInfo[]>;
     decodeTrack(track: string): Promise<Lavalink.TrackInfo>;
-    do<T>(endpoint: string, options?: Omit<RequestInit, "headers">): Promise<T>;
+    do<T>(endpoint: string, options?: Options): Promise<T>;
 }
+export type Options = Partial<Omit<phin.IWithData<phin.IOptions>, "url" | "headers" | "parse">>;
 

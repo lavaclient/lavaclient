@@ -1,11 +1,13 @@
 import { ClusterNode } from "./ClusterNode";
-import { Emitter, getId, DiscordResource, Snowflake  } from "../Utils";
+import { EventBus, ListenerMap } from "@dimensional-fun/common";
+import { DiscordResource, getId, Snowflake } from "../Utils";
 
 import type { ConnectEvent, DisconnectEvent, SendGatewayPayload } from "../node/Node";
 import type { ConnectionInfo } from "../node/Connection";
 import type { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
+import type { REST } from "../node/REST";
 
-export class Cluster extends Emitter<ClusterEvents> {
+export class Cluster extends EventBus<ClusterEvents> {
     readonly nodes: Map<String, ClusterNode>;
     readonly sendGatewayPayload: SendGatewayPayload;
 
@@ -22,8 +24,12 @@ export class Cluster extends Emitter<ClusterEvents> {
         this.sendGatewayPayload = options.sendGatewayPayload;
     }
 
+    get rest(): REST {
+        return this.idealNodes[0]!.rest;
+    }
+
     get idealNodes(): ClusterNode[] {
-        return [...this.nodes.values()]
+        return [ ...this.nodes.values() ]
             .filter(node => node.conn.active)
             .sort((a, b) => a.penalties - b.penalties);
     }
@@ -49,25 +55,27 @@ export class Cluster extends Emitter<ClusterEvents> {
 
     getNode(guild: Snowflake | DiscordResource): ClusterNode | null {
         const guildId = getId(guild);
-        return [...this.nodes.values()].find(n => n.players.has(guildId)) ?? null;
+        return [ ...this.nodes.values() ].find(n => n.players.has(guildId)) ?? null;
     }
 
     private forwardEvents(node: ClusterNode): ClusterNode {
-        return node
-            .on("connect", event => this.emit("nodeConnect", node, event))
-            .on("disconnect", event => this.emit("nodeDisconnect", node, event))
-            .on("error", error => this.emit("nodeError", node, error))
-            .on("debug", message => this.emit("nodeDebug", node, message));
-    }
+        this.redirect(node, {
+            connect: { name: "nodeConnect", args: [ node ] },
+            disconnect: { name: "nodeDisconnect", args: [ node ] },
+            error: { name: "nodeError", args: [ node ] },
+            debug: { name: "nodeDebug", args: [ node ] },
+        });
 
+        return node;
+    }
 }
 
-export type ClusterEvents = {
-    nodeConnect(node: ClusterNode, event: ConnectEvent): void;
-    nodeDisconnect(node: ClusterNode, event: DisconnectEvent): void;
-    nodeError(node: ClusterNode, error: Error): void;
-    nodeDebug(node: ClusterNode, message: string): void;
-};
+export interface ClusterEvents extends ListenerMap {
+    nodeConnect: [ node: ClusterNode, event: ConnectEvent ];
+    nodeDisconnect: [ node: ClusterNode, event: DisconnectEvent ];
+    nodeError: [ node: ClusterNode, error: Error ];
+    nodeDebug: [ node: ClusterNode, message: string ];
+}
 
 export interface ClusterOptions {
     nodes: ClusterNodeOptions[];
