@@ -1,6 +1,6 @@
 {
     "name": "lavaclient",
-    "version": "4.0.0-rc.1",
+    "version": "4.0.0-rc.2",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "main": "dist/index.js",
     "repository": "git@github.com:lavaclient/lavaclient.git",
@@ -22,6 +22,7 @@
         "node": ">=14"
     },
     "devDependencies": {
+        "@types/node-fetch": "^2.5.12",
         "@types/ws": "^7.4.7",
         "@typescript-eslint/eslint-plugin": "^4.29.1",
         "@typescript-eslint/parser": "^4.29.1",
@@ -33,7 +34,7 @@
     },
     "dependencies": {
         "@lavaclient/types": "^2.0.11",
-        "tslib": "^2.3.1",
+        "node-fetch": "^2.6.1",
         "ws": "^8.1.0"
     }
 }
