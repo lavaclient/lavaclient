@@ -1,4 +1,4 @@
-<img src="assets/banner.png" align="center">
+<img src="https://i.imgur.com/LvsojLc.png" align="center">
 
 > A lightweight and powerful lavalink client for nodejs.
  
