@@ -1,5 +1,8 @@
 import { EventEmitter } from "events";
-import type { Dictionary, DiscordResource, Snowflake } from "../constants";
+
+export type Snowflake = string;
+export type DiscordResource = { id: Snowflake };
+export type Dictionary<V = any, K extends string | number | symbol = string> = Record<K, V>;
 
 /* typed emitter. */
 export class Emitter<E extends Listeners> extends EventEmitter {}
@@ -12,10 +15,9 @@ export interface Emitter<E extends Listeners> extends EventEmitter {
     emit<K extends keyof E>(eventName: K, ...args: Parameters<E[K]>): boolean;
 }
 
-export function sleep(duration: number): Promise<void> {
-    return new Promise<void>(res => setTimeout(res, duration));
-}
-
+/**
+ * @internal
+ */
 export function getId(value: Snowflake | DiscordResource): Snowflake {
     return typeof value === "string" ? value : value.id;
 }

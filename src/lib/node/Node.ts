@@ -1,15 +1,14 @@
 import { Connection, ConnectionInfo } from "./Connection";
-import { Emitter, getId } from "../Utils";
+import { Emitter, getId, Dictionary, DiscordResource, Snowflake } from "../Utils";
 import { NodeState } from "./NodeState";
 import { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 
 import type * as Lavalink from "@lavaclient/types";
-import type { Dictionary, DiscordResource, Snowflake } from "../../constants";
-
-const _conn = Symbol("Node#_conn")
-const _userId = Symbol("Node#_userId")
+import type { IncomingMessage } from "@lavaclient/types";
 
 export class Node extends Emitter<NodeEvents> {
+    static DEBUG_FORMAT = "{topic}: {message}";
+    static DEBUG_FORMAT_PLAYER = "[player {player}] {topic}: {message}";
     static DEFAULT_STATS: Lavalink.StatsData = {
         cpu: {
             cores: 0,
@@ -32,42 +31,23 @@ export class Node extends Emitter<NodeEvents> {
         uptime: 0
     };
 
-    readonly players: Map<Snowflake, Player<this>>;
+    readonly conn: Connection;
+    readonly players = new Map<Snowflake, Player<this>>();
     readonly sendGatewayPayload: SendGatewayPayload;
 
     state: NodeState;
     stats: Lavalink.StatsData;
-
-    private [_userId]?: Snowflake;
-    private readonly [_conn]: Connection;
+    userId?: Snowflake;
 
     constructor(options: NodeOptions) {
         super();
 
-        this.players = new Map();
+        this.conn = new Connection(this, options.connection);
         this.sendGatewayPayload = options.sendGatewayPayload;
 
         this.state = NodeState.Idle;
         this.stats = Node.DEFAULT_STATS;
-
-        this[_userId] = typeof options.user === "string" ? options.user : options.user?.id;
-        this[_conn] = new Connection(this, options.connection);
-    }
-
-    get conn() {
-        return this[_conn];
-    }
-
-    get connected() {
-        return this.conn.active;
-    }
-
-    get userId(): Snowflake | undefined {
-        return this[_userId];
-    }
-
-    set userId(user: Snowflake | { id: Snowflake } | undefined) {
-        this[_userId] = typeof user === "string" ? user : user?.id;
+        this.userId = options.user && getId(options.user);
     }
 
     get penalties() {
@@ -75,29 +55,28 @@ export class Node extends Emitter<NodeEvents> {
 
         let deficit = 0, nulled = 0;
         if (this.stats.frameStats?.deficit !== -1) {
-            deficit =
-                Math.pow(1.03, 500 * ((this.stats.frameStats?.deficit ?? 0) / 3000)) * 600 - 600;
-            nulled =
-                (Math.pow(1.03, 500 * ((this.stats.frameStats?.nulled ?? 0) / 3000)) * 600 - 600) * 2;
+            deficit = Math.pow(1.03, 500 * ((this.stats.frameStats?.deficit ?? 0) / 3000)) * 600 - 600;
+            nulled = (Math.pow(1.03, 500 * ((this.stats.frameStats?.nulled ?? 0) / 3000)) * 600 - 600) * 2;
             nulled *= 2;
         }
 
         return cpu + deficit + nulled;
     }
 
+    connect(user: Snowflake | DiscordResource | undefined = this.userId) {
+        this.userId ??= user && getId(user);
+        if (!this.userId) {
+            throw new Error("No User-Id is present.");
+        }
 
-    connect(user: Snowflake | { id: Snowflake }) {
-        this.userId ??= user;
-        return this[_conn].connect();
+        return this.conn.connect();
     }
 
     createPlayer(guild: Snowflake | DiscordResource): Player<this> {
-        const guildId = typeof guild === "string" ? guild : guild.id;
-
-        let player = this.players.get(guildId);
+        let player = this.players.get(getId(guild));
         if (!player) {
             player = new Player<this>(this, guild);
-            this.players.set(guildId, player);
+            this.players.set(getId(guild), player);
         }
 
         return player;
@@ -117,6 +96,13 @@ export class Node extends Emitter<NodeEvents> {
         const player = this.players.get(update.guild_id);
         player?.handleVoiceUpdate(update);
     }
+
+    debug(topic: string, message: string, player?: Player) {
+        return this.emit("debug", (player ? Node.DEBUG_FORMAT_PLAYER : Node.DEBUG_FORMAT)
+            .replace("{topic}", topic)
+            .replace("{message}", message)
+            .replace("{player}", player?.guildId ?? "N/A"));
+    }
 }
 
 export type SendGatewayPayload = (id: Snowflake, payload: { op: 4, d: Dictionary }) => void;
@@ -125,6 +111,7 @@ export type NodeEvents = {
     disconnect: (event: DisconnectEvent) => void;
     error: (error: Error) => void;
     debug: (message: string) => void;
+    raw: (message: IncomingMessage) => void;
 }
 
 export interface ConnectEvent {

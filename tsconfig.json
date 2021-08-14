@@ -1,41 +1,37 @@
 {
     "compilerOptions": {
         /* Basic */
-        "lib": [
-            "ES2020"
-        ],
-        "target": "ES2020",
+        "lib": [ "ESNext" ],
+        "target": "ESNext",
         "module": "CommonJS",
         "skipLibCheck": true,
 
         /* Compiling */
         "inlineSourceMap": false,
         "declaration": false,
-        "allowJs": true,
+        "allowJs": false,
         "rootDir": "./src",
         "outDir": "./dist",
-        "importHelpers": true,
+        "removeComments": true,
 
         /* Strict Options */
         "strict": true,
+        "stripInternal": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
         "strictBindCallApply": true,
         "strictPropertyInitialization": true,
+        "strictFunctionTypes": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "pretty": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
         "importsNotUsedAsValues": "error",
+        "useDefineForClassFields": false,
 
         /* Types */
-        "types": [
-            "node"
-        ],
+        "types": [ "node" ],
         "forceConsistentCasingInFileNames": true,
 
         /* Module Resolution */

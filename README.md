@@ -72,7 +72,7 @@ await lavalink
     .play(results.tracks[0]);
 ```
 
-<sub>this is a very poo way of playing music btw...</sub>
+<sub>this is a very poor way of playing music btw...</sub>
 
 ---
 

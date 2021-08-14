@@ -1,63 +1,49 @@
 import WebSocket from "ws";
 import { NodeState } from "./NodeState";
-import { sleep } from "../Utils";
 
-import type { Node } from "./Node";
 import type * as Lavalink from "@lavaclient/types";
-import type { Dictionary } from "../../constants";
+import type { Node } from "./Node";
+import type { Dictionary } from "../Utils";
 
-const _connectedAt = Symbol("Connection#_connectedAt")
+/** @internal */
 const _socket = Symbol("Connection#_socket")
 
 export class Connection {
     static CLIENT_NAME = "lavaclient";
 
-    readonly node: Node;
-    readonly info: ConnectionInfo;
+    reconnectTry = 0;
+    payloadQueue: OutgoingPayload[] = [];
+    connectedAt?: number;
 
-    reconnectTry: number;
-    payloadQueue: QueuedPayload[] = [];
-
-    private [_connectedAt]?: number;
     private [_socket]?: WebSocket;
 
-    constructor(node: Node, info: ConnectionInfo) {
-        this.node = node;
-        this.info = info;
-
-        this.reconnectTry = 0;
+    constructor(readonly node: Node, readonly info: ConnectionInfo) {
     }
 
     get active(): boolean {
         return !!this[_socket] && this[_socket]!.readyState === WebSocket.OPEN;
     }
 
-    get address(): string {
-        return `${this.info.host}:${this.info.port}`;
+    get uptime() {
+        if (!this.connectedAt) return -1;
+        return Date.now() - this.connectedAt;
     }
 
     send(important: boolean, data: Lavalink.OutgoingMessage): Promise<void> {
         return new Promise((resolve, reject) => {
-            if (this.active) {
-                return this._send(data)
-                    .then(resolve)
-                    .catch(reject);
-            }
-
-            this.payloadQueue[important ? "unshift" : "push"]({ resolve, reject, data });
+            const payload: OutgoingPayload = { resolve, reject, data }
+            this.active
+                ? this._send(payload)
+                : this.payloadQueue[important ? "unshift" : "push"](payload);
         });
     }
 
     connect(): void {
-        if (!this.node.userId) {
-            throw new Error("No User-Id is present.");
-        }
-
         this.disconnect();
 
         const headers: Dictionary<string> = {
             Authorization: this.info.password,
-            "User-Id": this.node.userId,
+            "User-Id": this.node.userId!,
             "Client-Name": Connection.CLIENT_NAME,
             "Num-Shards": "1"
         };
@@ -66,15 +52,18 @@ export class Connection {
             headers["Resume-Key"] = this.info.resuming.key;
         }
 
-        this[_connectedAt] = Date.now();
+        if (this.node.state !== NodeState.Reconnecting) {
+            this.node.state = NodeState.Connecting;
+            this.node.debug("connection", "creating websocket...");
+        }
 
-        const socket = new WebSocket(`ws${this.info.secure ? "s" : ""}://${this.address}`, { headers });
+        this.connectedAt = Date.now();
+
+        const socket = this[_socket] = new WebSocket(`ws${this.info.secure ? "s" : ""}://${this.info.host}:${this.info.port}`, { headers });
         socket.onopen = this._onopen.bind(this);
         socket.onclose = this._onclose.bind(this);
         socket.onerror = this._onerror.bind(this);
         socket.onmessage = this._onmessage.bind(this);
-
-        this[_socket] = socket;
     }
 
     disconnect(code = 1000, reason = "closing"): void {
@@ -83,6 +72,8 @@ export class Connection {
         }
 
         this.node.state = NodeState.Disconnecting;
+        this.node.debug("connection", `disconnecting... code=${code}, reason=${reason}`);
+
         this[_socket]?.close(code, reason);
     }
 
@@ -103,12 +94,7 @@ export class Connection {
             return;
         }
 
-        for (const { resolve, reject, data } of this.payloadQueue) {
-            this._send(data)
-                .then(resolve)
-                .catch(reject);
-        }
-
+        this.payloadQueue.forEach(this._send.bind(this));
         this.payloadQueue = [];
     }
 
@@ -129,8 +115,8 @@ export class Connection {
         await this.flushQueue();
         await this.configureResuming();
 
-        const took = Date.now() - this[_connectedAt]!;
-        this.node.emit("connect", { took, reconnect: this.node.state === NodeState.Reconnecting });
+        this.node.emit("connect", { took: this.uptime, reconnect: this.node.state === NodeState.Reconnecting });
+        this.node.debug("connection", `connected in ${this.uptime}ms`);
         this.node.state = NodeState.Connected;
     }
 
@@ -139,7 +125,10 @@ export class Connection {
             return;
         }
 
-        const reconnecting = !!this.info.reconnect && this.info.reconnect.tries === -1 ? true : (this.info.reconnect?.tries ?? 3) > this.reconnectTry;
+        const reconnecting = !!this.info.reconnect
+            && this.info.reconnect.tries === -1 ? true : (this.info.reconnect?.tries ?? 3) > this.reconnectTry
+            && this.node.state !== NodeState.Disconnecting;
+
         this.node.emit("disconnect", { code, reason, wasClean, reconnecting });
         if (!reconnecting) {
             this.node.state = NodeState.Disconnected;
@@ -152,7 +141,9 @@ export class Connection {
                 : this.info.reconnect?.delay ?? 10000;
 
             this.reconnectTry++;
-            await sleep(duration);
+            this.node.debug("connection", `attempting to reconnect in ${duration}ms, try=${this.reconnectTry}`);
+
+            await new Promise(res => setTimeout(res, duration));
         }
     }
 
@@ -192,11 +183,15 @@ export class Connection {
                     player.handleEvent(payload);
                 }
         }
+
+        this.node.debug("connection", `${Connection.CLIENT_NAME} <<< ${payload.op}: ${data}`);
+        this.node.emit("raw", payload);
     }
 
-    private _send(payload: Lavalink.OutgoingMessage): Promise<void> {
-        const json = JSON.stringify(payload);
-        return new Promise((res, rej) => this[_socket]!.send(json, e => e ? rej(e) : res()));
+    private _send({ data, reject, resolve }: OutgoingPayload) {
+        const json = JSON.stringify(data);
+        this.node.debug("connection", `${Connection.CLIENT_NAME} >>> ${data.op}: ${json}`);
+        return this[_socket]!.send(json, e => e ? reject(e) : resolve());
     }
 }
 
@@ -221,7 +216,7 @@ export interface ReconnectOptions {
     tries?: number;
 }
 
-export interface QueuedPayload {
+export interface OutgoingPayload {
     resolve: () => void;
     reject: (error: Error) => void;
     data: Lavalink.OutgoingMessage;

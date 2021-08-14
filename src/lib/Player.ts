@@ -1,35 +1,42 @@
-import { Emitter } from "./Utils";
-import * as Lavalink from "@lavaclient/types";
+import { DiscordResource, Emitter, getId, Snowflake } from "./Utils";
+import {
+    EqualizerBand,
+    Filter,
+    FilterData,
+    PlayData,
+    PlayerEvent,
+    TrackEndReason,
+    VoiceUpdateData
+} from "@lavaclient/types";
 
 import type { Node } from "./node/Node";
-import type { DiscordResource, Snowflake } from "../constants";
 
-const _voiceUpdate = Symbol("Player#_voiceUpdate")
-const _volume = Symbol("Player#_volume")
+/** @internal */
+const _voiceUpdate = Symbol.for("Player#_voiceUpdate");
+/** @internal */
+const _volume = Symbol.for("Player#_volume");
 
 export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
     static USE_FILTERS = false;
 
-    readonly node: N;
     readonly guildId: Snowflake;
 
-    channelId?: string;
+    channelId: string | null = null;
     track?: string;
     playing = false;
     playingSince?: number;
     paused = false;
     position?: number;
     connected = false;
-    filters: Partial<Lavalink.FilterData> = {};
+    filters: Partial<FilterData> = {};
 
-    private [_voiceUpdate]: Partial<Lavalink.VoiceUpdateData> = {};
+    private [_voiceUpdate]: Partial<VoiceUpdateData> = {};
     private [_volume] = 100;
 
-    constructor(node: N, guild: Snowflake | DiscordResource) {
+    constructor(readonly node: N, guild: Snowflake | DiscordResource) {
         super();
 
-        this.node = node;
-        this.guildId = typeof guild === "string" ? guild : guild.id;
+        this.guildId = getId(guild);
     }
 
     get volume(): number {
@@ -40,10 +47,9 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
 
     /* voice connection management. */
     connect(channel: Snowflake | DiscordResource | null, options: ConnectOptions = {}): this {
-        this.channelId = typeof channel === "string"
-            ? channel
-            : channel?.id;
+        this.channelId = channel && getId(channel);
 
+        this.node.debug("voice", `updating voice status in guild=${this.guildId}, channel=${this.channelId}`, this);
         this.node.sendGatewayPayload(this.guildId, {
             op: 4,
             d: {
@@ -80,7 +86,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
 
     async pause(state = true) {
         this.paused = state;
-        await this.node.conn.send(false, { op: "pause", guildId: this.guildId, pause: state })
+        await this.node.conn.send(false, { op: "pause", guildId: this.guildId, pause: state });
         return this;
     }
 
@@ -100,7 +106,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
 
     async setVolume(volume: number): Promise<this> {
         if (Player.USE_FILTERS) {
-            await this.setFilters(Lavalink.Filter.Volume, volume > 1 ? volume / 100 : volume);
+            await this.setFilters(Filter.Volume, volume > 1 ? volume / 100 : volume);
         } else {
             await this.node.conn.send(false, { op: "volume", guildId: this.guildId, volume });
             this[_volume] = volume;
@@ -111,13 +117,13 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
 
     setEqualizer(gains: number[]): Promise<this>;
     setEqualizer(...gains: number[]): Promise<this>;
-    setEqualizer(bands: Lavalink.EqualizerBand[]): Promise<this>;
-    setEqualizer(...bands: Lavalink.EqualizerBand[]): Promise<this>;
+    setEqualizer(bands: EqualizerBand[]): Promise<this>;
+    setEqualizer(...bands: EqualizerBand[]): Promise<this>;
     async setEqualizer(
-        arg0: number | Lavalink.EqualizerBand | (Lavalink.EqualizerBand | number)[],
-        ...arg1: (number | Lavalink.EqualizerBand)[]
+        arg0: number | EqualizerBand | (EqualizerBand | number)[],
+        ...arg1: (number | EqualizerBand)[]
     ): Promise<this> {
-        const bands: Lavalink.EqualizerBand[] = [];
+        const bands: EqualizerBand[] = [];
         if (Array.isArray(arg0)) {
             arg0.forEach((value, index) => {
                 bands.push(typeof value === "number" ? { gain: value, band: index } : value);
@@ -125,8 +131,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
         } else {
             bands.push(typeof arg0 === "number" ? { gain: arg0, band: 0 } : arg0);
             arg1.forEach(value => {
-                const band =
-                    typeof value === "number" ? { gain: value, band: bands.length } : value;
+                const band = typeof value === "number" ? { gain: value, band: bands.length } : value;
                 bands.push(band);
             });
         }
@@ -138,7 +143,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
 
         /* apply the equalizer */
         await (Player.USE_FILTERS
-            ? this.setFilters(Lavalink.Filter.Equalizer, bands)
+            ? this.setFilters(Filter.Equalizer, bands)
             : this.node.conn.send(false, { op: "equalizer", guildId: this.guildId, bands }));
 
         return this;
@@ -146,11 +151,11 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
 
 
     setFilters(): Promise<this>;
-    setFilters(filters: Partial<Lavalink.FilterData>): Promise<this>;
-    setFilters<F extends Lavalink.Filter>(filter: F, data: Lavalink.FilterData[F]): Promise<this>;
-    async setFilters<F extends Lavalink.Filter>(
-        arg0?: Partial<Lavalink.FilterData> | F,
-        arg1?: Lavalink.FilterData[F]
+    setFilters(filters: Partial<FilterData>): Promise<this>;
+    setFilters<F extends Filter>(filter: F, data: FilterData[F]): Promise<this>;
+    async setFilters<F extends Filter>(
+        arg0?: Partial<FilterData> | F,
+        arg1?: FilterData[F]
     ): Promise<this> {
         if (typeof arg0 === "object") {
             this.filters = arg0;
@@ -161,7 +166,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
         await this.node.conn.send(false, {
             op: "filters",
             guildId: this.guildId,
-            ...this.filters,
+            ...this.filters
         });
 
         return this;
@@ -177,17 +182,18 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
             }
 
             if (update.channel_id && this.channelId !== update.channel_id) {
-                this.emit("channelMove", this.channelId, update.channel_id)
+                this.emit("channelMove", this.channelId, update.channel_id);
             }
 
             this[_voiceUpdate].sessionId = update.session_id;
         }
 
         if (this[_voiceUpdate].event && this[_voiceUpdate].sessionId) {
+            this.node.debug("voice", "submitting voice update", this);
             await this.node.conn.send(true, {
                 op: "voiceUpdate",
                 guildId: this.guildId,
-                ...this[_voiceUpdate] as Lavalink.VoiceUpdateData
+                ...this[_voiceUpdate] as VoiceUpdateData
             });
 
             this.connected = true;
@@ -196,7 +202,7 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
         return this;
     }
 
-    handleEvent(event: Lavalink.PlayerEvent) {
+    handleEvent(event: PlayerEvent) {
         switch (event.type) {
             case "TrackStartEvent":
                 this.playing = true;
@@ -220,22 +226,22 @@ export class Player<N extends Node = Node> extends Emitter<PlayerEvents> {
                 this.emit("trackStuck", event.track, event.thresholdMs);
                 break;
             case "WebSocketClosedEvent":
-                this.channelId = undefined;
+                this.channelId = null;
                 this.emit("channelLeave", event.code, event.reason, event.byRemote);
                 break;
         }
     }
 }
 
-export type PlayOptions = Omit<Lavalink.PlayData, "track">;
+export type PlayOptions = Omit<PlayData, "track">;
 
 export type PlayerEvents = {
     trackStart: (track: string) => void;
-    trackEnd: (track: string | null, reason: Lavalink.TrackEndReason) => void;
+    trackEnd: (track: string | null, reason: TrackEndReason) => void;
     trackException: (track: string | null, error: Error) => void;
     trackStuck: (track: string | null, thresholdMs: number) => void;
     channelLeave: (code: number, reason: string, byRemote: boolean) => void;
-    channelMove: (from?: Snowflake, to?: Snowflake) => void;
+    channelMove: (from: Snowflake | null, to: Snowflake | null) => void;
 }
 
 export interface ConnectOptions {
@@ -248,6 +254,7 @@ export interface VoiceServerUpdate {
     endpoint: string;
     guild_id: `${bigint}`;
 }
+
 export interface VoiceStateUpdate {
     session_id: string;
     channel_id: `${bigint}` | null;
