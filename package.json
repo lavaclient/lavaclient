@@ -21,7 +21,7 @@
     "easy"
   ],
   "dependencies": {
-    "@lavaclient/types": "2.0.8",
+    "@lavaclient/types": "2.0.11",
     "petitio": "^1.2.1",
     "ws": "^8.0.0"
   },
