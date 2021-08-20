@@ -1,4 +1,4 @@
-import fetch from 'petitio';
+import fetch from "petitio";
 import { EventEmitter } from "events";
 import { Structures } from "../Structures";
 

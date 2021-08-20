@@ -1,4 +1,15 @@
-import * as Lavalink from "@lavaclient/types";
+import {
+  VolumeFilter,
+  TimescaleFilter,
+  KaraokeFilter,
+  TremoloFilter,
+  RotationFilter,
+  DistortionFilter,
+  EqualizerFilter,
+  VibratoFilter,
+  Filter,
+  FilterData
+} from "@lavaclient/types";
 
 import type { Player } from "./Player";
 
@@ -6,12 +17,12 @@ export class Filters {
   /**
    * The default volume configuration
    */
-  static DEFAULT_VOLUME: Lavalink.VolumeFilter = 1;
+  static DEFAULT_VOLUME: VolumeFilter = 1;
 
   /**
    * The default configuration for timescale..
    */
-  static DEFAULT_TIMESCALE: Lavalink.TimescaleFilter = {
+  static DEFAULT_TIMESCALE: TimescaleFilter = {
     rate: 1,
     speed: 1,
     pitch: 1
@@ -20,7 +31,7 @@ export class Filters {
   /**
    * The default karaoke configuration.
    */
-  static DEFAULT_KARAOKE: Lavalink.KaraokeFilter = {
+  static DEFAULT_KARAOKE: KaraokeFilter = {
     level: 1,
     monoLevel: 1,
     filterBand: 220,
@@ -30,7 +41,7 @@ export class Filters {
   /**
    * The default tremolo configuration.
    */
-  static DEFAULT_TREMOLO: Lavalink.TremoloFilter = {
+  static DEFAULT_TREMOLO: TremoloFilter = {
     depth: .5,
     frequency: 2
   }
@@ -43,42 +54,42 @@ export class Filters {
   /**
    * The timescale filter.
    */
-  timescale?: Lavalink.TimescaleFilter;
+  timescale?: TimescaleFilter;
 
   /**
    * The karaoke filter.
    */
-  karaoke?: Lavalink.KaraokeFilter;
+  karaoke?: KaraokeFilter;
 
   /**
    * The equalizer filter.
    */
-  equalizer: Lavalink.EqualizerFilter;
+  equalizer: EqualizerFilter;
 
   /**
    * The distortion filter.
    */
-  distortion?: Lavalink.DistortionFilter;
+  distortion?: DistortionFilter;
 
   /**
    * The volume filter.
    */
-  volume: Lavalink.VolumeFilter;
+  volume: VolumeFilter;
 
   /**
    * The tremolo filter.
    */
-  tremolo?: Lavalink.TremoloFilter;
+  tremolo?: TremoloFilter;
 
   /**
    * The rotation filter.
    */
-  rotation?: Lavalink.RotationFilter;
+  rotation?: RotationFilter;
 
   /**
    * The vibrato filter.
    */
-  vibrato?: Lavalink.VibratoFilter;
+  vibrato?: VibratoFilter;
 
   /**
    * @param player The player instance.
@@ -136,30 +147,30 @@ export class Filters {
   /**
    * The filters payload.
    */
-  get payload(): Partial<Lavalink.FilterData> {
-    const payload: Partial<Lavalink.FilterData> = {
-      [Lavalink.Filter.Volume]: this.volume,
-      [Lavalink.Filter.Equalizer]: this.equalizer
+  get payload(): Partial<FilterData> {
+    const payload: Partial<FilterData> = {
+      [Filter.Volume]: this.volume,
+      [Filter.Equalizer]: this.equalizer
     }
 
     if (this.isTimescaleEnabled) {
-      payload[Lavalink.Filter.Timescale] = this.timescale;
+      payload[Filter.Timescale] = this.timescale;
     }
 
     if (this.isKaraokeEnabled) {
-      payload[Lavalink.Filter.Karaoke] = this.karaoke;
+      payload[Filter.Karaoke] = this.karaoke;
     }
 
     if (this.isTremoloEnabled) {
-      payload[Lavalink.Filter.Tremolo] = this.tremolo;
+      payload[Filter.Tremolo] = this.tremolo;
     }
 
     if (this.isDistortionEnabled) {
-      payload[Lavalink.Filter.Distortion] = this.distortion;
+      payload[Filter.Distortion] = this.distortion;
     }
 
     if (this.isRotationEnabled) {
-      payload[Lavalink.Filter.Rotation] = this.rotation;
+      payload[Filter.Rotation] = this.rotation;
     }
 
     return payload;
