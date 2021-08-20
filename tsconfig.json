@@ -1,45 +1,43 @@
 {
-  "exclude": ["./node_modules", "./dist"],
-  "include": [
-    "./src/**/*"
-  ],
-  "compilerOptions": {
-    /* Basic */
-    "lib": ["ESNext"],
-    "target": "ESNext",
-    "module": "CommonJS",
-    "skipLibCheck": true,
+    "exclude": ["./node_modules", "./dist"],
+    "include": ["./src/**/*"],
+    "compilerOptions": {
+        /* Basic */
+        "lib": ["ESNext"],
+        "target": "ESNext",
+        "module": "CommonJS",
+        "skipLibCheck": true,
 
-    /* Compiling */
-    "incremental": false,
-    "inlineSourceMap": false,
-    "declaration": false,
-    "allowJs": true,
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "removeComments": true,
+        /* Compiling */
+        "incremental": false,
+        "inlineSourceMap": false,
+        "declaration": false,
+        "allowJs": true,
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "removeComments": true,
 
-    /* Strict Options */
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "pretty": true,
-    "experimentalDecorators": true,
-    "importsNotUsedAsValues": "error",
+        /* Strict Options */
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "pretty": true,
+        "experimentalDecorators": true,
+        "importsNotUsedAsValues": "error",
 
-    /* Types */
-    "types": ["node"],
-    "forceConsistentCasingInFileNames": true,
+        /* Types */
+        "types": ["node"],
+        "forceConsistentCasingInFileNames": true,
 
-    /* Module Resolution */
-    "resolveJsonModule": true,
-    "esModuleInterop": true
-  }
+        /* Module Resolution */
+        "resolveJsonModule": true,
+        "esModuleInterop": true
+    }
 }
