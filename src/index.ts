@@ -1,7 +1,9 @@
-export { Structures } from "./Structures";
+export * from "./lib/Player";
+export * from "./lib/Utils";
 
-export * from "./structures/Manager";
-export * from "./structures/Player";
-export * from "./structures/Socket";
-export * from "./structures/Plugin";
-export * from "./structures/Filters";
+export * from "./lib/cluster/Cluster";
+export * from "./lib/cluster/ClusterNode";
+
+export * from "./lib/node/Node";
+export * from "./lib/node/NodeState";
+export * from "./lib/node/Connection";

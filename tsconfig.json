@@ -1,43 +1,47 @@
 {
-    "exclude": ["./node_modules", "./dist"],
-    "include": ["./src/**/*"],
     "compilerOptions": {
         /* Basic */
-        "lib": ["ESNext"],
+        "lib": [ "ESNext" ],
         "target": "ESNext",
         "module": "CommonJS",
         "skipLibCheck": true,
 
         /* Compiling */
-        "incremental": false,
         "inlineSourceMap": false,
         "declaration": false,
-        "allowJs": true,
+        "allowJs": false,
         "rootDir": "./src",
         "outDir": "./dist",
         "removeComments": true,
 
         /* Strict Options */
         "strict": true,
+        "stripInternal": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
         "strictBindCallApply": true,
         "strictPropertyInitialization": true,
+        "strictFunctionTypes": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "pretty": true,
-        "experimentalDecorators": true,
         "importsNotUsedAsValues": "error",
+        "useDefineForClassFields": false,
 
         /* Types */
-        "types": ["node"],
+        "types": [ "node" ],
         "forceConsistentCasingInFileNames": true,
 
         /* Module Resolution */
         "resolveJsonModule": true,
         "esModuleInterop": true
-    }
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./node_modules"
+    ]
 }

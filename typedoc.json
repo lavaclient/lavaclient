@@ -3,8 +3,5 @@
         "src"
     ],
     "excludeExternals": true,
-    "out": "docs",
-    "plugin": [
-        "typedoc-plugin-markdown"
-    ]
+    "out": "docs"
 }
