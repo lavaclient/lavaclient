@@ -1,13 +1,14 @@
 import { ClusterNode } from "./ClusterNode";
-import { EventBus, ListenerMap } from "@dimensional-fun/common";
-import { DiscordResource, getId, Snowflake } from "../Utils";
+import { TypedEmitter } from "tiny-typed-emitter";
+import { DiscordResource, getId, Manager, ManagerOptions, Snowflake } from "../Utils";
 
+import type * as Lavalink from "@lavaclient/types";
 import type { ConnectEvent, DisconnectEvent, SendGatewayPayload } from "../node/Node";
 import type { ConnectionInfo } from "../node/Connection";
 import type { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 import type { REST } from "../node/REST";
 
-export class Cluster extends EventBus<ClusterEvents> {
+export class Cluster extends TypedEmitter<ClusterEvents> implements Manager {
     readonly nodes: Map<String, ClusterNode>;
     readonly sendGatewayPayload: SendGatewayPayload;
 
@@ -16,12 +17,10 @@ export class Cluster extends EventBus<ClusterEvents> {
     constructor(options: ClusterOptions) {
         super();
 
-        this.nodes = new Map(options.nodes
-            .map(n => this.forwardEvents(new ClusterNode(this, n.id, n)))
-            .map(n => [ n.id, n ]));
-
-        this.userId = options.user && getId(options.user);
         this.sendGatewayPayload = options.sendGatewayPayload;
+        this.userId = options.user && getId(options.user);
+
+        this.nodes = new Map(options.nodes.map(n => [ n.id, new ClusterNode(this, n.id, n) ]));
     }
 
     get rest(): REST {
@@ -57,30 +56,18 @@ export class Cluster extends EventBus<ClusterEvents> {
         const guildId = getId(guild);
         return [ ...this.nodes.values() ].find(n => n.players.has(guildId)) ?? null;
     }
-
-    private forwardEvents(node: ClusterNode): ClusterNode {
-        this.redirect(node, {
-            connect: { name: "nodeConnect", args: [ node ] },
-            disconnect: { name: "nodeDisconnect", args: [ node ] },
-            error: { name: "nodeError", args: [ node ] },
-            debug: { name: "nodeDebug", args: [ node ] },
-        });
-
-        return node;
-    }
 }
 
-export interface ClusterEvents extends ListenerMap {
-    nodeConnect: [ node: ClusterNode, event: ConnectEvent ];
-    nodeDisconnect: [ node: ClusterNode, event: DisconnectEvent ];
-    nodeError: [ node: ClusterNode, error: Error ];
-    nodeDebug: [ node: ClusterNode, message: string ];
+export interface ClusterEvents {
+    nodeConnect: (node: ClusterNode, event: ConnectEvent) => void;
+    nodeDisconnect: (node: ClusterNode, event: DisconnectEvent) => void;
+    nodeError: (node: ClusterNode, error: Error) => void;
+    nodeDebug: (node: ClusterNode, message: string) => void;
+    nodeRaw: (node: ClusterNode, message: Lavalink.IncomingMessage) => void;
 }
 
-export interface ClusterOptions {
+export interface ClusterOptions extends ManagerOptions {
     nodes: ClusterNodeOptions[];
-    sendGatewayPayload: SendGatewayPayload;
-    user?: Snowflake | DiscordResource;
 }
 
 export interface ClusterNodeOptions extends ConnectionInfo {

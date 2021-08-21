@@ -1,45 +1,38 @@
 {
     "name": "lavaclient",
-    "version": "4.0.0-rc.9",
+    "version": "4.0.0",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "repository": "git@github.com:lavaclient/lavaclient.git",
     "author": "melike2d <gino@dimensional.fun>",
     "license": "MIT",
     "private": false,
     "scripts": {
-        "docs:gen": "typedoc --theme node_modules/typedoc-scalefast-theme/src"
+        "docs:gen": "typedoc --theme node_modules/typedoc-scalefast-theme/src",
+        "types": "tsc -d",
+        "types:bundle": "dts-bundle --name lavaclient --outputAsModuleFolder --main dist/index.d.ts --out ../index.d.ts --removeSource"
     },
-    "keywords": [
-        "lavaclient",
-        "lavalink",
-        "easy-to-use",
-        "beginner-friendly",
-        "user-friendly",
-        "flexible",
-        "simple",
-        "lightweight",
-        "easy"
-    ],
+    "keywords": [ "lavalink" ],
     "engines": {
-        "node": ">=14"
+        "node": ">=14.x.x"
     },
     "devDependencies": {
+        "@types/centra": "^2.2.0",
         "@types/ws": "^7.4.7",
         "@typescript-eslint/eslint-plugin": "^4.29.1",
         "@typescript-eslint/parser": "^4.29.1",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^3.4.0",
-        "ts-node": "^10.2.0",
         "typedoc": "^0.21.5",
         "typedoc-scalefast-theme": "^1.0.3",
         "typescript": "^4.3.5"
     },
     "dependencies": {
-        "@dimensional-fun/common": "^1.0.2",
         "@lavaclient/types": "^2.0.11",
-        "phin": "^3.6.0",
+        "centra": "^2.5.0",
+        "tiny-typed-emitter": "^2.1.0",
         "ws": "^8.1.0"
     }
 }

@@ -1,4 +1,4 @@
-import phin from "phin";
+import fetch from "centra";
 
 import type * as Lavalink from "@lavaclient/types";
 import type { Node } from "./Node";
@@ -20,7 +20,7 @@ export class REST {
     }
 
     decodeTracks(...tracks: string[]): Promise<Lavalink.TrackInfo[]> {
-        return this.do(`/decodetracks`, { method: "post", data: JSON.stringify(tracks) });
+        return this.do("/decodetracks", { method: "post", data: JSON.stringify(tracks) });
     }
 
     decodeTrack(track: string): Promise<Lavalink.TrackInfo> {
@@ -28,16 +28,18 @@ export class REST {
     }
 
     do<T>(endpoint: string, options: Options = {}): Promise<T> {
-        endpoint = /^\/.+/.test(endpoint) ? endpoint : `/${endpoint}`
-        return phin<T>({
-            url: `${this.baseUrl}${endpoint}`,
-            parse: "json",
-            headers: { authorization: this.info.password },
-            ...options
-        })
-            .then(res => res.body)
+        endpoint = /^\/.+/.test(endpoint) ? endpoint : `/${endpoint}`;
+        const req = fetch(`${this.baseUrl}${endpoint}`, options.method ?? "GET")
+            .header("Authorization", this.info.password);
+
+        if (options.data) {
+            req.body(options.data, "json");
+        }
+
+        return req.send()
+            .then(r => r.json())
             .finally(() => this.node.debug("rest", `${options.method?.toUpperCase() ?? "GET"} ${endpoint}`));
     }
 }
 
-export type Options = Partial<Omit<phin.IWithData<phin.IOptions>, "url" | "headers" | "parse">>
+export type Options = { method?: string, data?: any }

@@ -1,13 +1,13 @@
 import { Connection, ConnectionInfo } from "./Connection";
-import { Dictionary, DiscordResource, getId, Snowflake } from "../Utils";
+import { Dictionary, DiscordResource, getId, Manager, ManagerOptions, Snowflake } from "../Utils";
 import { NodeState } from "./NodeState";
 import { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 import { REST } from "./REST";
-import { EventBus, ListenerMap } from "@dimensional-fun/common";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import type * as Lavalink from "@lavaclient/types";
 
-export class Node extends EventBus<NodeEvents> {
+export class Node extends TypedEmitter<NodeEvents> implements Manager {
     static DEBUG_FORMAT = "{topic}: {message}";
     static DEBUG_FORMAT_PLAYER = "[player {player}] {topic}: {message}";
     static DEFAULT_STATS: Lavalink.StatsData = {
@@ -34,9 +34,9 @@ export class Node extends EventBus<NodeEvents> {
 
     readonly players = new Map<Snowflake, Player<this>>();
     readonly conn: Connection;
-    readonly rest = new REST(this)
+    readonly rest = new REST(this);
+    readonly sendGatewayPayload: SendGatewayPayload;
 
-    sendGatewayPayload: SendGatewayPayload;
     state = NodeState.Idle;
     stats = Node.DEFAULT_STATS;
     userId?: Snowflake;
@@ -44,10 +44,10 @@ export class Node extends EventBus<NodeEvents> {
     constructor(options: NodeOptions) {
         super();
 
-        this.conn = new Connection(this, options.connection);
-
         this.sendGatewayPayload = options.sendGatewayPayload;
         this.userId = options.user && getId(options.user);
+
+        this.conn = new Connection(this, options.connection);
     }
 
     get penalties() {
@@ -107,12 +107,12 @@ export class Node extends EventBus<NodeEvents> {
 
 export type SendGatewayPayload = (id: Snowflake, payload: { op: 4, d: Dictionary }) => void;
 
-export interface NodeEvents extends ListenerMap {
-    connect: [ event: ConnectEvent ];
-    disconnect: [ event: DisconnectEvent ];
-    error: [  error: Error ];
-    debug: [ message: string ];
-    raw: [ message: Lavalink.IncomingMessage ];
+export interface NodeEvents {
+    connect: (event: ConnectEvent) => void;
+    disconnect: (event: DisconnectEvent) => void;
+    error: (error: Error) => void;
+    debug: (message: string) => void;
+    raw: (message: Lavalink.IncomingMessage) => void;
 }
 
 export interface ConnectEvent {
@@ -127,8 +127,6 @@ export interface DisconnectEvent {
     wasClean: boolean;
 }
 
-export interface NodeOptions {
+export interface NodeOptions extends ManagerOptions {
     connection: ConnectionInfo;
-    sendGatewayPayload: SendGatewayPayload;
-    user?: Snowflake | { id: Snowflake };
 }

@@ -1,14 +1,6 @@
 import { DiscordResource, getId, Snowflake } from "./Utils";
-import {
-    EqualizerBand,
-    Filter,
-    FilterData,
-    PlayData,
-    PlayerEvent,
-    TrackEndReason,
-    VoiceUpdateData
-} from "@lavaclient/types";
-import { EventBus, ListenerMap } from "@dimensional-fun/common";
+import Lavalink, { Filter } from "@lavaclient/types";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import type { Node } from "./node/Node";
 
@@ -17,7 +9,7 @@ const _voiceUpdate = Symbol.for("Player#_voiceUpdate");
 /** @internal */
 const _volume = Symbol.for("Player#_volume");
 
-export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
+export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
     static USE_FILTERS = false;
 
     readonly guildId: Snowflake;
@@ -29,9 +21,9 @@ export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
     paused = false;
     position?: number;
     connected = false;
-    filters: Partial<FilterData> = {};
+    filters: Partial<Lavalink.FilterData> = {};
 
-    private [_voiceUpdate]: Partial<VoiceUpdateData> = {};
+    private [_voiceUpdate]: Partial<Lavalink.VoiceUpdateData> = {};
     private [_volume] = 100;
 
     constructor(readonly node: N, guild: Snowflake | DiscordResource) {
@@ -69,7 +61,7 @@ export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
     }
 
     /* lavalink operations. */
-    async play(track: string | { track: string }, options: PlayOptions) {
+    async play(track: string | { track: string }, options: PlayOptions = {}) {
         await this.node.conn.send(false, {
             op: "play",
             track: typeof track === "string" ? track : track.track,
@@ -117,12 +109,12 @@ export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
     }
 
     setEqualizer(...gains: number[]): Promise<this>;
-    setEqualizer(...bands: EqualizerBand[]): Promise<this>;
+    setEqualizer(...bands: Lavalink.EqualizerBand[]): Promise<this>;
     async setEqualizer(
-        arg0: number | EqualizerBand | (EqualizerBand | number)[],
-        ...arg1: (number | EqualizerBand)[]
+        arg0: number | Lavalink.EqualizerBand | (Lavalink.EqualizerBand | number)[],
+        ...arg1: (number | Lavalink.EqualizerBand)[]
     ): Promise<this> {
-        const bands: EqualizerBand[] = [];
+        const bands: Lavalink.EqualizerBand[] = [];
         if (Array.isArray(arg0)) {
             arg0.forEach((value, index) => {
                 bands.push(typeof value === "number" ? { gain: value, band: index } : value);
@@ -150,11 +142,11 @@ export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
 
 
     setFilters(): Promise<this>;
-    setFilters(filters: Partial<FilterData>): Promise<this>;
-    setFilters<F extends Filter>(filter: F, data: FilterData[F]): Promise<this>;
+    setFilters(filters: Partial<Lavalink.FilterData>): Promise<this>;
+    setFilters<F extends Filter>(filter: F, data: Lavalink.FilterData[F]): Promise<this>;
     async setFilters<F extends Filter>(
-        arg0?: Partial<FilterData> | F,
-        arg1?: FilterData[F]
+        arg0?: Partial<Lavalink.FilterData> | F,
+        arg1?: Lavalink.FilterData[F]
     ): Promise<this> {
         if (typeof arg0 === "object") {
             this.filters = arg0;
@@ -192,7 +184,7 @@ export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
             await this.node.conn.send(true, {
                 op: "voiceUpdate",
                 guildId: this.guildId,
-                ...this[_voiceUpdate] as VoiceUpdateData
+                ...this[_voiceUpdate] as Lavalink.VoiceUpdateData
             });
 
             this.connected = true;
@@ -201,7 +193,7 @@ export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
         return this;
     }
 
-    handleEvent(event: PlayerEvent) {
+    handleEvent(event: Lavalink.PlayerEvent) {
         switch (event.type) {
             case "TrackStartEvent":
                 this.playing = true;
@@ -232,15 +224,15 @@ export class Player<N extends Node = Node> extends EventBus<PlayerEvents> {
     }
 }
 
-export type PlayOptions = Omit<PlayData, "track">;
+export type PlayOptions = Omit<Lavalink.PlayData, "track">;
 
-export interface PlayerEvents extends ListenerMap {
-    trackStart: [ track: string ];
-    trackEnd: [ track: string | null, reason: TrackEndReason ];
-    trackException: [ track: string | null, error: Error ];
-    trackStuck: [ track: string | null, thresholdMs: number ];
-    channelLeave: [ code: number, reason: string, byRemote: boolean ];
-    channelMove: [ from: Snowflake | null, to: Snowflake | null ];
+export interface PlayerEvents {
+    trackStart: (track: string) => void;
+    trackEnd: (track: string | null, reason: Lavalink.TrackEndReason) => void;
+    trackException: (track: string | null, error: Error) => void;
+    trackStuck: (track: string | null, thresholdMs: number) => void;
+    channelLeave: (code: number, reason: string, byRemote: boolean) => void;
+    channelMove: (from: Snowflake | null, to: Snowflake | null) => void;
 }
 
 export interface ConnectOptions {
