@@ -1,6 +1,6 @@
 {
     "name": "lavaclient",
-    "version": "4.0.0",
+    "version": "4.0.2",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
