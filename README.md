@@ -58,8 +58,7 @@ What you need for correctly sending voice updates to lavalink:
 2. [**Raw** Voice *State* or *Server* updates](https://discord.com/developers/docs/topics/gateway#voice)
 3. Passing the data of the voice update to `(Cluster|Node)#handleVoiceUpdate`
 
-[comment]: <> (TODO: add link to djs v13 example)
-- [discord.js v13 example](#)
+- [discord.js v13 example](https://github.com/lavaclient/djs-v13-example)
 
 ### Playing Music
 
