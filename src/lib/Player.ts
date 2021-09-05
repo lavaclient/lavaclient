@@ -40,14 +40,12 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
 
     /* voice connection management. */
     connect(channel: Snowflake | DiscordResource | null, options: ConnectOptions = {}): this {
-        this.channelId = channel && getId(channel);
-
         this.node.debug("voice", `updating voice status in guild=${this.guildId}, channel=${this.channelId}`, this);
         this.node.sendGatewayPayload(this.guildId, {
             op: 4,
             d: {
                 guild_id: this.guildId,
-                channel_id: this.channelId,
+                channel_id: channel && getId(channel),
                 self_deaf: options.deafened ?? false,
                 self_mute: options.muted ?? false
             }
@@ -172,8 +170,16 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 return this;
             }
 
-            if (update.channel_id && this.channelId !== update.channel_id) {
-                this.emit("channelMove", this.channelId, update.channel_id);
+            const channel = update.channel_id;
+            if(!channel && this.channelId) {
+                this.emit("channelLeave", this.channelId);
+                this.channelId = null;
+            } else if (channel && !this.channelId) {
+                this.channelId = update.channel_id;
+                this.emit("channelJoin", this.channelId!);
+            } else if (channel !== this.channelId) {
+                this.emit("channelMove", this.channelId!, update.channel_id!);
+                this.channelId = update.channel_id;
             }
 
             this[_voiceUpdate].sessionId = update.session_id;
@@ -217,8 +223,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 this.emit("trackStuck", event.track, event.thresholdMs);
                 break;
             case "WebSocketClosedEvent":
-                this.channelId = null;
-                this.emit("channelLeave", event.code, event.reason, event.byRemote);
+                this.emit("disconnected", event.code, event.reason, event.byRemote);
                 break;
         }
     }
@@ -227,12 +232,14 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
 export type PlayOptions = Omit<Lavalink.PlayData, "track">;
 
 export interface PlayerEvents {
+    disconnected: (code: number, reason: string, byRemote: boolean) => void;
     trackStart: (track: string) => void;
     trackEnd: (track: string | null, reason: Lavalink.TrackEndReason) => void;
     trackException: (track: string | null, error: Error) => void;
     trackStuck: (track: string | null, thresholdMs: number) => void;
-    channelLeave: (code: number, reason: string, byRemote: boolean) => void;
-    channelMove: (from: Snowflake | null, to: Snowflake | null) => void;
+    channelJoin: (joined: Snowflake) => void;
+    channelLeave: (left: Snowflake) => void;
+    channelMove: (from: Snowflake, to: Snowflake) => void;
 }
 
 export interface ConnectOptions {
