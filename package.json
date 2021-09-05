@@ -1,6 +1,6 @@
 {
     "name": "lavaclient",
-    "version": "4.0.2",
+    "version": "4.0.3",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -11,8 +11,11 @@
     "scripts": {
         "docs:gen": "typedoc --theme node_modules/typedoc-scalefast-theme/src",
         "types": "tsc -d",
-        "types:bundle": "dts-bundle --name lavaclient --outputAsModuleFolder --main dist/index.d.ts --out ../index.d.ts --removeSource"
+        "types:bundle": "dts-bundle --name lavaclient --outputAsModuleFolder --main dist/index.d.ts --out ./index.d.ts --removeSource"
     },
+    "files": [
+        "dist/**/*.{js,d.ts}"
+    ],
     "keywords": [ "lavalink" ],
     "engines": {
         "node": ">=14.x.x"
