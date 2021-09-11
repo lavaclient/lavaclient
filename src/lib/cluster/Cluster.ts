@@ -43,6 +43,10 @@ export class Cluster extends TypedEmitter<ClusterEvents> implements Manager {
         if (!node) throw new Error("No available nodes.");
         return node.createPlayer(guild);
     }
+    
+    getPlayer(guild: Snowflake | DiscordResource): Player<ClusterNode> {
+        return this.getNode(guild)?.players?.get(guild);
+    }
 
     destroyPlayer(guild: Snowflake | DiscordResource): boolean {
         return this.getNode(guild)?.destroyPlayer(guild) ?? false;
