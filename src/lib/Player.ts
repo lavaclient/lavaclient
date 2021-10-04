@@ -59,7 +59,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
     }
 
     /* lavalink operations. */
-    async play(track: string | { track: string }, options: PlayOptions = {}) {
+    async play(track: string | { track: string }, options: PlayOptions = {}): Promise<this> {
         await this.node.conn.send(false, {
             op: "play",
             track: typeof track === "string" ? track : track.track,
@@ -75,7 +75,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         return this;
     }
 
-    async pause(state = true) {
+    async pause(state = true): Promise<this> {
         this.paused = state;
         await this.node.conn.send(false, { op: "pause", guildId: this.guildId, pause: state });
         return this;
@@ -138,7 +138,6 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         return this;
     }
 
-
     setFilters(): Promise<this>;
     setFilters(filters: Partial<Lavalink.FilterData>): Promise<this>;
     setFilters<F extends Filter>(filter: F, data: Lavalink.FilterData[F]): Promise<this>;
@@ -199,7 +198,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         return this;
     }
 
-    handleEvent(event: Lavalink.PlayerEvent) {
+    handleEvent(event: Lavalink.PlayerEvent): void {
         switch (event.type) {
             case "TrackStartEvent":
                 this.playing = true;

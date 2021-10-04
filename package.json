@@ -16,7 +16,9 @@
     "files": [
         "dist/**/*.{js,d.ts}"
     ],
-    "keywords": [ "lavalink" ],
+    "keywords": [
+        "lavalink"
+    ],
     "engines": {
         "node": ">=14.x.x"
     },
@@ -26,8 +28,6 @@
         "@typescript-eslint/eslint-plugin": "^4.29.1",
         "@typescript-eslint/parser": "^4.29.1",
         "eslint": "^7.32.0",
-        "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-prettier": "^3.4.0",
         "typedoc": "^0.21.5",
         "typedoc-scalefast-theme": "^1.0.3",
         "typescript": "^4.3.5"
