@@ -1,5 +1,5 @@
 import { Connection, ConnectionInfo } from "./Connection";
-import { Dictionary, DiscordResource, getId, Manager, ManagerOptions, Snowflake } from "../Utils";
+import { Dictionary, DiscordResource, getId, ManagerOptions, Snowflake } from "../Utils";
 import { NodeState } from "./NodeState";
 import { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 import { REST } from "./REST";
@@ -7,7 +7,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 
 import type * as Lavalink from "@lavaclient/types";
 
-export class Node extends TypedEmitter<NodeEvents> implements Manager {
+export class Node extends TypedEmitter<NodeEvents> {
     static DEBUG_FORMAT = "{topic}: {message}";
     static DEBUG_FORMAT_PLAYER = "[player {player}] {topic}: {message}";
     static DEFAULT_STATS: Lavalink.StatsData = {
@@ -50,7 +50,7 @@ export class Node extends TypedEmitter<NodeEvents> implements Manager {
         this.conn = new Connection(this, options.connection);
     }
 
-    get penalties() {
+    get penalties(): number {
         const cpu = Math.pow(1.05, 100 * this.stats.cpu.systemLoad) * 10 - 10;
 
         let deficit = 0, nulled = 0;
@@ -63,7 +63,7 @@ export class Node extends TypedEmitter<NodeEvents> implements Manager {
         return cpu + deficit + nulled;
     }
 
-    connect(user: Snowflake | DiscordResource | undefined = this.userId) {
+    connect(user: Snowflake | DiscordResource | undefined = this.userId): void {
         this.userId ??= user && getId(user);
         if (!this.userId) {
             throw new Error("No User-Id is present.");
@@ -92,13 +92,13 @@ export class Node extends TypedEmitter<NodeEvents> implements Manager {
         return !!player;
     }
 
-    handleVoiceUpdate(update: VoiceStateUpdate | VoiceServerUpdate) {
+    handleVoiceUpdate(update: VoiceStateUpdate | VoiceServerUpdate): void {
         const player = this.players.get(update.guild_id);
         player?.handleVoiceUpdate(update);
     }
 
-    debug(topic: string, message: string, player?: Player) {
-        return this.emit("debug", (player ? Node.DEBUG_FORMAT_PLAYER : Node.DEBUG_FORMAT)
+    debug(topic: string, message: string, player?: Player): void {
+        return void this.emit("debug", (player ? Node.DEBUG_FORMAT_PLAYER : Node.DEBUG_FORMAT)
             .replace("{topic}", topic)
             .replace("{message}", message)
             .replace("{player}", player?.guildId ?? "N/A"));

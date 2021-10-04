@@ -1,6 +1,6 @@
 import { ClusterNode } from "./ClusterNode";
 import { TypedEmitter } from "tiny-typed-emitter";
-import { DiscordResource, getId, Manager, ManagerOptions, Snowflake } from "../Utils";
+import { DiscordResource, getId, ManagerOptions, Snowflake } from "../Utils";
 
 import type * as Lavalink from "@lavaclient/types";
 import type { ConnectEvent, DisconnectEvent, SendGatewayPayload } from "../node/Node";
@@ -8,7 +8,7 @@ import type { ConnectionInfo } from "../node/Connection";
 import type { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 import type { REST } from "../node/REST";
 
-export class Cluster extends TypedEmitter<ClusterEvents> implements Manager {
+export class Cluster extends TypedEmitter<ClusterEvents> {
     readonly nodes: Map<string, ClusterNode>;
     readonly sendGatewayPayload: SendGatewayPayload;
 

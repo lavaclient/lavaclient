@@ -6,7 +6,7 @@ import type { Node } from "./Node";
 import type { Dictionary } from "../Utils";
 
 /** @internal */
-const _socket = Symbol("Connection#_socket")
+const _socket = Symbol("Connection#_socket");
 
 export class Connection {
     static CLIENT_NAME = "lavaclient";
@@ -21,22 +21,22 @@ export class Connection {
     }
 
     get active(): boolean {
-        return !!this[_socket] && this[_socket]!.readyState === WebSocket.OPEN;
+        return !!this[_socket] && this[_socket]?.readyState === WebSocket.OPEN;
     }
 
-    get canReconnect() {
+    get canReconnect(): boolean {
         const maxTries = this.info.reconnect?.tries === -1 ? Infinity : this.info.reconnect?.tries ?? 5;
         return !!this.info.reconnect && maxTries <= this.reconnectTry;
     }
 
-    get uptime() {
+    get uptime(): number {
         if (!this.connectedAt) return -1;
         return Date.now() - this.connectedAt;
     }
 
     send(important: boolean, data: Lavalink.OutgoingMessage): Promise<void> {
         return new Promise((resolve, reject) => {
-            const payload: OutgoingPayload = { resolve, reject, data }
+            const payload: OutgoingPayload = { resolve, reject, data };
             this.active
                 ? this._send(payload)
                 : this.payloadQueue[important ? "unshift" : "push"](payload);
@@ -46,9 +46,14 @@ export class Connection {
     connect(): void {
         this.disconnect();
 
+        const userId = this.node.userId;
+        if (!userId) {
+            throw new Error("No User-Id is present.");
+        }
+
         const headers: Dictionary<string> = {
             Authorization: this.info.password,
-            "User-Id": this.node.userId!,
+            "User-Id": userId,
             "Client-Name": Connection.CLIENT_NAME,
             "Num-Shards": "1"
         };
@@ -94,7 +99,7 @@ export class Connection {
         });
     }
 
-    flushQueue() {
+    flushQueue(): void {
         if (!this.active) {
             return;
         }
@@ -107,9 +112,9 @@ export class Connection {
         this.node.state = NodeState.Reconnecting;
 
         try {
-            this.connect()
+            this.connect();
         } catch (e) {
-            this.node.emit("error", e);
+            this.node.emit("error", e instanceof Error ? e : new Error(`${e}`));
             return false;
         }
 
@@ -165,35 +170,32 @@ export class Connection {
         try {
             payload = JSON.parse(data.toString());
         } catch (e) {
-            this.node.emit("error", e);
+            this.node.emit("error", e instanceof Error ? e : new Error(`${e}`));
             return;
         }
 
-        switch (payload.op) {
-            case "stats":
-                this.node.stats = payload;
-                break;
-            default:
-                const player = this.node.players.get(payload.guildId);
-                if (player) {
-                    if (payload.op === "playerUpdate") {
-                        player.position = payload.state.position ?? -1;
-                        player.connected = payload.state.connected ?? player.connected;
-                        break;
-                    }
-
+        if (payload.op === "stats") {
+            this.node.stats = payload;
+        } else {
+            const player = this.node.players.get(payload.guildId);
+            if (player) {
+                if (payload.op === "playerUpdate") {
+                    player.position = payload.state.position ?? -1;
+                    player.connected = payload.state.connected ?? player.connected;
+                } else {
                     player.handleEvent(payload);
                 }
+            }
         }
 
         this.node.debug("connection", `${Connection.CLIENT_NAME} <<< ${payload.op}: ${data}`);
         this.node.emit("raw", payload);
     }
 
-    private _send({ data, reject, resolve }: OutgoingPayload) {
+    private _send({ data, reject, resolve }: OutgoingPayload): void {
         const json = JSON.stringify(data);
         this.node.debug("connection", `${Connection.CLIENT_NAME} >>> ${data.op}: ${json}`);
-        return this[_socket]!.send(json, e => e ? reject(e) : resolve());
+        return this[_socket]?.send(json, e => e ? reject(e) : resolve());
     }
 }
 

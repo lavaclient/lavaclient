@@ -1,11 +1,11 @@
-import type { SendGatewayPayload } from "./node/Node";
+import type { Cluster } from "./cluster/Cluster";
+import type { Node, SendGatewayPayload } from "./node/Node";
 
 export type Snowflake = string;
 export type DiscordResource = { id: Snowflake };
 export type Dictionary<V = any, K extends string | symbol = string> = Record<K, V>;
 
-export interface Manager {
-}
+export type Manager = Node | Cluster;
 
 export interface ManagerOptions {
     sendGatewayPayload: SendGatewayPayload;
