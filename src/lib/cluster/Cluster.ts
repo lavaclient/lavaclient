@@ -9,7 +9,7 @@ import type { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 import type { REST } from "../node/REST";
 
 export class Cluster extends TypedEmitter<ClusterEvents> implements Manager {
-    readonly nodes: Map<String, ClusterNode>;
+    readonly nodes: Map<string, ClusterNode>;
     readonly sendGatewayPayload: SendGatewayPayload;
 
     userId?: Snowflake;
@@ -23,8 +23,8 @@ export class Cluster extends TypedEmitter<ClusterEvents> implements Manager {
         this.nodes = new Map(options.nodes.map(n => [ n.id, new ClusterNode(this, n.id, n) ]));
     }
 
-    get rest(): REST {
-        return this.idealNodes[0]!.rest;
+    get rest(): REST | null {
+        return this.idealNodes[0]?.rest ?? null;
     }
 
     get idealNodes(): ClusterNode[] {
@@ -33,7 +33,7 @@ export class Cluster extends TypedEmitter<ClusterEvents> implements Manager {
             .sort((a, b) => a.penalties - b.penalties);
     }
 
-    connect(user: Snowflake | DiscordResource | undefined = this.userId) {
+    connect(user: Snowflake | DiscordResource | undefined = this.userId): void {
         this.userId ??= user && getId(user);
         this.nodes.forEach(node => node.connect(this.userId));
     }
@@ -44,15 +44,16 @@ export class Cluster extends TypedEmitter<ClusterEvents> implements Manager {
         return node.createPlayer(guild);
     }
     
-    getPlayer(guild: Snowflake | DiscordResource): Player<ClusterNode> {
-        return this.getNode(guild)?.players?.get(guild);
+    getPlayer(guild: Snowflake | DiscordResource): Player<ClusterNode> | null {
+        const guildId = getId(guild);
+        return this.getNode(guildId)?.players?.get(guildId) ?? null;
     }
 
     destroyPlayer(guild: Snowflake | DiscordResource): boolean {
         return this.getNode(guild)?.destroyPlayer(guild) ?? false;
     }
 
-    handleVoiceUpdate(update: VoiceServerUpdate | VoiceStateUpdate) {
+    handleVoiceUpdate(update: VoiceServerUpdate | VoiceStateUpdate): void {
         this.getNode(update.guild_id)?.handleVoiceUpdate(update);
     }
 
