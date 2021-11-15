@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { DiscordResource, getId, Snowflake } from "./Utils";
 import Lavalink, { Filter } from "@lavaclient/types";
 import { TypedEmitter } from "tiny-typed-emitter";
@@ -22,6 +23,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
     position?: number;
     connected = false;
     filters: Partial<Lavalink.FilterData> = {};
+    lastUpdatedTimestamp?: number;
 
     private [_voiceUpdate]: Partial<Lavalink.VoiceUpdateData> = {};
     private [_volume] = 100;
@@ -30,6 +32,14 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         super();
 
         this.guildId = getId(guild);
+    }
+
+    get accuratePosition(): number | undefined {
+        if (!this.position) {
+            return;
+        }
+
+        return this.lastUpdatedTimestamp ? this.position + (Date.now() - this.lastUpdatedTimestamp) : this.position;
     }
 
     get volume(): number {
@@ -175,8 +185,10 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 this.channelId = null;
             } else if (channel && !this.channelId) {
                 this.channelId = update.channel_id;
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 this.emit("channelJoin", this.channelId!);
             } else if (channel !== this.channelId) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 this.emit("channelMove", this.channelId!, update.channel_id!);
                 this.channelId = update.channel_id;
             }

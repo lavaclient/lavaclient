@@ -182,6 +182,7 @@ export class Connection {
                 if (payload.op === "playerUpdate") {
                     player.position = payload.state.position ?? -1;
                     player.connected = payload.state.connected ?? player.connected;
+                    player.lastUpdatedTimestamp = payload.state.time;
                 } else {
                     player.handleEvent(payload);
                 }
