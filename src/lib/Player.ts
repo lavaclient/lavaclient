@@ -50,6 +50,8 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
 
     /* voice connection management. */
     connect(channel: Snowflake | DiscordResource | null, options: ConnectOptions = {}): this {
+        this[_voiceUpdate] = {};
+        
         this.node.debug("voice", `updating voice status in guild=${this.guildId}, channel=${this.channelId}`, this);
         this.node.sendGatewayPayload(this.guildId, {
             op: 4,
@@ -65,6 +67,8 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
     }
 
     disconnect(): this {
+        this[_voiceUpdate] = {};
+
         return this.connect(null);
     }
 
@@ -183,6 +187,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
             if(!channel && this.channelId) {
                 this.emit("channelLeave", this.channelId);
                 this.channelId = null;
+                this[_voiceUpdate] = {};
             } else if (channel && !this.channelId) {
                 this.channelId = update.channel_id;
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -191,6 +196,10 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 this.emit("channelMove", this.channelId!, update.channel_id!);
                 this.channelId = update.channel_id;
+            }
+
+            if (this[_voiceUpdate].sessionId === update.session_id) {
+                return this;
             }
 
             this[_voiceUpdate].sessionId = update.session_id;
