@@ -26,7 +26,7 @@ export class Connection {
 
     get canReconnect(): boolean {
         const maxTries = this.info.reconnect?.tries === -1 ? Infinity : this.info.reconnect?.tries ?? 5;
-        return !!this.info.reconnect && maxTries <= this.reconnectTry;
+        return !!this.info.reconnect && maxTries > this.reconnectTry;
     }
 
     get uptime(): number {
@@ -143,11 +143,18 @@ export class Connection {
         }
 
         while (!this.reconnect()) {
+			this.reconnectTry++;
+
+			if (!this.canReconnect) {
+				this.node.debug("connection", "ran out of reconnect tries.");
+				this.node.emit("closed");
+				return;
+			}
+
             const duration = typeof this.info.reconnect?.delay === "function"
                 ? await this.info.reconnect.delay(this.reconnectTry)
                 : this.info.reconnect?.delay ?? 10000;
 
-            this.reconnectTry++;
             this.node.debug("connection", `attempting to reconnect in ${duration}ms, try=${this.reconnectTry}`);
 
             await new Promise(res => setTimeout(res, duration));
