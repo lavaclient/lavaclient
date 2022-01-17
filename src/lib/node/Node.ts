@@ -110,6 +110,7 @@ export type SendGatewayPayload = (id: Snowflake, payload: { op: 4, d: Dictionary
 export interface NodeEvents {
     connect: (event: ConnectEvent) => void;
     disconnect: (event: DisconnectEvent) => void;
+	closed: () => void;
     error: (error: Error) => void;
     debug: (message: string) => void;
     raw: (message: Lavalink.IncomingMessage) => void;
