@@ -4,6 +4,7 @@ import Lavalink, { Filter } from "@lavaclient/types";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 import type { Node } from "./node/Node";
+import { decode } from "./track/Track";
 
 /** @internal */
 const _voiceUpdate = Symbol.for("Player#_voiceUpdate");
@@ -17,6 +18,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
 
     channelId: string | null = null;
     track?: string;
+    trackData?: Lavalink.TrackInfo;
     playing = false;
     playingSince?: number;
     paused = false;
@@ -39,7 +41,8 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
             return;
         }
 
-        return this.lastUpdatedTimestamp ? this.position + (Date.now() - this.lastUpdatedTimestamp) : this.position;
+        const accurate = (this.lastUpdatedTimestamp) ? this.position + (Date.now() - this.lastUpdatedTimestamp) : this.position;
+        return this.trackData ? Math.min(accurate, this.trackData.length) : accurate;
     }
 
     get volume(): number {
@@ -225,6 +228,9 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 this.playing = true;
                 this.playingSince = Date.now();
                 this.track = event.track;
+                try {
+                    this.trackData = decode(event.track) ?? undefined;
+                } catch {/*no-op*/}
                 this.emit("trackStart", event.track);
                 break;
             case "TrackEndEvent":
@@ -234,6 +240,8 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 }
 
                 delete this.track;
+                delete this.trackData;
+
                 this.emit("trackEnd", event.track, event.reason);
                 break;
             case "TrackExceptionEvent":
