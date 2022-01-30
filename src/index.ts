@@ -8,3 +8,5 @@ export * from "./lib/node/Node";
 export * from "./lib/node/NodeState";
 export * from "./lib/node/Connection";
 export * from "./lib/node/REST";
+
+export * from "./lib/track/Track";
