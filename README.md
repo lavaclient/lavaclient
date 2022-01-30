@@ -1,16 +1,16 @@
 <img src="https://i.imgur.com/LvsojLc.png" align="center">
 
-> A lightweight and powerful lavalink client for nodejs.
+> A lightweight and powerful [lavalink](https://github.com/freyacodes/lavalink) client for nodejs.
  
 - **Easy-to-use:** lavaclient has a neat and user-friendly promise-based api.
 - **Performant:** designed to be small and lightweight, it's a great choice for any project. 
-- **Library Independent:** lavaclient doesn't lock you into a specific discord library. Use anything you want!
+- **Library Agnostic:** lavaclient doesn't require you to use a specific discord library. Use anything you want!
 
 [**Support Server**](https://discord.gg/CH9ubGPMV6)
 
 <h1 align="center">Installation</h1>
 
-[node.js lts](https://nodejs.org) or newer is required
+[node.js v14](https://nodejs.org) or newer is required
 
 ##### Stable
 
@@ -18,7 +18,7 @@
 yarn add lavaclient # or npm install
 ```
 
-##### Beta
+##### Beta (may be outdated)
 
 ```shell
 yarn add lavaclient@beta # or npm install
@@ -55,7 +55,7 @@ Lavalink requires voice updates to play audio in a voice channel, this may vary 
 What you need for correctly sending voice updates to lavalink:
 
 1. A connection to the Discord gateway.
-2. [**Raw** Voice *State* or *Server* updates](https://discord.com/developers/docs/topics/gateway#voice)
+2. [**Raw** Voice *State* and *Server* updates](https://discord.com/developers/docs/topics/gateway#voice)
 3. Passing the data of the voice update to `(Cluster|Node)#handleVoiceUpdate`
 
 - [discord.js v13 example](https://github.com/lavaclient/djs-v13-example)
@@ -71,7 +71,7 @@ await lavalink
     .play(results.tracks[0]);
 ```
 
-<sub>this is a very poor way of playing music btw...</sub>
+<sub>this is a very poor way of playing music btw... checkout our [discord.js example](https://github.com/lavaclient/djs-v13-example)</sub>
 
 ---
 
@@ -85,5 +85,5 @@ If you're looking for a [Deno](https://deno.land) variant of lavaclient... I've 
 
 ---
 
-[melike2d](dimensional.fun) &copy; 2018 - 2021
+[lavaclient](https://lavaclient.js.org/) &copy; 2018 - 2022
 
