@@ -12,9 +12,9 @@ export class ClusterNode extends Node {
         const _event = `node${event.replace(/(\b\w)/, i => i.toUpperCase())}` as keyof ClusterEvents;
         if (this.cluster.listenerCount(_event)) {
             // @ts-expect-error Fuck off lmfao
-            this.cluster.emit(_event, this, ...args);
+            return this.cluster.emit(_event, this, ...args);
         }
 
-        return super.emit(event, ...args);
+        return false;
     }
 }

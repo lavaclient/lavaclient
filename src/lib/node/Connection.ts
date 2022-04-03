@@ -3,10 +3,12 @@ import { NodeState } from "./NodeState";
 
 import type * as Lavalink from "@lavaclient/types";
 import type { Node } from "./Node";
-import type { Dictionary } from "../Utils";
+import { Dictionary, randomId, sleep } from "../Utils";
 
 /** @internal */
 const _socket = Symbol("Connection#_socket");
+/** @internal */
+const _reconnectionPromise = Symbol("Connection#_reconnectionPromise");
 
 export class Connection {
     static CLIENT_NAME = "lavaclient";
@@ -15,6 +17,7 @@ export class Connection {
     payloadQueue: OutgoingPayload[] = [];
     connectedAt?: number;
 
+    private [_reconnectionPromise]?: (connected: boolean) => void;
     private [_socket]?: WebSocket;
 
     constructor(readonly node: Node, readonly info: ConnectionInfo) {
@@ -54,8 +57,8 @@ export class Connection {
         const headers: Dictionary<string> = {
             Authorization: this.info.password,
             "User-Id": userId,
-            "Client-Name": Connection.CLIENT_NAME,
-            "Num-Shards": "1"
+            "Client-Name": this.info.clientName ?? `${Connection.CLIENT_NAME} ${randomId()}`,
+            "Num-Shards": "1" // Lavalink does not use this header
         };
 
         if (this.info.resuming?.key) {
@@ -67,13 +70,13 @@ export class Connection {
             this.node.debug("connection", "creating websocket...");
         }
 
-        this.connectedAt = Date.now();
-
         const socket = this[_socket] = new WebSocket(`ws${this.info.secure ? "s" : ""}://${this.info.host}:${this.info.port}`, { headers });
         socket.onopen = this._onopen.bind(this);
         socket.onclose = this._onclose.bind(this);
         socket.onerror = this._onerror.bind(this);
         socket.onmessage = this._onmessage.bind(this);
+
+        this.connectedAt = Date.now();
     }
 
     disconnect(code = 1000, reason = "closing"): void {
@@ -108,20 +111,24 @@ export class Connection {
         this.payloadQueue = [];
     }
 
-    reconnect(): boolean {
+    async reconnect(): Promise<boolean> {
         this.node.state = NodeState.Reconnecting;
 
-        try {
-            this.connect();
-        } catch (e) {
-            this.node.emit("error", e instanceof Error ? e : new Error(`${e}`));
-            return false;
-        }
+        return new Promise(res => {
+            this[_reconnectionPromise] = res;
 
-        return true;
+            try {
+                this.connect();
+            } catch (e) {
+                this.node.emit("error", e instanceof Error ? e : new Error(`${e}`));
+                return res(false);
+            }
+        });
     }
 
     private async _onopen() {
+        this[_reconnectionPromise]?.(true);
+
         await this.flushQueue();
         await this.configureResuming();
 
@@ -137,19 +144,23 @@ export class Connection {
 
         const reconnecting = this.canReconnect && this.node.state !== NodeState.Disconnecting;
         this.node.emit("disconnect", { code, reason, wasClean, reconnecting });
+
         if (!reconnecting) {
+            this.node.debug("connection", "unable to reconnect");
+            this.node.emit("closed");
             this.node.state = NodeState.Disconnected;
             return;
         }
 
-        while (!this.reconnect()) {
-			this.reconnectTry++;
+        while (!await this.reconnect()) {
+            this.reconnectTry++;
 
-			if (!this.canReconnect) {
-				this.node.debug("connection", "ran out of reconnect tries.");
-				this.node.emit("closed");
-				return;
-			}
+            if (!this.canReconnect) {
+                this.node.debug("connection", "ran out of reconnect tries.");
+                this.node.emit("closed");
+                this.node.state = NodeState.Disconnected;
+                return;
+            }
 
             const duration = typeof this.info.reconnect?.delay === "function"
                 ? await this.info.reconnect.delay(this.reconnectTry)
@@ -157,11 +168,13 @@ export class Connection {
 
             this.node.debug("connection", `attempting to reconnect in ${duration}ms, try=${this.reconnectTry}`);
 
-            await new Promise(res => setTimeout(res, duration));
+            await sleep(duration);
         }
     }
 
     private _onerror(event: WebSocket.ErrorEvent) {
+        this[_reconnectionPromise]?.(false);
+
         const error = event.error ? event.error : event.message;
         this.node.emit("error", new Error(error));
     }
@@ -216,6 +229,7 @@ export interface ConnectionInfo {
     secure?: boolean;
     resuming?: ResumingOptions;
     reconnect?: ReconnectOptions;
+    clientName?: string;
 }
 
 export interface ResumingOptions {

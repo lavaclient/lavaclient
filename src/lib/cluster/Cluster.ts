@@ -35,7 +35,9 @@ export class Cluster extends TypedEmitter<ClusterEvents> {
 
     connect(user: Snowflake | DiscordResource | undefined = this.userId): void {
         this.userId ??= user && getId(user);
-        this.nodes.forEach(node => node.connect(this.userId));
+        for (const [, node] of this.nodes) {
+            node.connect(this.userId);
+        }
     }
 
     createPlayer(guild: Snowflake | DiscordResource, nodeId?: string): Player<ClusterNode> {
