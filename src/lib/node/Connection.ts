@@ -200,9 +200,10 @@ export class Connection {
             const player = this.node.players.get(payload.guildId);
             if (player) {
                 if (payload.op === "playerUpdate") {
-                    player.position = payload.state.position ?? -1;
                     player.connected = payload.state.connected ?? player.connected;
-                    player.lastUpdatedTimestamp = payload.state.time;
+
+                    player.lastPosition = payload.state.position;
+                    player.lastUpdate  = Date.now();
                 } else {
                     player.handleEvent(payload);
                 }

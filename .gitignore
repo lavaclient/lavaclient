@@ -5,6 +5,7 @@ tests/
 
 # yarn/npm
 node_modules/
+.yarn/
 package-lock.json
 *.lock
 

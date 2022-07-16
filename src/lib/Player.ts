@@ -22,10 +22,11 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
     playing = false;
     playingSince?: number;
     paused = false;
-    position?: number;
     connected = false;
     filters: Partial<Lavalink.FilterData> = {};
-    lastUpdatedTimestamp?: number;
+
+    lastPosition?: number;
+    lastUpdate?: number;
 
     private [_voiceUpdate]: Partial<Lavalink.VoiceUpdateData> = {};
     private [_volume] = 100;
@@ -36,13 +37,26 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         this.guildId = getId(guild);
     }
 
-    get accuratePosition(): number | undefined {
-        if (!this.position) {
-            return;
+    /**
+     * @deprecated use {@link Player#position}
+     */
+    get accuratePosition() {
+        return this.position;
+    }
+
+    get position(): number | undefined {
+        const lastPosition = this.lastPosition
+            , lastUpdate = this.lastUpdate;
+        if (lastPosition == null) return;
+
+        const length = this.trackData?.length;
+        if (lastUpdate == null || length == null) {
+            return lastPosition;
         }
 
-        const accurate = (this.lastUpdatedTimestamp) ? this.position + (Date.now() - this.lastUpdatedTimestamp) : this.position;
-        return this.trackData ? Math.min(accurate, this.trackData.length) : accurate;
+        return this.paused
+            ? Math.min(lastPosition, length)
+            : Math.min(lastPosition + (Date.now() - lastUpdate), length);
     }
 
     get volume(): number {
@@ -54,7 +68,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
     /* voice connection management. */
     connect(channel: Snowflake | DiscordResource | null, options: ConnectOptions = {}): this {
         this[_voiceUpdate] = {};
-        
+
         this.node.debug("voice", `updating voice status in guild=${this.guildId}, channel=${this.channelId}`, this);
         this.node.sendGatewayPayload(this.guildId, {
             op: 4,
@@ -187,7 +201,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
             }
 
             const channel = update.channel_id;
-            if(!channel && this.channelId) {
+            if (!channel && this.channelId) {
                 this.emit("channelLeave", this.channelId);
                 this.channelId = null;
                 this[_voiceUpdate] = {};
@@ -230,7 +244,8 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 this.track = event.track;
                 try {
                     this.trackData = decode(event.track) ?? undefined;
-                } catch {/*no-op*/}
+                } catch {/*no-op*/
+                }
                 this.emit("trackStart", event.track);
                 break;
             case "TrackEndEvent":
