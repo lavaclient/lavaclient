@@ -1,0 +1,6 @@
+{
+  "$schema": "https://raw.githubusercontent.com/favware/cliff-jumper/main/assets/cliff-jumper.schema.json",
+  "name": "lavaclient",
+  "monoRepo": false,
+  "packagePath": "."
+}
