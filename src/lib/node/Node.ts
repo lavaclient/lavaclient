@@ -34,7 +34,7 @@ export class Node extends TypedEmitter<NodeEvents> {
 
     readonly players = new Map<Snowflake, Player<this>>();
     readonly conn: Connection;
-    readonly rest = new REST(this);
+    readonly rest: REST;
     readonly sendGatewayPayload: SendGatewayPayload;
 
     state = NodeState.Idle;
@@ -48,6 +48,7 @@ export class Node extends TypedEmitter<NodeEvents> {
         this.userId = options.user && getId(options.user);
 
         this.conn = new Connection(this, options.connection);
+        this.rest = new REST(this);
     }
 
     get penalties(): number {
