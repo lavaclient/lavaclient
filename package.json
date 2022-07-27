@@ -33,6 +33,8 @@
         "esm": "gen-esm-wrapper dist/index.js dist/index.mjs",
         "lint": "dprint check && eslint src --ext js,ts",
         "format": "dprint fmt && eslint src --ext js,ts --fix",
+        "bump": "cliff-jumper",
+        "check-update": "cliff-jumper --dry-run",
         "prepublishOnly": "run-s clean bundle:types"
     },
     "keywords": [

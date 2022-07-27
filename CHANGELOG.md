@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Miscellaneous Tasks
 
+- Add cliff configuration
 - Add commit hooks
 - We don't use prettier
 
