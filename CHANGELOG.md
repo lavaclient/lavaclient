@@ -1,0 +1,29 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [4.1.0] - 2022-07-27
+
+### Miscellaneous Tasks
+
+- Add commit hooks
+- We don't use prettier
+
+### Refactor
+
+- [**breaking**] Switch to undici, improve eslint config
+
+### Styling
+
+- Add dprint and format code
+
+## [3.4.2] - 2021-08-06
+
+### Bug Fixes
+
+- "move" event emits when bot disconnects
+
+### Readme
+
+- Add another bot to the showcase
+

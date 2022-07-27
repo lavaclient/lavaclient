@@ -1,6 +1,6 @@
 {
     "name": "lavaclient",
-    "version": "4.1.0-rc.1",
+    "version": "4.1.0",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "license": "Apache-2.0",
     "author": "lavaclient team <lavaclient@dimensional.fun>",
@@ -51,12 +51,14 @@
     "devDependencies": {
         "@commitlint/cli": "^17.0.3",
         "@commitlint/config-conventional": "^17.0.3",
+        "@favware/cliff-jumper": "^1.8.5",
         "@favware/rollup-type-bundler": "^1.0.9",
         "@types/node": "^16.11.7",
         "@types/rimraf": "^3",
         "@types/ws": "^8.2.0",
         "@typescript-eslint/eslint-plugin": "^5.31.0",
         "@typescript-eslint/parser": "^5.31.0",
+        "cz-conventional-changelog": "^3.3.0",
         "dprint": "^0.30.3",
         "eslint": "^8.20.0",
         "eslint-config-marine": "^9.4.1",
