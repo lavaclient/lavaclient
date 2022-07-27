@@ -10,7 +10,7 @@
 
 <h1 align="center">Installation</h1>
 
-[node.js v14](https://nodejs.org) or newer is required
+[Node.js v16](https://nodejs.org) or newer is required
 
 ##### Stable
 
@@ -23,6 +23,12 @@ yarn add lavaclient # or npm install
 ```shell
 yarn add lavaclient@beta # or npm install
 ```
+
+##### Deno
+
+If you're looking for a [Deno](https://deno.land) variant of lavaclient... We've got you covered!!
+
+- **Lavadeno:** <https://github.com/lavaclient/lavadeno>
 
 <h2 align="center">Usage</h2>
 
@@ -76,12 +82,6 @@ await lavalink
 ---
 
 Need some more help? Join our [**Support Server**](https://discord.gg/CH9ubGPMV6)
-
-<h2 align="center">Deno</h2>
-
-If you're looking for a [Deno](https://deno.land) variant of lavaclient... I've got you covered!!
-
-- **Lavadeno:** <https://github.com/lavaclient/lavadeno>
 
 ---
 

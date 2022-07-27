@@ -1,0 +1,51 @@
+{
+    "incremental": true,
+    "typescript": {
+        "lineWidth": 120,
+        "indentWidth": 4,
+        "useTabs": false,
+        "semiColons": "prefer",
+        "quoteStyle": "alwaysDouble",
+        "quoteProps": "preserve",
+        "newLineKind": "lf",
+        "arguments.preferHanging": false,
+        "arguments.preferSingleLine": false,
+        "arguments.spaceAround": false,
+        "arguments.trailingCommas": "onlyMultiLine",
+        "arrayExpression.preferHanging": true,
+        "arrayExpression.preferSingleLine": false,
+        "arrayExpression.spaceAround": true,
+        "arrayExpression.trailingCommas": "onlyMultiLine",
+        "arrowFunction.bracePosition": "sameLineUnlessHanging",
+        "arrowFunction.useParentheses": "preferNone",
+        "classDeclaration.bracePosition": "sameLineUnlessHanging",
+        "classExpression.bracePosition": "sameLineUnlessHanging",
+        "commentLine.forceSpaceAfterSlashes": true,
+        "computed.preferSingleLine": false,
+        "parameters.preferHanging": false,
+        "parameters.preferSingleLine": false,
+        "preferHanging": false,
+        "preferSingleLine": false,
+        "arrayPattern.preferHanging": false,
+        "arrayPattern.preferSingleLine": false,
+        "arrayPattern.spaceAround": true,
+        "arrayPattern.trailingCommas": "onlyMultiLine",
+        "objectPattern.preferHanging": false
+    },
+    "json": {
+        "indentWidth": 4
+    },
+    "includes": [
+        "**/*.{ts,js,json}"
+    ],
+    "excludes": [
+        "**/node_modules",
+        "**/dist",
+        "**/*-lock.json",
+        ".yarn"
+    ],
+    "plugins": [
+        "https://plugins.dprint.dev/typescript-0.71.1.wasm",
+        "https://plugins.dprint.dev/json-0.15.3.wasm"
+    ]
+}

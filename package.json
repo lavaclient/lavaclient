@@ -1,42 +1,64 @@
 {
     "name": "lavaclient",
-    "version": "4.0.10",
+    "version": "4.1.0-rc.1",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "repository": "git@github.com:lavaclient/lavaclient.git",
-    "author": "melike2d <gino@dimensional.fun>",
     "license": "Apache-2.0",
-    "scripts": {
-        "docs:gen": "typedoc --theme node_modules/typedoc-scalefast-theme/src",
-        "types": "tsc -d",
-        "types:bundle": "dts-bundle --name lavaclient --outputAsModuleFolder --main dist/index.d.ts --out ./index.d.ts --removeSource"
+    "author": "lavaclient team <lavaclient@dimensional.fun>",
+    "repository": "git@github.com:lavaclient/lavaclient.git",
+    "bugs": {
+        "url": "https://github.com/lavaclient/lavaclient/issues"
     },
+    "exports": {
+        "require": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "files": [
-        "dist/**/*.js",
-        "index.d.ts"
+        "dist/**/*.{js,d.ts}"
     ],
+    "maintainers": [
+        {
+            "url": "https://www.dimensional.fun",
+            "name": "melike2d",
+            "email": "ml2dofficial@gmail.com"
+        }
+    ],
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "tsc",
+        "lint": "eslint src --ext js,ts",
+        "format": "prettier --write . && eslint src --ext js,ts --fix"
+    },
     "keywords": [
-        "lavalink"
+        "lavalink",
+        "flexible",
+        "easy",
+        "performant",
+        "lightweight"
     ],
-    "engines": {
-        "node": ">=14.x.x"
+    "dependencies": {
+        "@lavaclient/types": "^2.1.0",
+        "tiny-typed-emitter": "^2.1.0",
+        "undici": "^5.8.0",
+        "ws": "^8.2.3"
     },
     "devDependencies": {
-        "@types/centra": "^2.2.0",
         "@types/node": "^16.11.7",
+        "@types/rimraf": "^3",
         "@types/ws": "^8.2.0",
-        "@typescript-eslint/eslint-plugin": "^5.3.1",
-        "@typescript-eslint/parser": "^5.3.1",
-        "eslint": "^8.2.0",
-        "typedoc": "^0.22.9",
-        "typedoc-scalefast-theme": "^1.0.3",
-        "typescript": "^4.4.4"
+        "@typescript-eslint/eslint-plugin": "^5.31.0",
+        "@typescript-eslint/parser": "^5.31.0",
+        "dprint": "^0.30.3",
+        "eslint": "^8.20.0",
+        "eslint-config-marine": "^9.4.1",
+        "eslint-import-resolver-typescript": "^3.3.0",
+        "eslint-plugin-import": "^2.26.0",
+        "rimraf": "^3.0.2",
+        "typescript": "^4.7.4"
     },
-    "dependencies": {
-        "@lavaclient/types": "^2.0.11",
-        "centra": "^2.5.0",
-        "tiny-typed-emitter": "^2.1.0",
-        "ws": "^8.2.3"
-    }
+    "engines": {
+        "node": ">=16.x.x"
+    },
+    "packageManager": "yarn@3.2.1"
 }

@@ -1,9 +1,13 @@
-import WebSocket from "ws";
+import { CloseEvent, ErrorEvent, MessageEvent, WebSocket } from "ws";
+import { setTimeout } from "node:timers/promises";
 import { NodeState } from "./NodeState";
 
-import type * as Lavalink from "@lavaclient/types";
+import type * as Lavalink from "@lavaclient/types/v3";
 import type { Node } from "./Node";
-import { Dictionary, randomId, sleep } from "../Utils";
+import { randomId } from "../Utils";
+import { TextDecoder } from "node:util";
+
+const decoder = new TextDecoder();
 
 /** @internal */
 const _socket = Symbol("Connection#_socket");
@@ -16,20 +20,23 @@ export class Connection {
     reconnectTry = 0;
     payloadQueue: OutgoingPayload[] = [];
     connectedAt?: number;
+    clientName: string;
 
     private [_reconnectionPromise]?: (connected: boolean) => void;
     private [_socket]?: WebSocket;
 
     constructor(readonly node: Node, readonly info: ConnectionInfo) {
+        this.clientName = this.info.clientName ?? `${Connection.CLIENT_NAME} ${randomId()}`;
     }
 
     get active(): boolean {
-        return !!this[_socket] && this[_socket]?.readyState === WebSocket.OPEN;
+        const socket = this[_socket];
+        return socket != null && socket.readyState === WebSocket.OPEN;
     }
 
     get canReconnect(): boolean {
         const maxTries = this.info.reconnect?.tries === -1 ? Infinity : this.info.reconnect?.tries ?? 5;
-        return !!this.info.reconnect && maxTries > this.reconnectTry;
+        return Boolean(this.info.reconnect) && maxTries > this.reconnectTry;
     }
 
     get uptime(): number {
@@ -54,11 +61,11 @@ export class Connection {
             throw new Error("No User-Id is present.");
         }
 
-        const headers: Dictionary<string> = {
+        const headers: Lavalink.Headers = {
             Authorization: this.info.password,
             "User-Id": userId,
-            "Client-Name": this.info.clientName ?? `${Connection.CLIENT_NAME} ${randomId()}`,
-            "Num-Shards": "1" // Lavalink does not use this header
+            "Client-Name": this.clientName,
+            "Num-Shards": "1" // Lavalink does not use this header but is still required for older jars
         };
 
         if (this.info.resuming?.key) {
@@ -70,12 +77,19 @@ export class Connection {
             this.node.debug("connection", "creating websocket...");
         }
 
-        const socket = this[_socket] = new WebSocket(`ws${this.info.secure ? "s" : ""}://${this.info.host}:${this.info.port}`, { headers });
+        const socket = new WebSocket(
+            `ws${this.info.secure ? "s" : ""}://${this.info.host}:${this.info.port}`,
+            // TODO: find a non-scuffed way of passing the headers
+            { headers: headers as unknown as Record<string, string> }
+        );
+
+        /* eslint-disable @typescript-eslint/no-misused-promises */
         socket.onopen = this._onopen.bind(this);
         socket.onclose = this._onclose.bind(this);
         socket.onerror = this._onerror.bind(this);
         socket.onmessage = this._onmessage.bind(this);
 
+        this[_socket] = socket;
         this.connectedAt = Date.now();
     }
 
@@ -137,7 +151,7 @@ export class Connection {
         this.node.state = NodeState.Connected;
     }
 
-    private async _onclose({ reason, code, wasClean }: WebSocket.CloseEvent) {
+    private async _onclose({ reason, code, wasClean }: CloseEvent) {
         if (this.node.state === NodeState.Reconnecting) {
             return;
         }
@@ -168,27 +182,29 @@ export class Connection {
 
             this.node.debug("connection", `attempting to reconnect in ${duration}ms, try=${this.reconnectTry}`);
 
-            await sleep(duration);
+            await setTimeout(duration);
         }
     }
 
-    private _onerror(event: WebSocket.ErrorEvent) {
+    private _onerror(event: ErrorEvent) {
         this[_reconnectionPromise]?.(false);
 
         const error = event.error ? event.error : event.message;
         this.node.emit("error", new Error(error));
     }
 
-    private _onmessage({ data }: WebSocket.MessageEvent) {
-        if (data instanceof ArrayBuffer) {
-            data = Buffer.from(data);
-        } else if (Array.isArray(data)) {
+    private _onmessage({ data }: MessageEvent) {
+        if (Array.isArray(data)) {
             data = Buffer.concat(data);
         }
 
+        const text = typeof data === "string"
+            ? data
+            : decoder.decode(data);
+
         let payload: Lavalink.IncomingMessage;
         try {
-            payload = JSON.parse(data.toString());
+            payload = JSON.parse(text);
         } catch (e) {
             this.node.emit("error", e instanceof Error ? e : new Error(`${e}`));
             return;
@@ -203,14 +219,14 @@ export class Connection {
                     player.connected = payload.state.connected ?? player.connected;
 
                     player.lastPosition = payload.state.position;
-                    player.lastUpdate  = Date.now();
+                    player.lastUpdate = Date.now();
                 } else {
                     player.handleEvent(payload);
                 }
             }
         }
 
-        this.node.debug("connection", `${Connection.CLIENT_NAME} <<< ${payload.op}: ${data}`);
+        this.node.debug("connection", `${Connection.CLIENT_NAME} <<< ${payload.op}: ${text}`);
         this.node.emit("raw", payload);
     }
 

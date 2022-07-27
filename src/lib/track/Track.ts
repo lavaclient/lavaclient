@@ -1,16 +1,17 @@
+import type { TrackInfo } from "@lavaclient/types/v3";
 import { DataInput } from "./DataInput";
 
 export const TRACK_INFO_VERSIONED = 1, TRACK_INFO_VERSION = 2;
 
-export const decoders: Record<number, TrackInfoDecoder> = { 
+export const decoders: Record<number, TrackInfoDecoder> = {
     2: input => {
-        const track: Partial<TrackInfo> = { 
-            title:      input.readUTF(), 
-            author:     input.readUTF(), 
-            length:     Number(input.readLong()), 
-            identifier: input.readUTF(), 
-            isStream:   input.readBoolean(), 
-            uri:        input.readBoolean() ? input.readUTF() : "", 
+        const track: Partial<DecodedTrackInfo> = {
+            title:      input.readUTF(),
+            author:     input.readUTF(),
+            length:     Number(input.readLong()),
+            identifier: input.readUTF(),
+            isStream:   input.readBoolean(),
+            uri:        input.readBoolean() ? input.readUTF() : "",
             sourceName: input.readUTF(),
             version:    2
         };
@@ -22,26 +23,29 @@ export const decoders: Record<number, TrackInfoDecoder> = {
 
         track.position = Number(input.readLong());
         track.isSeekable = !track.isStream;
-        return track as TrackInfo;
+        return track as DecodedTrackInfo;
     },
 };
 
-export function decode(data: Uint8Array | string): TrackInfo | null {
-    const input = new DataInput(data);
-
-    return decoders[readVersion(input)]?.(input);
-}
 
 function readVersion(input: DataInput): number {
     const flags = (input.readInt() & 0xC0000000) >> 30;
     return flags & TRACK_INFO_VERSIONED ? input.readByte() : 1;
 }
 
-export type TrackInfo = import("@lavaclient/types").TrackInfo & { 
+// TODO: improve return type
+export function decode(data: Uint8Array | string): DecodedTrackInfo | null {
+    const input   = new DataInput(data)
+        , version = readVersion(input);
+
+    return decoders[version]?.(input) ?? null;
+}
+
+export type DecodedTrackInfo = TrackInfo & {
     version: number;
     probeInfo: { 
         name: string;
         parameters?: string;
     }
 }
-export type TrackInfoDecoder = (input: DataInput) => TrackInfo | null;
+export type TrackInfoDecoder = (input: DataInput) => DecodedTrackInfo | null;

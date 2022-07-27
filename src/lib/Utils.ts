@@ -1,14 +1,14 @@
-import { promisify } from "util";
 import type { Cluster } from "./cluster/Cluster";
 import type { Node, SendGatewayPayload } from "./node/Node";
 
-export type Snowflake = string;
-export type DiscordResource = { id: Snowflake };
-export type Dictionary<V = any, K extends string | symbol = string> = Record<K, V>;
-
 export type Manager = Node | Cluster;
 
-export const sleep = promisify(setTimeout);
+export type Dictionary<V = any, K extends string | symbol = string> = Record<K, V>;
+export type Snowflake = string;
+
+export interface DiscordResource {
+    id: Snowflake
+}
 
 export interface ManagerOptions {
     sendGatewayPayload: SendGatewayPayload;

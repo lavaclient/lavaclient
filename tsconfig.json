@@ -1,48 +1,57 @@
 {
     "compilerOptions": {
         /* Basic */
-        "lib": [ "ESNext" ],
-        "target": "ES2021",
-        "module": "CommonJS",
-        "skipLibCheck": true,
+        "lib": ["ESNext"],
+        "target": "ES2022",
+        "incremental": true,
+        "tsBuildInfoFile": "dist/.tsbuildinfo",
 
-        /* Compiling */
-        "inlineSourceMap": false,
-        "declaration": false,
-        "allowJs": false,
+        /* File Locations */
         "rootDir": "./src",
+        "baseUrl": ".",
         "outDir": "./dist",
+
+        /* Modules */
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+
+        /* Emit */
+        "declaration": true,
+        "declarationMap": true,
+        "pretty": false,
+        "esModuleInterop": true,
+        "newLine": "lf",
         "removeComments": true,
+        "inlineSourceMap": true,
+        "useDefineForClassFields": true,
+        "importHelpers": false,
 
         /* Strict Options */
         "strict": true,
-        "stripInternal": true,
-        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "alwaysStrict": true,
+        "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
         "strictBindCallApply": true,
         "strictPropertyInitialization": true,
-        "strictFunctionTypes": true,
-        "noImplicitThis": true,
-        "alwaysStrict": true,
+        "importsNotUsedAsValues": "error",
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": false,
         "noUnusedParameters": true,
+        "noEmitHelpers": false,
         "experimentalDecorators": true,
-        "importsNotUsedAsValues": "error",
-        "useDefineForClassFields": false,
+        "emitDecoratorMetadata": true,
+        "preserveConstEnums": true,
 
         /* Types */
-        "types": [ "node" ],
-        "forceConsistentCasingInFileNames": true,
-
-        /* Module Resolution */
-        "resolveJsonModule": true,
-        "esModuleInterop": true
+        "types": ["node"],
+        "forceConsistentCasingInFileNames": true
     },
-    "include": [
-        "./src/**/*"
-    ],
-    "exclude": [
-        "./node_modules"
-    ]
+    "include": [ "src/**/*" ],
+    "exclude": [ "dist/**/*", "node_modules/**/*" ],
 }
+

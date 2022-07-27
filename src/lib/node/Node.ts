@@ -5,7 +5,7 @@ import { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 import { REST } from "./REST";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import type * as Lavalink from "@lavaclient/types";
+import type * as Lavalink from "@lavaclient/types/v3";
 
 export class Node extends TypedEmitter<NodeEvents> {
     static DEBUG_FORMAT = "{topic}: {message}";
@@ -82,19 +82,21 @@ export class Node extends TypedEmitter<NodeEvents> {
         return player;
     }
 
-    destroyPlayer(guild: Snowflake | DiscordResource): boolean {
+    async destroyPlayer(guild: Snowflake | DiscordResource): Promise<boolean> {
         const player = this.players.get(getId(guild));
         if (player) {
-            player.destroy();
+            await player.destroy();
             this.players.delete(player.guildId);
         }
 
-        return !!player;
+        return Boolean(player);
     }
 
-    handleVoiceUpdate(update: VoiceStateUpdate | VoiceServerUpdate): void {
+    async handleVoiceUpdate(
+        update: VoiceStateUpdate | VoiceServerUpdate
+    ): Promise<void> {
         const player = this.players.get(update.guild_id);
-        player?.handleVoiceUpdate(update);
+        await player?.handleVoiceUpdate(update);
     }
 
     debug(topic: string, message: string, player?: Player): void {

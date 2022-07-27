@@ -2,7 +2,7 @@ import { ClusterNode } from "./ClusterNode";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { DiscordResource, getId, ManagerOptions, Snowflake } from "../Utils";
 
-import type * as Lavalink from "@lavaclient/types";
+import type * as Lavalink from "@lavaclient/types/v3";
 import type { ConnectEvent, DisconnectEvent, SendGatewayPayload } from "../node/Node";
 import type { ConnectionInfo } from "../node/Connection";
 import type { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
@@ -51,12 +51,16 @@ export class Cluster extends TypedEmitter<ClusterEvents> {
         return this.getNode(guildId)?.players?.get(guildId) ?? null;
     }
 
-    destroyPlayer(guild: Snowflake | DiscordResource): boolean {
-        return this.getNode(guild)?.destroyPlayer(guild) ?? false;
+    async destroyPlayer(guild: Snowflake | DiscordResource): Promise<boolean> {
+        const destroyed = await this.getNode(guild)?.destroyPlayer(guild);
+        return destroyed ?? false;
     }
 
-    handleVoiceUpdate(update: VoiceServerUpdate | VoiceStateUpdate): void {
-        this.getNode(update.guild_id)?.handleVoiceUpdate(update);
+    async handleVoiceUpdate(
+        update: VoiceServerUpdate | VoiceStateUpdate
+    ): Promise<boolean> {
+        const accepted = await this.getNode(update.guild_id)?.handleVoiceUpdate(update);
+        return accepted ?? false;
     }
 
     getNode(guild: Snowflake | DiscordResource): ClusterNode | null {

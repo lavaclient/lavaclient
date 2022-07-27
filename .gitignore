@@ -1,15 +1,17 @@
-# Folders
-dist/
-tests/
+#
 .idea/
+dist/
 
-# yarn/npm
+# Node
 node_modules/
-.yarn/
-package-lock.json
+
+# Yarn
+.yarn/cache
+.yarn/install-state.gz
+.yarn/build-state.yml
+
 *.lock
 
-# Other
+# Testing Files
 *.env
-.npmignore
-tsconfig.tsbuildinfo
+test/

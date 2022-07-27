@@ -1,10 +1,15 @@
-import fetch from "centra";
+// noinspection JSUnusedGlobalSymbols
 
-import type * as Lavalink from "@lavaclient/types";
+import { Dispatcher, Pool } from "undici";
+
+import type * as Lavalink from "@lavaclient/types/v3";
 import type { Node } from "./Node";
 
 export class REST {
+    readonly pool: Pool;
+
     constructor(readonly node: Node) {
+        this.pool = new Pool(this.baseUrl);
     }
 
     private get info() {
@@ -19,27 +24,42 @@ export class REST {
         return this.do(`/loadtracks?identifier=${encodeURIComponent(identifier)}`);
     }
 
-    decodeTracks(...tracks: string[]): Promise<Lavalink.TrackInfo[]> {
-        return this.do("/decodetracks", { method: "post", data: JSON.stringify(tracks) });
+    decodeTracks(...tracks: string[]): Promise<Lavalink.DecodeTracksResponse> {
+        return this.do("/decodetracks", { method: "POST", data: JSON.stringify(tracks) });
     }
 
-    decodeTrack(track: string): Promise<Lavalink.TrackInfo> {
+    decodeTrack(track: string): Promise<Lavalink.DecodeTrackResponse> {
         return this.do(`/decodetrack?track=${track}`);
     }
 
-    do<T>(endpoint: string, options: Options = {}): Promise<T> {
+    async do<T>(
+        endpoint: string,
+        { method = "GET", data }: Options = {}
+    ): Promise<T> {
         endpoint = /^\/.+/.test(endpoint) ? endpoint : `/${endpoint}`;
-        const req = fetch(`${this.baseUrl}${endpoint}`, options.method ?? "GET")
-            .header("Authorization", this.info.password);
 
-        if (options.data) {
-            req.body(options.data, "json");
+        try {
+            const request = await this.pool.request({
+                path: endpoint,
+                method: method,
+                body: data ? JSON.stringify(data) : undefined,
+                headers: {
+                    "Authorization": this.info.password,
+                    "Client-Name": this.node.conn.clientName
+                }
+            });
+
+            this.node.debug("rest", `+ ${method} ${endpoint}`);
+            return await request.body.json();
+        } catch (e) {
+            this.node.emit("error", e instanceof Error ? e : new Error(`${e}`));
+            this.node.debug("rest", `- ${method} ${endpoint}`);
+            throw e;
         }
-
-        return req.send()
-            .then(r => r.json())
-            .finally(() => this.node.debug("rest", `${options.method?.toUpperCase() ?? "GET"} ${endpoint}`));
     }
 }
 
-export type Options = { method?: string, data?: any }
+export interface Options {
+    method?: Dispatcher.HttpMethod,
+    data?: any
+}
