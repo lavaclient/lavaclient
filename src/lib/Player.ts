@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 // noinspection JSUnusedGlobalSymbols
 
-import { DiscordResource, getId, Snowflake } from "./Utils";
 import {
     EqualizerBand,
     Filter,
@@ -10,9 +9,10 @@ import {
     PlayerEvent,
     TrackEndReason,
     TrackInfo,
-    VoiceUpdateData
+    VoiceUpdateData,
 } from "@lavaclient/types/v3";
 import { TypedEmitter } from "tiny-typed-emitter";
+import { DiscordResource, getId, Snowflake } from "./Utils";
 
 import type { Node } from "./node/Node";
 import { decode } from "./track/Track";
@@ -59,8 +59,8 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         const lastPosition = this.lastPosition;
         if (lastPosition == null) return;
 
-        const length     = this.trackData?.length
-            , lastUpdate = this.lastUpdate;
+        const length = this.trackData?.length,
+            lastUpdate = this.lastUpdate;
         if (lastUpdate == null || length == null) {
             return lastPosition;
         }
@@ -87,8 +87,8 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
                 guild_id: this.guildId,
                 channel_id: channel && getId(channel),
                 self_deaf: options.deafened ?? false,
-                self_mute: options.muted ?? false
-            }
+                self_mute: options.muted ?? false,
+            },
         });
 
         return this;
@@ -106,7 +106,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
             op: "play",
             track: typeof track === "string" ? track : track.track,
             guildId: this.guildId,
-            ...options
+            ...options,
         });
 
         return this;
@@ -141,12 +141,12 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         if (Player.USE_FILTERS) {
             await this.setFilters(
                 Filter.Volume,
-                volume > 1 ? volume / 100 : volume
+                volume > 1 ? volume / 100 : volume,
             );
         } else {
             await this.node.conn.send(
                 false,
-                { op: "volume", guildId: this.guildId, volume }
+                { op: "volume", guildId: this.guildId, volume },
             );
 
             this[_volume] = volume;
@@ -193,7 +193,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
 
     async setFilters<F extends Filter>(
         arg0?: FilterData | F,
-        arg1?: FilterData[F]
+        arg1?: FilterData[F],
     ): Promise<this> {
         if (typeof arg0 === "object") {
             this.filters = arg0;
@@ -204,7 +204,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
         await this.node.conn.send(false, {
             op: "filters",
             guildId: this.guildId,
-            ...this.filters
+            ...this.filters,
         });
 
         return this;
@@ -246,7 +246,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
             await this.node.conn.send(true, {
                 op: "voiceUpdate",
                 guildId: this.guildId,
-                ...this[_voiceUpdate] as VoiceUpdateData
+                ...this[_voiceUpdate] as VoiceUpdateData,
             });
 
             this.connected = true;

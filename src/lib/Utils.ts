@@ -7,7 +7,7 @@ export type Dictionary<V = any, K extends string | symbol = string> = Record<K, 
 export type Snowflake = string;
 
 export interface DiscordResource {
-    id: Snowflake
+    id: Snowflake;
 }
 
 export interface ManagerOptions {

@@ -1,11 +1,11 @@
-import { CloseEvent, ErrorEvent, MessageEvent, WebSocket } from "ws";
 import { setTimeout } from "node:timers/promises";
+import { CloseEvent, ErrorEvent, MessageEvent, WebSocket } from "ws";
 import { NodeState } from "./NodeState";
 
 import type * as Lavalink from "@lavaclient/types/v3";
-import type { Node } from "./Node";
-import { randomId } from "../Utils";
 import { TextDecoder } from "node:util";
+import { randomId } from "../Utils";
+import type { Node } from "./Node";
 
 const decoder = new TextDecoder();
 
@@ -65,7 +65,7 @@ export class Connection {
             Authorization: this.info.password,
             "User-Id": userId,
             "Client-Name": this.clientName,
-            "Num-Shards": "1" // Lavalink does not use this header but is still required for older jars
+            "Num-Shards": "1", // Lavalink does not use this header but is still required for older jars
         };
 
         if (this.info.resuming?.key) {
@@ -80,7 +80,7 @@ export class Connection {
         const socket = new WebSocket(
             `ws${this.info.secure ? "s" : ""}://${this.info.host}:${this.info.port}`,
             // TODO: find a non-scuffed way of passing the headers
-            { headers: headers as unknown as Record<string, string> }
+            { headers: headers as unknown as Record<string, string> },
         );
 
         /* eslint-disable @typescript-eslint/no-misused-promises */
@@ -112,7 +112,7 @@ export class Connection {
         await this.send(true, {
             op: "configureResuming",
             key: this.info.resuming.key,
-            timeout: this.info.resuming.timeout ?? 60000
+            timeout: this.info.resuming.timeout ?? 60000,
         });
     }
 

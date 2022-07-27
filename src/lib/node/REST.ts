@@ -34,7 +34,7 @@ export class REST {
 
     async do<T>(
         endpoint: string,
-        { method = "GET", data }: Options = {}
+        { method = "GET", data }: Options = {},
     ): Promise<T> {
         endpoint = /^\/.+/.test(endpoint) ? endpoint : `/${endpoint}`;
 
@@ -45,8 +45,8 @@ export class REST {
                 body: data ? JSON.stringify(data) : undefined,
                 headers: {
                     "Authorization": this.info.password,
-                    "Client-Name": this.node.conn.clientName
-                }
+                    "Client-Name": this.node.conn.clientName,
+                },
             });
 
             this.node.debug("rest", `+ ${method} ${endpoint}`);
@@ -60,6 +60,6 @@ export class REST {
 }
 
 export interface Options {
-    method?: Dispatcher.HttpMethod,
-    data?: any
+    method?: Dispatcher.HttpMethod;
+    data?: any;
 }

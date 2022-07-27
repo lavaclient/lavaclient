@@ -1,9 +1,9 @@
-import { Connection, ConnectionInfo } from "./Connection";
-import { Dictionary, DiscordResource, getId, ManagerOptions, Snowflake } from "../Utils";
-import { NodeState } from "./NodeState";
-import { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
-import { REST } from "./REST";
 import { TypedEmitter } from "tiny-typed-emitter";
+import { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
+import { Dictionary, DiscordResource, getId, ManagerOptions, Snowflake } from "../Utils";
+import { Connection, ConnectionInfo } from "./Connection";
+import { NodeState } from "./NodeState";
+import { REST } from "./REST";
 
 import type * as Lavalink from "@lavaclient/types/v3";
 
@@ -14,22 +14,22 @@ export class Node extends TypedEmitter<NodeEvents> {
         cpu: {
             cores: 0,
             lavalinkLoad: 0,
-            systemLoad: 0
+            systemLoad: 0,
         },
         frameStats: {
             deficit: 0,
             nulled: 0,
-            sent: 0
+            sent: 0,
         },
         memory: {
             allocated: 0,
             free: 0,
             reservable: 0,
-            used: 0
+            used: 0,
         },
         players: 0,
         playingPlayers: 0,
-        uptime: 0
+        uptime: 0,
     };
 
     readonly players = new Map<Snowflake, Player<this>>();
@@ -93,26 +93,29 @@ export class Node extends TypedEmitter<NodeEvents> {
     }
 
     async handleVoiceUpdate(
-        update: VoiceStateUpdate | VoiceServerUpdate
+        update: VoiceStateUpdate | VoiceServerUpdate,
     ): Promise<void> {
         const player = this.players.get(update.guild_id);
         await player?.handleVoiceUpdate(update);
     }
 
     debug(topic: string, message: string, player?: Player): void {
-        return void this.emit("debug", (player ? Node.DEBUG_FORMAT_PLAYER : Node.DEBUG_FORMAT)
-            .replace("{topic}", topic)
-            .replace("{message}", message)
-            .replace("{player}", player?.guildId ?? "N/A"));
+        return void this.emit(
+            "debug",
+            (player ? Node.DEBUG_FORMAT_PLAYER : Node.DEBUG_FORMAT)
+                .replace("{topic}", topic)
+                .replace("{message}", message)
+                .replace("{player}", player?.guildId ?? "N/A"),
+        );
     }
 }
 
-export type SendGatewayPayload = (id: Snowflake, payload: { op: 4, d: Dictionary }) => void;
+export type SendGatewayPayload = (id: Snowflake, payload: { op: 4; d: Dictionary }) => void;
 
 export interface NodeEvents {
     connect: (event: ConnectEvent) => void;
     disconnect: (event: DisconnectEvent) => void;
-	closed: () => void;
+    closed: () => void;
     error: (error: Error) => void;
     debug: (message: string) => void;
     raw: (message: Lavalink.IncomingMessage) => void;

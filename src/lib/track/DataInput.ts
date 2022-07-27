@@ -34,8 +34,8 @@ export class DataInput {
     }
 
     readUTF(): string {
-        const length = this.readUnsignedShort()
-            , start  = this.advance(length);
+        const length = this.readUnsignedShort(),
+            start = this.advance(length);
 
         return decoder.decode(this.buf.slice(start, start + length));
     }

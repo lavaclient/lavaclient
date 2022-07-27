@@ -1,12 +1,12 @@
-import { ClusterNode } from "./ClusterNode";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { DiscordResource, getId, ManagerOptions, Snowflake } from "../Utils";
+import { ClusterNode } from "./ClusterNode";
 
 import type * as Lavalink from "@lavaclient/types/v3";
-import type { ConnectEvent, DisconnectEvent, SendGatewayPayload } from "../node/Node";
 import type { ConnectionInfo } from "../node/Connection";
-import type { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
+import type { ConnectEvent, DisconnectEvent, SendGatewayPayload } from "../node/Node";
 import type { REST } from "../node/REST";
+import type { Player, VoiceServerUpdate, VoiceStateUpdate } from "../Player";
 
 export class Cluster extends TypedEmitter<ClusterEvents> {
     readonly nodes: Map<string, ClusterNode>;
@@ -35,7 +35,7 @@ export class Cluster extends TypedEmitter<ClusterEvents> {
 
     connect(user: Snowflake | DiscordResource | undefined = this.userId): void {
         this.userId ??= user && getId(user);
-        for (const [, node] of this.nodes) {
+        for (const [ , node ] of this.nodes) {
             node.connect(this.userId);
         }
     }
@@ -45,7 +45,7 @@ export class Cluster extends TypedEmitter<ClusterEvents> {
         if (!node) throw new Error("No available nodes.");
         return node.createPlayer(guild);
     }
-    
+
     getPlayer(guild: Snowflake | DiscordResource): Player<ClusterNode> | null {
         const guildId = getId(guild);
         return this.getNode(guildId)?.players?.get(guildId) ?? null;
@@ -57,7 +57,7 @@ export class Cluster extends TypedEmitter<ClusterEvents> {
     }
 
     async handleVoiceUpdate(
-        update: VoiceServerUpdate | VoiceStateUpdate
+        update: VoiceServerUpdate | VoiceStateUpdate,
     ): Promise<boolean> {
         const accepted = await this.getNode(update.guild_id)?.handleVoiceUpdate(update);
         return accepted ?? false;

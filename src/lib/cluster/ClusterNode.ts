@@ -1,7 +1,7 @@
 import { Node, NodeEvents } from "../node/Node";
 
-import type { Cluster, ClusterEvents } from "./Cluster";
 import type { ConnectionInfo } from "../node/Connection";
+import type { Cluster, ClusterEvents } from "./Cluster";
 
 export class ClusterNode extends Node {
     constructor(readonly cluster: Cluster, readonly id: string, info: ConnectionInfo) {

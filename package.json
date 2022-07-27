@@ -27,8 +27,8 @@
     "scripts": {
         "clean": "rimraf dist",
         "build": "tsc",
-        "lint": "eslint src --ext js,ts",
-        "format": "prettier --write . && eslint src --ext js,ts --fix"
+        "lint": "dprint check && eslint src --ext js,ts",
+        "format": "dprint fmt && eslint src --ext js,ts --fix"
     },
     "keywords": [
         "lavalink",
