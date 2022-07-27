@@ -1,6 +1,6 @@
 module.exports = {
     "env": { "es6": true, "node": true },
-    "extends": "marine/prettier/node",
+    "extends": "marine/node",
     "parser": "@typescript-eslint/parser",
     "root": true,
     "parserOptions": { "project": "tsconfig.eslint.json", "ecmaVersion": 2022, "sourceType": "module" },
