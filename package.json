@@ -1,6 +1,6 @@
 {
     "name": "lavaclient",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "license": "Apache-2.0",
     "author": "lavaclient team <lavaclient@dimensional.fun>",
