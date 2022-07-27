@@ -12,19 +12,20 @@
         "outDir": "./dist",
 
         /* Modules */
-        "module": "ESNext",
+        "module": "CommonJS",
         "moduleResolution": "node",
         "resolveJsonModule": true,
 
         /* Emit */
         "declaration": true,
-        "declarationMap": true,
+        "declarationMap": false,
+        "sourceMap": false,
         "pretty": false,
         "esModuleInterop": true,
         "newLine": "lf",
         "removeComments": true,
-        "inlineSourceMap": true,
-        "useDefineForClassFields": true,
+        "inlineSourceMap": false,
+        "useDefineForClassFields": false,
         "importHelpers": false,
 
         /* Strict Options */

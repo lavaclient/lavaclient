@@ -1,0 +1,4 @@
+{
+    "*": "dprint fmt",
+    "src/**.{js,ts}": "eslint --ext js,ts --fix"
+}
