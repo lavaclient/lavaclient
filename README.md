@@ -6,7 +6,7 @@
 - **Performant:** designed to be small and lightweight, it's a great choice for any project.
 - **Library Agnostic:** lavaclient doesn't require you to use a specific discord library. Use anything you want!
 
-[**Support Server**](https://discord.gg/CH9ubGPMV6)
+[**Support Server**](https://discord.gg/6Qpy3QnR8b)
 
 <h1 align="center">Installation</h1>
 
@@ -83,7 +83,7 @@ await lavalink
 
 ---
 
-Need some more help? Join our [**Support Server**](https://discord.gg/CH9ubGPMV6)
+Need some more help? Join our [**Support Server**](https://discord.gg/6Qpy3QnR8b)
 
 ---
 
