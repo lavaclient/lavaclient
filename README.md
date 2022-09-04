@@ -83,7 +83,7 @@ await lavalink
 
 ---
 
-Need some more help? Join our [**Support Server**](https://discord.gg/6Qpy3QnR8b)
+Need some more help? Join our [**Support Server**](https://discord.gg/mNADeS6BtE)
 
 ---
 
