@@ -218,7 +218,7 @@ export class Connection {
                 if (payload.op === "playerUpdate") {
                     player.connected = payload.state.connected ?? player.connected;
 
-                    player.lastLatency = payload.state.ping;
+                    player.lastLatency = payload.state.ping ?? -1; // depending on the version of lavalink this may be undefined
                     player.lastPosition = payload.state.position;
                     player.lastUpdate = Date.now();
                 } else {
