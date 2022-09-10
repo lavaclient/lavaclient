@@ -45,7 +45,7 @@
         "lightweight"
     ],
     "dependencies": {
-        "@lavaclient/types": "^2.1.0",
+        "@lavaclient/types": "2.1.1",
         "tiny-typed-emitter": "^2.1.0",
         "undici": "^5.8.0",
         "ws": "^8.2.3"
