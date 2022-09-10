@@ -36,7 +36,7 @@ export class Player<N extends Node = Node> extends TypedEmitter<PlayerEvents> {
     connected = false;
     filters: Partial<FilterData> = {};
 
-    lastLatency?: number;
+    lastLatency = -1;
     lastPosition?: number;
     lastUpdate?: number;
 
