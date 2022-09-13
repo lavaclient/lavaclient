@@ -34,6 +34,8 @@ If you're looking for a [Deno](https://deno.land) variant of lavaclient... We've
 
 ### Setup
 
+Even though the following examples use import syntax, Lavaclient also supports CommonJS!
+
 ```ts
 import { Cluster, Node } from "lavaclient";
 
