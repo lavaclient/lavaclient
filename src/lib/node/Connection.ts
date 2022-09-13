@@ -227,13 +227,13 @@ export class Connection {
             }
         }
 
-        this.node.debug("connection", `${Connection.CLIENT_NAME} <<< ${payload.op}: ${text}`);
+        this.node.debug("connection", `${this.clientName} <<< ${payload.op}: ${text}`);
         this.node.emit("raw", payload);
     }
 
     private _send({ data, reject, resolve }: OutgoingPayload): void {
         const json = JSON.stringify(data);
-        this.node.debug("connection", `${Connection.CLIENT_NAME} >>> ${data.op}: ${json}`);
+        this.node.debug("connection", `${this.clientName} >>> ${data.op}: ${json}`);
         return this[_socket]?.send(json, e => e ? reject(e) : resolve());
     }
 }
