@@ -25,7 +25,7 @@ export class REST {
     }
 
     decodeTracks(...tracks: string[]): Promise<Lavalink.DecodeTracksResponse> {
-        return this.do("/decodetracks", { method: "POST", data: JSON.stringify(tracks) });
+        return this.do("/decodetracks", { method: "POST", data: tracks });
     }
 
     decodeTrack(track: string): Promise<Lavalink.DecodeTrackResponse> {
