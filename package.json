@@ -45,10 +45,10 @@
         "lightweight"
     ],
     "dependencies": {
-        "@lavaclient/types": "2.1.1",
+        "@lavaclient/types": "^2.1.1",
         "tiny-typed-emitter": "^2.1.0",
-        "undici": "^5.8.0",
-        "ws": "^8.2.3"
+        "undici": "^5.10.0",
+        "ws": "^8.8.1"
     },
     "devDependencies": {
         "@commitlint/cli": "^17.0.3",
@@ -56,8 +56,7 @@
         "@favware/cliff-jumper": "^1.8.5",
         "@favware/rollup-type-bundler": "^1.0.9",
         "@types/node": "^16.11.7",
-        "@types/rimraf": "^3",
-        "@types/ws": "^8.2.0",
+        "@types/ws": "^8.5.3",
         "@typescript-eslint/eslint-plugin": "^5.31.0",
         "@typescript-eslint/parser": "^5.31.0",
         "cz-conventional-changelog": "^3.3.0",
