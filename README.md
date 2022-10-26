@@ -87,7 +87,7 @@ await lavalink
 
 Need some more help? Join our [**Support Server**](https://discord.gg/GQgM5pbJWm)
 
-[![Rate this package](https://badges.openbase.com/js/rating/lavaclient.svg?)](https://openbase.com/js/lavaclient?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
+[![Rate this package](https://badges.openbase.com/js/rating/lavaclient.svg?token=7xbXCE61YwbjuEPTGbWP9q9GXQStpvuXdzoYBVY6i1k=)](https://openbase.com/js/lavaclient?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
 
 ---
 
