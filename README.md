@@ -2,15 +2,20 @@
 
 > A lightweight and powerful [lavalink](https://github.com/freyacodes/lavalink) client for nodejs.
 
+> **Warning**  
+> Lavaclient v5 is currently in active development
+
 - **Easy-to-use:** lavaclient has a neat and user-friendly promise-based api.
 - **Performant:** designed to be small and lightweight, it's a great choice for any project.
 - **Library Agnostic:** lavaclient doesn't require you to use a specific discord library. Use anything you want!
 
 [**Support Server**](https://discord.gg/GQgM5pbJWm)
 
+<!--
+
 <h1 align="center">Installation</h1>
 
-[Node.js v16.11.0](https://nodejs.org) or newer is required
+[Node.js LTS (v18)](https://nodejs.org) or newer is required
 
 ##### Stable
 
@@ -88,6 +93,8 @@ await lavalink
 Need some more help? Join our [**Support Server**](https://discord.gg/GQgM5pbJWm)
 
 [![Rate this package](https://badges.openbase.com/js/rating/lavaclient.svg?token=7xbXCE61YwbjuEPTGbWP9q9GXQStpvuXdzoYBVY6i1k=)](https://openbase.com/js/lavaclient?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
+-->
+
 
 ---
 
