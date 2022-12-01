@@ -297,6 +297,7 @@ export type PlayOptions = Omit<PlayData, "track">;
 
 export interface PlayerEvents {
     disconnected: (code: number, reason: string, byRemote: boolean) => void;
+    updated: () => void;
     trackStart: (track: string) => void;
     trackEnd: (track: string | null, reason: TrackEndReason) => void;
     trackException: (track: string | null, error: Error) => void;
