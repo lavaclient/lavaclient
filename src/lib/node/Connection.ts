@@ -222,7 +222,7 @@ export class Connection {
                     player.lastPosition = payload.state.position;
                     player.lastUpdate = Date.now();
 
-                    player.emit("updated")
+                    player.emit("updated");
                 } else {
                     player.handleEvent(payload);
                 }
