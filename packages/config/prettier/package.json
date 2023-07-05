@@ -1,0 +1,9 @@
+{
+    "name": "@lavaclient/config-prettier",
+    "main": "./index.js",
+    "types": "./index.d.ts",
+    "packageManager": "pnpm@8.3.1",
+    "devDependencies": {
+        "prettier": "^2.8.8"
+    }
+}

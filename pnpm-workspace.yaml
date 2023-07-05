@@ -1,0 +1,6 @@
+packages:
+  - packages/config/prettier
+  - packages/config/typescript
+  - packages/node
+  - packages/deno
+  - packages/protocol

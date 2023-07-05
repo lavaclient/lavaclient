@@ -1,0 +1,13 @@
+{
+    "include": ["src/**/*.ts"],
+    "extends": "@lavaclient/config-typescript/base.json",
+    "compilerOptions": {
+        "tsBuildInfoFile": "dist/.tsbuildinfo",
+        "declaration": true,
+        "declarationMap": true,
+        "importHelpers": true,
+        "noEmitHelpers": true,
+        "rootDir": "./src",
+        "outDir": "./dist"
+    }
+}

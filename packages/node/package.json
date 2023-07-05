@@ -1,0 +1,15 @@
+{
+    "name": "lavaclient",
+    "version": "5.0.0",
+    "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
+    "devDependencies": {
+        "@lavaclient/config-prettier": "workspace:^",
+        "@lavaclient/config-typescript": "workspace:^",
+        "@types/node": "^20.3.3",
+        "tslib": "^2.6.0",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "lavalink-protocol": "workspace:1.0.0-rc.1"
+    }
+}

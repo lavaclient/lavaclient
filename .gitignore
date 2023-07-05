@@ -1,18 +1,10 @@
-#
+# ides
+.vscode/
+.fleet/
 .idea/
-dist/
 
-# Node
+# node
 node_modules/
 
-# Yarn
-.yarn/cache
-.yarn/install-state.gz
-.yarn/build-state.yml
-
-*.lock
-
-# Testing Files
-*.env
-test/
-scripts/
+# typescript
+dist/
