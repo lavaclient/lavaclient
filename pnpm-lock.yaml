@@ -12,27 +12,114 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
 
-  packages/api-client:
+  packages/adapter/biscuit:
     dependencies:
-      '@effect/schema':
-        specifier: ^0.33.0
-        version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
-      lavalink-protocol:
-        specifier: 1.0.0-rc.5
-        version: link:../protocol
       tslib:
         specifier: ^2.6.0
         version: 2.6.0
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
-        version: link:../config/prettier
+        version: link:../../config/prettier
       '@lavaclient/config-typescript':
         specifier: workspace:^
-        version: link:../config/typescript
+        version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
         version: 20.3.3
+      '@types/ws':
+        specifier: ^8.5.5
+        version: 8.5.5
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
+  packages/adapter/djs:
+    dependencies:
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
+    devDependencies:
+      '@lavaclient/config-prettier':
+        specifier: workspace:^
+        version: link:../../config/prettier
+      '@lavaclient/config-typescript':
+        specifier: workspace:^
+        version: link:../../config/typescript
+      '@types/node':
+        specifier: ^20.3.3
+        version: 20.3.3
+      '@types/ws':
+        specifier: ^8.5.5
+        version: 8.5.5
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
+  packages/client/api:
+    dependencies:
+      '@effect/schema':
+        specifier: ^0.33.0
+        version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
+      lavalink-protocol:
+        specifier: 1.0.0-rc.5
+        version: link:../../protocol
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
+    devDependencies:
+      '@lavaclient/config-prettier':
+        specifier: workspace:^
+        version: link:../../config/prettier
+      '@lavaclient/config-typescript':
+        specifier: workspace:^
+        version: link:../../config/typescript
+      '@types/node':
+        specifier: ^20.3.3
+        version: 20.3.3
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
+  packages/client/ws:
+    dependencies:
+      '@effect/schema':
+        specifier: ^0.33.0
+        version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
+      lavalink-api-client:
+        specifier: 1.0.0-rc.6
+        version: link:../api
+      lavalink-protocol:
+        specifier: 1.0.0-rc.5
+        version: link:../../protocol
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
+      ws:
+        specifier: ^8.13.0
+        version: 8.13.0
+    devDependencies:
+      '@lavaclient/config-prettier':
+        specifier: workspace:^
+        version: link:../../config/prettier
+      '@lavaclient/config-typescript':
+        specifier: workspace:^
+        version: link:../../config/typescript
+      '@types/node':
+        specifier: ^20.3.3
+        version: 20.3.3
+      '@types/ws':
+        specifier: ^8.5.5
+        version: 8.5.5
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
@@ -59,13 +146,13 @@ importers:
     dependencies:
       lavalink-api-client:
         specifier: 1.0.0-rc.6
-        version: link:../api-client
+        version: link:../client/api
       lavalink-protocol:
         specifier: 1.0.0-rc.5
         version: link:../protocol
       lavalink-ws-client:
         specifier: 1.0.0-rc.2
-        version: link:../ws-client
+        version: link:../client/ws
       tslib:
         specifier: ^2.6.0
         version: 2.6.0
@@ -85,6 +172,56 @@ importers:
       ts-essentials:
         specifier: ^9.3.2
         version: 9.3.2(typescript@5.1.6)
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
+  packages/plugin/lavasearch:
+    dependencies:
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
+    devDependencies:
+      '@lavaclient/config-prettier':
+        specifier: workspace:^
+        version: link:../../config/prettier
+      '@lavaclient/config-typescript':
+        specifier: workspace:^
+        version: link:../../config/typescript
+      '@types/node':
+        specifier: ^20.3.3
+        version: 20.3.3
+      '@types/ws':
+        specifier: ^8.5.5
+        version: 8.5.5
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
+  packages/plugin/queue:
+    dependencies:
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
+    devDependencies:
+      '@lavaclient/config-prettier':
+        specifier: workspace:^
+        version: link:../../config/prettier
+      '@lavaclient/config-typescript':
+        specifier: workspace:^
+        version: link:../../config/typescript
+      '@types/node':
+        specifier: ^20.3.3
+        version: 20.3.3
+      '@types/ws':
+        specifier: ^8.5.5
+        version: 8.5.5
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
@@ -141,43 +278,6 @@ importers:
       ts-essentials:
         specifier: ^9.3.2
         version: 9.3.2(typescript@5.1.6)
-      typed-emitter:
-        specifier: ^2.1.0
-        version: 2.1.0
-      typescript:
-        specifier: ^5.1.6
-        version: 5.1.6
-
-  packages/ws-client:
-    dependencies:
-      '@effect/schema':
-        specifier: ^0.33.0
-        version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
-      lavalink-api-client:
-        specifier: 1.0.0-rc.6
-        version: link:../api-client
-      lavalink-protocol:
-        specifier: 1.0.0-rc.5
-        version: link:../protocol
-      tslib:
-        specifier: ^2.6.0
-        version: 2.6.0
-      ws:
-        specifier: ^8.13.0
-        version: 8.13.0
-    devDependencies:
-      '@lavaclient/config-prettier':
-        specifier: workspace:^
-        version: link:../config/prettier
-      '@lavaclient/config-typescript':
-        specifier: workspace:^
-        version: link:../config/typescript
-      '@types/node':
-        specifier: ^20.3.3
-        version: 20.3.3
-      '@types/ws':
-        specifier: ^8.5.5
-        version: 8.5.5
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
