@@ -1,6 +1,8 @@
 packages:
   - packages/config/prettier
   - packages/config/typescript
+  - packages/api-client
+  - packages/ws-client
   - packages/node
   - packages/deno
   - packages/protocol

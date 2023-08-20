@@ -1,7 +1,7 @@
 {
-    "name": "lavalink-protocol",
-    "version": "1.0.0-rc.4",
-    "description": "Type-safe validation for the Lavalink protocol.",
+    "name": "lavalink-ws-client",
+    "version": "1.0.0-rc.1",
+    "description": "Type-safe WebSocket client for Lavalink",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "maintainers": [
@@ -11,21 +11,29 @@
             "url": "https://vzt.gay"
         }
     ],
-    "files": ["dist/*", "!dist/.tsbuildinfo"],
+    "files": [
+        "dist/*",
+        "!dist/.tsbuildinfo"
+    ],
     "scripts": {
         "build": "tsc",
         "check": "tsc --noEmit",
-        "format": "prettier -w src/**.ts",
+        "format": "prettier -w src/*",
         "prepublishOnly": "pnpm run format && pnpm run build"
     },
     "devDependencies": {
         "@lavaclient/config-prettier": "workspace:^",
         "@lavaclient/config-typescript": "workspace:^",
         "@types/node": "^20.3.3",
+        "@types/ws": "^8.5.5",
+        "typed-emitter": "^2.1.0",
         "typescript": "^5.1.6"
     },
     "dependencies": {
         "@effect/schema": "^0.33.0",
-        "tslib": "^2.6.0"
+        "lavalink-api-client": "1.0.0-rc.5",
+        "lavalink-protocol": "1.0.0-rc.4",
+        "tslib": "^2.6.0",
+        "ws": "^8.13.0"
     }
 }
