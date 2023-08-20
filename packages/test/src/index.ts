@@ -1,5 +1,5 @@
 import { Client, GatewayDispatchEvents } from "discord.js";
-import { Node } from "./index.js";
+import { Node } from "lavaclient";
 
 const client = new Client({
     intents: ["Guilds", "GuildVoiceStates"],
@@ -22,12 +22,11 @@ node.on("debug", (event) => {
 
 node.ws.on("ready", async () => {
     const result = await node.api.loadTracks("ytsearch:Odetari - I LOVE YOU HOE");
-    console.log(result);
 
     const player = node.players.create(process.env.TEST_GUILD!);
     player.on("trackStart", (track) => {
         console.log("started playing", track.info.title, "by", track.info.author)
-    })
+    });
 
     player.voice.connect(process.env.TEST_CHANNEL!);
 

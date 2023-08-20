@@ -241,7 +241,7 @@ export class Player extends Emitter<PlayerEvents> {
     /**
      * Updates this player with the provided player state.
      * **Warning:** this is an internal method, and should not be used by users.
-     * 
+     *
      * @param data The player state to patch this player with.
      */
     patchWithState(data: Protocol.PlayerState) {

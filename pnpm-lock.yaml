@@ -18,7 +18,7 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
       lavalink-protocol:
-        specifier: 1.0.0-rc.4
+        specifier: 1.0.0-rc.5
         version: link:../protocol
       tslib:
         specifier: ^2.6.0
@@ -58,13 +58,13 @@ importers:
   packages/node:
     dependencies:
       lavalink-api-client:
-        specifier: 1.0.0-rc.5
+        specifier: 1.0.0-rc.6
         version: link:../api-client
       lavalink-protocol:
-        specifier: 1.0.0-rc.4
+        specifier: 1.0.0-rc.5
         version: link:../protocol
       lavalink-ws-client:
-        specifier: 1.0.0-rc.1
+        specifier: 1.0.0-rc.2
         version: link:../ws-client
       tslib:
         specifier: ^2.6.0
@@ -82,9 +82,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.5
         version: 8.5.5
-      discord.js:
-        specifier: ^14.13.0
-        version: 14.13.0
       ts-essentials:
         specifier: ^9.3.2
         version: 9.3.2(typescript@5.1.6)
@@ -117,16 +114,50 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
 
+  packages/test:
+    dependencies:
+      lavaclient:
+        specifier: workspace:5.0.0-alpha.1
+        version: link:../node
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
+    devDependencies:
+      '@lavaclient/config-prettier':
+        specifier: workspace:^
+        version: link:../config/prettier
+      '@lavaclient/config-typescript':
+        specifier: workspace:^
+        version: link:../config/typescript
+      '@types/node':
+        specifier: ^20.3.3
+        version: 20.3.3
+      '@types/ws':
+        specifier: ^8.5.5
+        version: 8.5.5
+      discord.js:
+        specifier: ^14.13.0
+        version: 14.13.0
+      ts-essentials:
+        specifier: ^9.3.2
+        version: 9.3.2(typescript@5.1.6)
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
+
   packages/ws-client:
     dependencies:
       '@effect/schema':
         specifier: ^0.33.0
         version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
       lavalink-api-client:
-        specifier: 1.0.0-rc.5
+        specifier: 1.0.0-rc.6
         version: link:../api-client
       lavalink-protocol:
-        specifier: 1.0.0-rc.4
+        specifier: 1.0.0-rc.5
         version: link:../protocol
       tslib:
         specifier: ^2.6.0
@@ -352,7 +383,7 @@ packages:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     requiresBuild: true
     dependencies:
-      tslib: 2.6.0
+      tslib: 2.6.2
     dev: true
     optional: true
 
@@ -375,6 +406,7 @@ packages:
 
   /tslib@2.6.0:
     resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==}
+    dev: false
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}

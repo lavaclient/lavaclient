@@ -1,6 +1,6 @@
 {
     "name": "lavaclient",
-    "version": "5.0.0",
+    "version": "5.0.0-alpha.1",
     "description": "A simple, easy-to-use, and flexible lavalink client for node.js",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -26,15 +26,14 @@
         "@lavaclient/config-typescript": "workspace:^",
         "@types/node": "^20.3.3",
         "@types/ws": "^8.5.5",
-        "discord.js": "^14.13.0",
         "ts-essentials": "^9.3.2",
         "typed-emitter": "^2.1.0",
         "typescript": "^5.1.6"
     },
     "dependencies": {
-        "lavalink-api-client": "1.0.0-rc.5",
-        "lavalink-protocol": "1.0.0-rc.4",
-        "lavalink-ws-client": "1.0.0-rc.1",
+        "lavalink-api-client": "1.0.0-rc.6",
+        "lavalink-protocol": "1.0.0-rc.5",
+        "lavalink-ws-client": "1.0.0-rc.2",
         "tslib": "^2.6.0"
     }
 }

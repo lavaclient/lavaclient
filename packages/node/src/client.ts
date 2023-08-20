@@ -8,7 +8,7 @@ export interface Client {
     /**
      * The player manager for this Client.
      */
-    readonly players: PlayerManager;    
+    readonly players: PlayerManager;
 
     /**
      * The user id that is being authenticated with.
@@ -22,7 +22,7 @@ export interface Client {
 
     /**
      * Connects this Client to the lavalink node(s).
-     * 
+     *
      * @param userId The user id to authenticate with.
      */
     connect(userId: string): void;
@@ -35,7 +35,7 @@ export interface Client {
     /**
      * Creates a new player for the given {@link guildId}
      * **Warning:** This is an internal method, and should not be used by users.
-     * 
+     *
      * @internal
      */
     createPlayer(guildId: string): Player;
