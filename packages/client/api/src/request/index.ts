@@ -1,9 +1,9 @@
 export * from "./executor.js";
 export * from "./tools.js";
 
-export interface PreparedLavalinkRequest {
-    /** The {@link LavalinkAPIRequest Lavalink Request} that was given. */
-    request: LavalinkAPIRequest;
+export interface PreparedLavalinkHttpRequest {
+    /** The {@link LavalinkHttpRequest Lavalink Request} that was given. */
+    request: LavalinkHttpRequest;
 
     /**
      * The {@link RequestInit request options} that will be used.
@@ -16,9 +16,9 @@ export interface PreparedLavalinkRequest {
     url: URL;
 }
 
-export type ExecutedLavalinkRequest = {
+export type ExecutedLavalinkHttpRequest = {
     /** The prepared request. */
-    prepared: PreparedLavalinkRequest;
+    prepared: PreparedLavalinkHttpRequest;
 
     /** How long the request took (in milliseconds). */
     took: number;
@@ -27,7 +27,7 @@ export type ExecutedLavalinkRequest = {
     response: Response;
 };
 
-export interface LavalinkAPIRequest {
+export interface LavalinkHttpRequest {
     /** The endpoint to make a request to. */
     path: `/v4/${string}`;
 

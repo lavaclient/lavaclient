@@ -1,5 +1,5 @@
-import type { ExecutedLavalinkRequest, PreparedLavalinkRequest } from "./index.js";
-import type { LavalinkAPIClient } from "../client/index.js";
+import type { ExecutedLavalinkHttpRequest, PreparedLavalinkHttpRequest } from "./index.js";
+import type { LavalinkHttpClient } from "../client/index.js";
 
 import * as LP from "lavalink-protocol";
 
@@ -8,9 +8,9 @@ import { parseSchema } from "../tools.js";
 import { onRequest } from "../client/tools.js";
 
 export async function execute(
-    client: LavalinkAPIClient,
-    prepared: PreparedLavalinkRequest,
-): Promise<ExecutedLavalinkRequest> {
+    client: LavalinkHttpClient,
+    prepared: PreparedLavalinkHttpRequest,
+): Promise<ExecutedLavalinkHttpRequest> {
     const start = performance.now();
 
     /* execute the request. */

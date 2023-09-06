@@ -1,14 +1,14 @@
 import type { LavalinkHTTPErrorReason } from "../error.js";
-import type { ExecutedLavalinkRequest, PreparedLavalinkRequest } from "../request/index.js";
+import type { ExecutedLavalinkHttpRequest, PreparedLavalinkHttpRequest } from "../request/index.js";
 
 import type * as LP from "lavalink-protocol";
 
 type HasRequest = {
     /**  */
-    prepared: PreparedLavalinkRequest;
+    prepared: PreparedLavalinkHttpRequest;
 };
 
-type Finished = ExecutedLavalinkRequest & {
+type Finished = ExecutedLavalinkHttpRequest & {
     /** A request was made to Lavalink. */
     finished: true;
 };
@@ -21,7 +21,7 @@ type DidNotFinish = HasRequest & {
 type Finish = Finished | DidNotFinish;
 
 //
-export type LavalinkAPIClientRequestEvent =
+export type LavalinkHttpClientRequestEvent =
     | (Finished &
           (
               | {
@@ -44,14 +44,14 @@ export type LavalinkAPIClientRequestEvent =
           cause: unknown;
       });
 
-export type LavalinkAPIClientStatistics = Record<"sent" | "failed" | "successful" | "errored" | "lastTook", number>;
+export type LavalinkHttpClientStatistics = Record<"sent" | "failed" | "successful" | "errored" | "lastTook", number>;
 
-export type LavalinkAPIClientEvents = {
+export type LavalinkHttpClientEvents = {
     /** Emitted whenever a request is made to lavalink. */
-    request: (event: LavalinkAPIClientRequestEvent) => void;
+    request: (event: LavalinkHttpClientRequestEvent) => void;
 };
 
-export interface LavalinkAPIClientOptions {
+export interface LavalinkHttpClientOptions {
     /** The host to use. */
     host: string;
 

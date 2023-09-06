@@ -57,6 +57,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
      */
     state: LavalinkWSClientState = LavalinkWSClientState.Idle;
 
+    private userId: string | undefined;
     private reconnectionPromise?: (connected: boolean) => void;
     private connectedAt?: number;
     private readyAt?: number;
@@ -68,6 +69,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
         readonly options: LavalinkWSClientOptions = {},
     ) {
         super();
+        this.userId = options.userId;
     }
 
     /**
@@ -90,7 +92,9 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
      *
      * @param userId The user id to authenticate as.
      */
-    connect(userId: string | undefined = this.options.userId) {
+    connect(userId: string | undefined = this.userId) {
+        this.userId ??= userId;
+        
         if (!userId) {
             throw new Error("No user id was provided.");
         }
@@ -99,7 +103,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
         const headers: Record<string, string> = {};
         headers["User-Id"] = userId;
         headers["Authorization"] = this.api.client.options.auth;
-        headers["Client-Name"] = this.options.clientName ?? "lavaclient v4";
+        headers["Client-Name"] = this.options.clientName ?? "lavalink-ws-client v1.0.0";
 
         if (this.session && shouldResume(this.options)) {
             // resume
@@ -136,8 +140,9 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
 
             try {
                 this.connect();
-            } catch (e) {
-                this.emit("error", e instanceof Error ? e : new Error(`${e}`));
+            } catch (cause) {
+                console.log(cause);
+                this.emit("error", new Error("Unable to reconnect", { cause }));
                 return res(false);
             }
         });

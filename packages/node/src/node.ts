@@ -1,7 +1,25 @@
-import { LavalinkAPI, LavalinkAPIClient, LavalinkAPIClientOptions } from "lavalink-api-client";
-import { LavalinkWSClient, LavalinkWSClientEvents, LavalinkWSClientOptions } from "lavalink-ws-client";
+/*
+ * Copyright 2023 Dimensional Fun & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import * as Protocol from "lavalink-protocol";
+import * as API from "lavalink-api-client";
+import * as WS from "lavalink-ws-client";
+
 import { Emitter } from "./tools.js";
-import { Client } from "./client.js";
+import { Client, ClientEvents } from "./client.js";
 import { Player } from "./player.js";
 import { NodePlayerManager, PlayerManager } from "./players.js";
 
@@ -9,17 +27,22 @@ export class Node extends Emitter<NodeEvents> implements Client {
     /**
      * The player manager for this node.
      */
-    readonly players: PlayerManager;
+    readonly players: PlayerManager<this>;
 
     /**
      * The Lavalink API client for this node.
      */
-    readonly rest: LavalinkAPIClient;
+    readonly rest: API.LavalinkHttpClient;
 
     /**
      * The Lavalink WS client for this node.
      */
-    readonly ws: LavalinkWSClient;
+    readonly ws: WS.LavalinkWSClient;
+
+    /**
+     * The entrypoint for most user-land API calls.
+     */
+    readonly api: API.LavalinkAPI;
 
     userId: string | undefined;
 
@@ -27,28 +50,37 @@ export class Node extends Emitter<NodeEvents> implements Client {
         super();
 
         this.players = new NodePlayerManager(this);
-        this.rest = new LavalinkAPIClient({ ...options.info, ...options.rest });
-        this.ws = new LavalinkWSClient(this.api, { ...options.info, userId: options.discord.userId });
+        this.rest = new API.LavalinkHttpClient({ ...options.info, ...options.rest });
+        this.api = new API.LavalinkAPI(this.rest);
+        this.ws = new WS.LavalinkWSClient(this.api, { ...options.ws, userId: options.discord.userId });
         this.userId = options.discord.userId;
 
-        // attach event listeners.
+        /* attach event listeners. */
+
+        // http
+        this.rest.on("request", (event) => this.emit("request", event));
+
+        // websocket
+        this.ws.on("ready", (event) => this.emit("ready", event));
+
         this.ws.on("debug", (message) => this.emit("debug", { system: "ws", message }));
+
         this.ws.on("error", (error) => this.emit("error", error));
 
+        this.ws.on("connected", (event) => this.emit("connected", event));
+
+        this.ws.on("disconnected", (event) => this.emit("disconnected", event));
+
         this.ws.on("message", (message) => {
-            if (message.op === "event") {
-                this.players.resolve(message.guildId)?.handleEvent(message);
-            } else if (message.op === "playerUpdate") {
-                this.players.resolve(message.guildId)?.patchWithState(message.state);
-            }
+            if (message.op === "event" || message.op === "playerUpdate") this.handlePlayerMessage(message);
         });
     }
 
     /**
-     * The entrypoint for most user-land API calls.
+     * The amount of time this node has been connected to the lavalink node (in milliseconds).
      */
-    get api(): LavalinkAPI {
-        return new LavalinkAPI(this.rest);
+    get uptime(): number {
+        return this.ws.uptime;
     }
 
     /**
@@ -71,28 +103,29 @@ export class Node extends Emitter<NodeEvents> implements Client {
     /**
      * @internal
      */
-    createPlayer(guildId: string): Player {
+    createPlayer(guildId: string): Player<this> {
         return new Player(this, guildId);
+    }
+
+    override emit<E extends keyof NodeEvents>(event: E, ...args: Parameters<NodeEvents[E]>): boolean {
+        return this.listenerCount(event) > 0 ? super.emit(event, ...args) : false;
+    }
+
+    protected handlePlayerMessage(message: Exclude<Protocol.Message, { op: "ready" | "stats" }>) {
+        const player = this.players.resolve(message.guildId);
+        if (!player) {
+            this.emit("debug", { system: "ws", message: `received '${message.op}' for unknown player` });
+            return;
+        }
+
+        message.op === "event" ? player.handleEvent(message) : player.patchWithState(message.state);
     }
 }
 
-export type NodeDebugEvent = {
-    message: string;
-} & (
-    | {
-          system: "ws" | "rest";
-      }
-    | {
-          system: "player";
-          subsystem: "voice" | "track" | "event";
-          player: Player;
-      }
-);
-
-export type NodeEvents = Omit<LavalinkWSClientEvents, "debug"> & {
-    /** Emitted when a debug message is logged */
-    debug: (event: NodeDebugEvent) => void;
-};
+export type NodeEvents = ClientEvents &
+    Omit<WS.LavalinkWSClientEvents, "debug"> & {
+        request: (event: API.LavalinkHttpClientRequestEvent) => void;
+    };
 
 type InfoKeys = "host" | "port" | "tls" | "auth";
 
@@ -112,7 +145,7 @@ export type NodeOptions = {
     /**
      * Crucial information about the node.
      */
-    info: Pick<LavalinkAPIClientOptions, InfoKeys>;
+    info: Pick<API.LavalinkHttpClientOptions, InfoKeys>;
 
     /**
      * Options for Discord.
@@ -122,10 +155,10 @@ export type NodeOptions = {
     /**
      * Options to pass to the Lavalink API client.
      */
-    rest?: Omit<LavalinkAPIClientOptions, InfoKeys>;
+    rest?: Omit<API.LavalinkHttpClientOptions, InfoKeys>;
 
     /**
      * Options to pass to the Lavalink WS client.
      */
-    ws?: Omit<LavalinkWSClientOptions, "userId">;
+    ws?: Omit<WS.LavalinkWSClientOptions, "userId">;
 };

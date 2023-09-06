@@ -1,40 +1,77 @@
 import { Client, GatewayDispatchEvents } from "discord.js";
-import { Node } from "lavaclient";
+import { Cluster } from "lavaclient";
+
+import "@lavaclient/plugin-lavasearch/register";
+import "@lavaclient/plugin-effects/register";
+import { PlayerEffect } from "@lavaclient/plugin-effects";
 
 const client = new Client({
     intents: ["Guilds", "GuildVoiceStates"],
 });
 
-const node = new Node({
-    info: {
-        auth: "youshallnotpass",
-        host: "localhost",
-        port: 8080,
-    },
+const node = new Cluster({
+    nodes: [
+        {
+            info: {
+                auth: "youshallnotpass",
+                host: "localhost",
+                port: 8080,
+            },
+            ws: {
+                reconnecting: { tries: Infinity },
+            },
+        },
+    ],
     discord: {
         sendGatewayCommand: (id, data) => client.guilds.cache.get(id)?.shard?.send(data),
     },
 });
 
-node.on("debug", (event) => {
-    console.debug(`[${event.system}${"subsystem" in event ? `:${event.subsystem}` : ""}] ${event.message}`);
-});
+const nightcore: PlayerEffect = {
+    id: "nightcore",
+    filters: {
+        timescale: { rate: 1.123456789 },
+    },
+};
 
-node.ws.on("ready", async () => {
-    const result = await node.api.loadTracks("ytsearch:Odetari - I LOVE YOU HOE");
+const slowed: PlayerEffect = {
+    id: "slowed",
+    filters: {
+        timescale: { rate: 0.75 },
+    },
+};
+
+node.once("ready", async () => {
+    const result = await node.api.loadSearch("spsearch:i love you hoe odetari", "track");
+    console.log(result)
 
     const player = node.players.create(process.env.TEST_GUILD!);
     player.on("trackStart", (track) => {
-        console.log("started playing", track.info.title, "by", track.info.author)
+        console.log("started playing", track.info.title, "by", track.info.author);
     });
 
     player.voice.connect(process.env.TEST_CHANNEL!);
 
-    await player.play(result.loadType === "search" ? result.data[0] : "");
+    await player.play(result.tracks[0]);
+    await player.effects.toggle(nightcore);
+    await player.effects.toggle(slowed);
 });
 
-node.rest.on("request", (event) => {
-    const msg: unknown[] = ["[rest]", event.prepared.request.method, event.prepared.url.pathname];
+node.on("nodeDebug", (node, event) => {
+    console.debug(
+        `[${node.identifier}]`,
+        `[${event.system}${"subsystem" in event ? `:${event.subsystem}` : ""}] ${event.message}`,
+    );
+});
+
+node.on("nodeRequest", (node, event) => {
+    const msg: unknown[] = [
+        `[${node.identifier}]`,
+        "[rest]",
+        event.prepared.request.method,
+        event.prepared.url.pathname,
+    ];
+
     if (event.type === "error") {
         msg.push("!");
         if (event.finished) msg.push(event.took.toFixed(2), "ms");
@@ -47,11 +84,21 @@ node.rest.on("request", (event) => {
     console.log(...msg);
 });
 
+node.on("nodeReady", async (node, event) => {
+    if (event.resumed) {
+        // player most likely still exists.
+        return;
+    }
+
+    for (const [_, player] of node.players.cache) player.transfer(node);
+});
+
 client.on("ready", async (client) => {
+    console.log("connected to discord.");
     node.connect(client.user.id);
 });
 
-client.ws.on(GatewayDispatchEvents.VoiceStateUpdate, u => node.players.handleVoiceUpdate(u))
-client.ws.on(GatewayDispatchEvents.VoiceServerUpdate, u => node.players.handleVoiceUpdate(u))
+client.ws.on(GatewayDispatchEvents.VoiceStateUpdate, (u) => node.players.handleVoiceUpdate(u));
+client.ws.on(GatewayDispatchEvents.VoiceServerUpdate, (u) => node.players.handleVoiceUpdate(u));
 
 client.login(process.env.TEST_TOKEN);

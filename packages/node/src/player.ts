@@ -1,22 +1,47 @@
+/*
+ * Copyright 2023 Dimensional Fun & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import type { Node } from "./node.js";
-import type { PlayerAPI } from "lavalink-api-client";
 
 import type * as Protocol from "lavalink-protocol";
+import type * as API from "lavalink-api-client";
+
+import type { Cluster } from "./cluster/client.js";
+import { ClusterNode } from "./cluster/node.js";
+
 import { Emitter } from "./tools.js";
 import { PlayerVoice } from "./playerVoice.js";
 
 import type { DeepWritable } from "ts-essentials";
 
-export class Player extends Emitter<PlayerEvents> {
+export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
+    /**
+     * The voice manager for this player.
+     */
+    readonly voice: PlayerVoice;
+
     /**
      * The api for this player.
      */
-    readonly api: PlayerAPI;
+    api: API.PlayerAPI;
 
     /**
-     * The voice mananger for this player.
+     * The lavalink node that governs this player.
      */
-    readonly voice: PlayerVoice;
+    node: $Node;
 
     /**
      * Whether this player is currently playing something.
@@ -59,11 +84,10 @@ export class Player extends Emitter<PlayerEvents> {
     lastUpdate?: number;
 
     /**
-     * @param node The lavalink node that governs this player.
      * @param id   The ID of the guild this player is for.
      */
     constructor(
-        readonly node: Node,
+        node: $Node,
         readonly id: string,
     ) {
         const session = node.ws.session;
@@ -77,6 +101,27 @@ export class Player extends Emitter<PlayerEvents> {
         this.api = session.player(id);
         this.node = node;
         this.voice = new PlayerVoice(this);
+    }
+
+    get cluster(): $Node extends ClusterNode ? Cluster : Cluster | null {
+        // @ts-expect-error
+        return this.node instanceof ClusterNode ? this.node.cluster : null;
+    }
+
+    /**
+     *  
+     */
+    get adjustedPosition() {
+        if (this.position === 0) {
+            return 0;
+        }
+
+        const length = this.track?.info?.length, last = this.lastUpdate;
+        if (this.paused || !length || !last) {
+            return this.position;
+        }
+
+        return Math.min(this.position + (Date.now() - last), length);
     }
 
     // high-level utilities.
@@ -250,6 +295,37 @@ export class Player extends Emitter<PlayerEvents> {
         this.position = data.position;
         this.lastUpdate = data.time;
         return this;
+    }
+
+    /**
+     * Transfers this player to another node. 
+     * **Warning:** this is an experimental method, use at your own risk!
+     * 
+     * @param to The node to transfer to.
+     */
+    async transfer(to: $Node) {
+        const api = to.ws.session?.player(this.id);
+        if (!api) throw new Error("The given node is not ready.");
+
+        /* remove this player from the current node. */
+        try {
+            await this.api.remove()
+        } catch {
+            // might fail
+        }
+
+        /* switch to the provided node information */
+        this.api = api;
+        this.node = to;
+
+        // 
+        await this.update({
+            encodedTrack: this.track?.encoded,
+            position: this.adjustedPosition,
+            filters: this.filters,
+            volume: this.volume,
+            voice: this.voice.server ?? { endpoint: "", sessionId: "", token: "" },
+        });
     }
 
     /**

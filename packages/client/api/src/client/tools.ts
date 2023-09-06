@@ -1,12 +1,12 @@
-import type { LavalinkAPIClient } from "./index.js";
-import type { LavalinkAPIClientOptions, LavalinkAPIClientRequestEvent } from "./types.js";
+import type { LavalinkHttpClient } from "./index.js";
+import type { LavalinkHttpClientOptions, LavalinkHttpClientRequestEvent } from "./types.js";
 
 /**
  * Get the user agent to use.
  *
  * @param options The options passed to the API Client.
  */
-export const getUserAgent = (options: LavalinkAPIClientOptions) =>
+export const getUserAgent = (options: LavalinkHttpClientOptions) =>
     options.userAgent ?? `lavalink-api-client (npmjs.com/lavalink-api-client, Node.JS ${process.version})`;
 
 /**
@@ -14,7 +14,7 @@ export const getUserAgent = (options: LavalinkAPIClientOptions) =>
  *
  * @param options The options passed to the API Client.
  */
-export const getPort = (options: LavalinkAPIClientOptions) => {
+export const getPort = (options: LavalinkHttpClientOptions) => {
     return options.port ?? 80;
 };
 
@@ -23,7 +23,7 @@ export const getPort = (options: LavalinkAPIClientOptions) => {
  *
  * @param options The options passed to the API Client.
  */
-export const isSecure = (options: LavalinkAPIClientOptions) => {
+export const isSecure = (options: LavalinkHttpClientOptions) => {
     return options.tls ?? getPort(options) === 443;
 };
 
@@ -32,7 +32,7 @@ export const isSecure = (options: LavalinkAPIClientOptions) => {
  *
  * @param options The options passed to the API Client.
  */
-export const getAddress = (options: LavalinkAPIClientOptions) => {
+export const getAddress = (options: LavalinkHttpClientOptions) => {
     return `${options.host}:${getPort(options)}`;
 };
 
@@ -41,11 +41,11 @@ export const getAddress = (options: LavalinkAPIClientOptions) => {
  *
  * @param options The options passed to the API Client.
  */
-export const getURI = (proto: string, options: LavalinkAPIClientOptions) => {
+export const getURI = (proto: string, options: LavalinkHttpClientOptions) => {
     return `${proto}${isSecure(options) ? "s" : ""}://${getAddress(options)}`;
 };
 
-export const onRequest = (client: LavalinkAPIClient, event: LavalinkAPIClientRequestEvent) => {
+export const onRequest = (client: LavalinkHttpClient, event: LavalinkHttpClientRequestEvent) => {
     // update statistics.
     client.statistics.sent++;
 

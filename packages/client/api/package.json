@@ -1,6 +1,6 @@
 {
     "name": "lavalink-api-client",
-    "version": "1.0.0-rc.6",
+    "version": "1.0.0-rc.7",
     "description": "Type-safe API client for Lavalink",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

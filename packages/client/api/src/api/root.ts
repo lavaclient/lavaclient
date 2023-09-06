@@ -1,4 +1,4 @@
-import type { LavalinkAPIClient } from "../client/index.js";
+import type { LavalinkHttpClient } from "../client/index.js";
 
 import { SessionAPI } from "./session.js";
 import {
@@ -11,7 +11,7 @@ import {
 } from "../endpoint/index.js";
 
 export class LavalinkAPI {
-    constructor(readonly client: LavalinkAPIClient) {}
+    constructor(readonly client: LavalinkHttpClient) {}
 
     /**
      *

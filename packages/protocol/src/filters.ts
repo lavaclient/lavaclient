@@ -54,6 +54,7 @@ export const filters = S.struct({
     karaoke,
     timescale,
     tremolo,
+    vibrato,
     distortion,
     rotation,
     channelMix,

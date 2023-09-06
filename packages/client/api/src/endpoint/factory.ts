@@ -1,15 +1,31 @@
+/*
+ * Copyright 2023 Dimensional Fun & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import * as S from "@effect/schema/Schema";
 
 import { encodeSchema, parseSchema } from "../tools.js";
 import { LavalinkHTTPError } from "../error.js";
-import { LavalinkAPIRequest, prepare, execute } from "../request/index.js";
-import { LavalinkAPIClient, LavalinkAPIClientRequestEvent, onRequest } from "../client/index.js";
+import { LavalinkHttpRequest, prepare, execute } from "../request/index.js";
+import { LavalinkHttpClient, LavalinkHttpClientRequestEvent, onRequest } from "../client/index.js";
 
 export const createEndpointMethod =
     <E extends EndpointDefinition>(def: E): createExecuteEndpointFn<E> =>
     async (client, arg1, arg2 = {}) => {
         /* build the request object. */
-        const request: LavalinkAPIRequest = {
+        const request: LavalinkHttpRequest = {
             ...arg2,
             method: def.method,
             // @ts-expect-error
@@ -87,7 +103,7 @@ export const createEndpointMethod =
                 reason = cause;
                 throw new LavalinkHTTPError("Unable to validate JSON response", { cause, reason: "VALIDATION" });
             } finally {
-                const event: LavalinkAPIClientRequestEvent = reason
+                const event: LavalinkHttpClientRequestEvent = reason
                     ? { type: "error", finished: true, reason: "VALIDATION", cause: reason, ...executed }
                     : { type: "success", finished: true, ...executed };
 
@@ -148,7 +164,7 @@ type createEndpointMethodArgs<E extends EndpointDefinition> = E extends JSONBody
     : {};
 
 type createExecuteEndpointFn<E extends EndpointDefinition> = (
-    client: LavalinkAPIClient,
+    client: LavalinkHttpClient,
     request: AddPath<E, createEndpointMethodArgs<E>>,
-    options?: Omit<LavalinkAPIRequest, "path" | "method" | "query" | "body">,
+    options?: Omit<LavalinkHttpRequest, "path" | "method" | "query" | "body">,
 ) => Promise<E extends ResultContainer<infer Result> ? Result : void>;

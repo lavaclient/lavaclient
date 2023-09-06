@@ -6,7 +6,7 @@
         "incremental": true,
 
         "module": "NodeNext",
-        "moduleResolution": "node",
+        "moduleResolution": "NodeNext",
         "resolveJsonModule": true,
 
         "pretty": true,

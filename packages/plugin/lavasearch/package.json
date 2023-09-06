@@ -1,9 +1,19 @@
 {
-    "name": "@lavaclient/lavasearch",
+    "name": "@lavaclient/plugin-lavasearch",
     "version": "1.0.0-rc.1",
     "description": "Lavaclient plugin for better integration with LavaSearch",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "require": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./register": {
+            "import": "./dist/register.js",
+            "require": "./dist/register.js",
+            "types": "./dist/register.d.ts"
+        }
+    },
     "maintainers": [
         {
             "email": "hi@vzt.gay",
@@ -30,6 +40,9 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
+        "@effect/schema": "^0.33.0",
+        "lavalink-api-client": "workspace:1.0.0-rc.7",
+        "lavalink-protocol": "workspace:1.0.0-rc.5",
         "tslib": "^2.6.0"
     }
 }

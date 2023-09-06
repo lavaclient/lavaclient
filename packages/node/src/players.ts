@@ -1,6 +1,24 @@
-import { Node } from "./node";
-import { Player } from "./player.js";
-import { VoiceServerUpdate, VoiceStateUpdate } from "./playerVoice";
+/*
+ * Copyright 2023 Dimensional Fun & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import type { Node } from "./node";
+import type { Player } from "./player.js";
+import type { VoiceServerUpdate, VoiceStateUpdate } from "./playerVoice";
+
+import { Identifiable, getId } from "./tools.js";
 
 export interface FetchOptions {
     /**
@@ -13,53 +31,53 @@ export interface FetchOptions {
     force?: Boolean;
 }
 
-export interface PlayerManager {
+export interface PlayerManager<$Node extends Node = Node> {
     /**
      * The cache of players, mapped by guild id.
      *
      * **Warning:** This map should not be modified directly.
      */
-    get cache(): Map<string, Player>;
+    get cache(): Map<string, Player<$Node>>;
 
     /**
      * Whether this player manager has a player for the given guild.
      */
-    has(guildId: string): boolean;
+    has(guild: Identifiable): boolean;
 
     /**
      * Resolves a player for the given guild.
      *
-     * @param guildId The guild id to resolve the player for.
+     * @param guild The guild to resolve the player for.
      */
-    resolve(guildId: string): Player | undefined;
+    resolve(guild: Identifiable): Player<$Node> | undefined;
 
     /**
      * Fetches all players from the lavalink node for this session.
      *
      * @param cache Whether to cache the players.
      */
-    fetch(cache?: boolean): Promise<Player[]>;
+    fetch(cache?: boolean): Promise<Player<$Node>[]>;
 
     /**
      * Fetches a player from the lavalink node for this session.
      *
-     * @param guildId The guild id to fetch the player for.
+     * @param guild   The guild to fetch the player for.
      * @param options The options for fetching the player.
      */
-    fetch(guildId: string, options?: FetchOptions): Promise<Player | undefined>;
+    fetch(guild: Identifiable, options?: FetchOptions): Promise<Player<$Node> | undefined>;
 
     /**
      * Creates a player for the given guild.
      */
-    create(guildId: string): Player;
+    create(guild: Identifiable): Player<$Node>;
 
     /**
      * Destroys a player for the given guild.
      *
-     * @param guildId The guild id to destroy the player for.
-     * @param force   Whether to force destroy the player, even if it isn't cached.
+     * @param guild The guild id to destroy the player for.
+     * @param force Whether to force destroy the player, even if it isn't cached.
      */
-    destroy(guildId: string, force?: boolean): Promise<boolean>;
+    destroy(guild: Identifiable, force?: boolean): Promise<boolean>;
 
     /**
      * Destroys all **cached** players.
@@ -76,69 +94,68 @@ export interface PlayerManager {
     handleVoiceUpdate(update: VoiceStateUpdate | VoiceServerUpdate): Promise<boolean>;
 }
 
-export class NodePlayerManager implements PlayerManager {
-    /**
-     * The cache of players.
-     */
-    readonly cache: Map<string, Player> = new Map();
+export class NodePlayerManager<$Node extends Node = Node> implements PlayerManager<$Node> {
+    readonly cache: Map<string, Player<$Node>> = new Map();
 
-    constructor(readonly node: Node) {}
+    constructor(readonly node: $Node) {}
 
-    has(guildId: string): boolean {
-        return this.cache.has(guildId);
+    has(guild: Identifiable): boolean {
+        return this.cache.has(getId(guild));
     }
 
-    resolve(guildId: string): Player | undefined {
-        return this.cache.get(guildId);
+    resolve(guild: Identifiable): Player<$Node> | undefined {
+        return this.cache.get(getId(guild));
     }
 
-    create(guildId: string): Player {
-        if (this.has(guildId)) {
-            return this.resolve(guildId)!;
+    create(guild: Identifiable): Player<$Node> {
+        if (this.has(getId(guild))) {
+            return this.resolve(getId(guild))!;
         }
 
-        const player = this.node.createPlayer(guildId);
-        this.cache.set(guildId, player);
+        const player = this.node.createPlayer(getId(guild));
+        this.cache.set(getId(guild), player);
 
         return player;
     }
 
-    fetch(cache?: boolean | undefined): Promise<Player[]>;
-    fetch(guildId: string, options?: FetchOptions | undefined): Promise<Player | undefined>;
+    fetch(cache?: boolean | undefined): Promise<Player<$Node>[]>;
 
-    async fetch(arg0: boolean | string | undefined, options: FetchOptions = {}) {
+    fetch(guild: Identifiable, options?: FetchOptions | undefined): Promise<Player<$Node> | undefined>;
+
+    async fetch(arg0: boolean | Identifiable | undefined, options: FetchOptions = {}) {
         /* fetch single player. */
-        if (typeof arg0 === "string") {
-            let player = this.cache.get(arg0);
-            if (!options.force && player) {
-                return player;
-            }
+        if (typeof arg0 === "boolean") {
+            /* fetch all players. */
+            const response = (await this.node.ws.session?.players()) ?? [];
+            return response.map((data) => {
+                const player = arg0 ? this.create(data.guildId) : this.node.createPlayer(data.guildId);
 
-            const data = await this.node.ws.session?.player(arg0)?.fetchOrNull();
-
-            if (data) {
-                player = options.cache ? player ?? this.create(arg0) : this.node.createPlayer(arg0);
                 return player.patch(data);
-            }
-
-            return;
+            });
         }
 
-        /* fetch all players. */
-        const response = (await this.node.ws.session?.players()) ?? [];
-        return response.map((data) => {
-            const player = arg0 ? this.create(data.guildId) : this.node.createPlayer(data.guildId);
+        const guildId = getId(arg0!);
 
+        let player = this.cache.get(guildId);
+        if (!options.force && player) {
+            return player;
+        }
+
+        const data = await this.node.ws.session?.player(guildId)?.fetchOrNull();
+        if (data) {
+            player = options.cache ? player ?? this.create(guildId) : this.node.createPlayer(guildId);
             return player.patch(data);
-        });
+        }
+
+        return;
     }
 
-    destroy(guildId: string, force?: boolean | undefined): Promise<boolean>;
+    destroy(guild: Identifiable, force?: boolean | undefined): Promise<boolean>;
 
     destroy(): Promise<number>;
 
-    async destroy(guildId?: string, force = false) {
-        if (!guildId) {
+    async destroy(guild?: Identifiable, force = false) {
+        if (!guild) {
             let count = 0;
             for (const [_, player] of this.cache) {
                 player.api.remove();
@@ -148,12 +165,12 @@ export class NodePlayerManager implements PlayerManager {
         }
 
         /* destroy a specific player: */
-        const player = this.resolve(guildId);
-        this.cache.delete(guildId);
+        const player = this.resolve(getId(guild));
+        this.cache.delete(getId(guild));
 
         if (!player) {
             if (force) {
-                return this.node.ws.session?.player(guildId)?.remove() ?? false;
+                return this.node.ws.session?.player(getId(guild))?.remove() ?? false;
             }
 
             return false;

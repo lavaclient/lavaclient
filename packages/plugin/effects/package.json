@@ -1,0 +1,46 @@
+{
+    "name": "@lavaclient/plugin-effects",
+    "version": "1.0.0-rc.1",
+    "description": "Lavaclient plugin for better filter management",
+    "exports": {
+        ".": {
+            "default": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./register": {
+            "default": "./register.js",
+            "types": "./register.d.ts"
+        }
+    },
+    "maintainers": [
+        {
+            "email": "hi@vzt.gay",
+            "name": "vzt",
+            "url": "https://vzt.gay"
+        }
+    ],
+    "files": [
+        "dist/*",
+        "!dist/.tsbuildinfo"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "check": "tsc --noEmit",
+        "format": "prettier -w src/*",
+        "prepublishOnly": "pnpm run format && pnpm run build"
+    },
+    "devDependencies": {
+        "@lavaclient/config-prettier": "workspace:^",
+        "@lavaclient/config-typescript": "workspace:^",
+        "@types/node": "^20.3.3",
+        "@types/ws": "^8.5.5",
+        "ts-essentials": "^9.3.2",
+        "typed-emitter": "^2.1.0",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "lavaclient": "workspace:5.0.0-alpha.1",
+        "lavalink-protocol": "workspace:1.0.0-rc.5",
+        "tslib": "^2.6.0"
+    }
+}

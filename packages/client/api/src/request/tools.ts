@@ -1,5 +1,5 @@
-import type { LavalinkAPIRequest, PreparedLavalinkRequest } from "./index.js";
-import { getUserAgent, type LavalinkAPIClientOptions, type LavalinkAPIClient, getURI } from "../client/index.js";
+import type { LavalinkHttpRequest, PreparedLavalinkHttpRequest } from "./index.js";
+import { getUserAgent, type LavalinkHttpClientOptions, type LavalinkHttpClient, getURI } from "../client/index.js";
 
 /**
  * Get the URL to use in the prepared request.
@@ -7,7 +7,7 @@ import { getUserAgent, type LavalinkAPIClientOptions, type LavalinkAPIClient, ge
  * @param request The request to get the URL for.
  * @param options The options passed to the API Client.
  */
-export const getRequestURL = (request: LavalinkAPIRequest, options: LavalinkAPIClientOptions): URL => {
+export const getRequestURL = (request: LavalinkHttpRequest, options: LavalinkHttpClientOptions): URL => {
     const url = new URL(request.path, getURI("http", options));
 
     // append all of the configured search params to the url.
@@ -31,7 +31,7 @@ export const getRequestURL = (request: LavalinkAPIRequest, options: LavalinkAPIC
  * @param request The request to get the request init for.
  * @param options The options passed to the API Client.
  */
-export const getRequestInit = (request: LavalinkAPIRequest, options: LavalinkAPIClientOptions): RequestInit => {
+export const getRequestInit = (request: LavalinkHttpRequest, options: LavalinkHttpClientOptions): RequestInit => {
     /*
      * Construct the headers to use.
      */
@@ -56,7 +56,7 @@ export const getRequestInit = (request: LavalinkAPIRequest, options: LavalinkAPI
     return init;
 };
 
-export const prepare = (client: LavalinkAPIClient, request: LavalinkAPIRequest): PreparedLavalinkRequest => {
+export const prepare = (client: LavalinkHttpClient, request: LavalinkHttpRequest): PreparedLavalinkHttpRequest => {
     const url = getRequestURL(request, client.options),
         init = getRequestInit(request, client.options);
 

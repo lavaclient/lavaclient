@@ -5,6 +5,7 @@ packages:
   - packages/client/api
   - packages/plugin/lavasearch
   - packages/plugin/queue
+  - packages/plugin/effects
   - packages/adapter/biscuit
   - packages/adapter/djs
   - packages/node
