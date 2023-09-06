@@ -109,14 +109,15 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
     }
 
     /**
-     *  
+     *
      */
     get adjustedPosition() {
         if (this.position === 0) {
             return 0;
         }
 
-        const length = this.track?.info?.length, last = this.lastUpdate;
+        const length = this.track?.info?.length,
+            last = this.lastUpdate;
         if (this.paused || !length || !last) {
             return this.position;
         }
@@ -298,9 +299,9 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
     }
 
     /**
-     * Transfers this player to another node. 
+     * Transfers this player to another node.
      * **Warning:** this is an experimental method, use at your own risk!
-     * 
+     *
      * @param to The node to transfer to.
      */
     async transfer(to: $Node) {
@@ -309,7 +310,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
 
         /* remove this player from the current node. */
         try {
-            await this.api.remove()
+            await this.api.remove();
         } catch {
             // might fail
         }
@@ -318,7 +319,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
         this.api = api;
         this.node = to;
 
-        // 
+        //
         await this.update({
             encodedTrack: this.track?.encoded,
             position: this.adjustedPosition,

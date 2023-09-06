@@ -40,13 +40,13 @@ export interface Client extends TypedEmitter<ClientEvents> {
     get userId(): string | undefined;
 
     /**
-     * The Lavalink HTTP client for executing requests. 
+     * The Lavalink HTTP client for executing requests.
      * Depending on the implementation of this interface, this may not always return the same instance.
      */
     get rest(): API.LavalinkHttpClient;
 
     /**
-     * The entrypoint into most user-land API calls. 
+     * The entrypoint into most user-land API calls.
      * Depending on the implementation of this interface, this may not always return the same instance.
      */
     get api(): API.LavalinkAPI;
@@ -65,7 +65,7 @@ export interface Client extends TypedEmitter<ClientEvents> {
 }
 
 /**
- * 
+ *
  */
 export type ClientDebugEvent = {
     message: string;
@@ -94,4 +94,4 @@ export type ClientEvents = {
      * Emitted when the client is ready to be used.
      */
     ready: (event: { took: number }) => void;
-}
+};

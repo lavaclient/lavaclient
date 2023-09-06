@@ -94,7 +94,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
      */
     connect(userId: string | undefined = this.userId) {
         this.userId ??= userId;
-        
+
         if (!userId) {
             throw new Error("No user id was provided.");
         }
@@ -141,7 +141,6 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
             try {
                 this.connect();
             } catch (cause) {
-                console.log(cause);
                 this.emit("error", new Error("Unable to reconnect", { cause }));
                 return res(false);
             }

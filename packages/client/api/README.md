@@ -2,6 +2,8 @@
 
 A type-safe API client for [Lavalink](https://lavalink.dev), it uses the [lavalink-protocol](https://npmjs.com/lavalink-protocol) package.
 
+-   Compatible with **Lavalink v4 Beta 3**
+
 ## 🛟 Need Support?
 
 Feel free to join our [Discord Server](https://discord.gg/8R4d8RydT4).
@@ -46,7 +48,6 @@ These ensure that the data from the JSON body, query parameters, and response bo
 
 > Syntax is `execute<Endpoint>(client, request info, extra request options)`
 
-
 ```ts
 import { executeInfo } from "lavalink-api-client";
 
@@ -76,6 +77,7 @@ try {
 ```
 
 The different reasons an HTTP error may occur are:
+
 1. The response body couldn't be decoded.
 2. The request failed to send.
 3. Lavalink returned an error.
@@ -84,8 +86,9 @@ The different reasons an HTTP error may occur are:
 6. The request was aborted.
 
 > Differences between an HTTP and API Error:
-> - `LavalinkHTTPError`'s are thrown when something went wrong somewhere in the request - most originate from the client.
-> - `LavalinkAPIError`'s are thrown when Lavalink returns a non 2.x.x status code - although these extend HTTP errors, they only originate from Lavalink.
+>
+> -   `LavalinkHTTPError`'s are thrown when something went wrong somewhere in the request - most originate from the client.
+> -   `LavalinkAPIError`'s are thrown when Lavalink returns a non 2.x.x status code - although these extend HTTP errors, they only originate from Lavalink.
 >
 > tl;dr HTTP errors indicate a general error, API errors indicate Lavalink returned an error.
 

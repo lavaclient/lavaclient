@@ -68,7 +68,7 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
       lavalink-protocol:
-        specifier: 1.0.0-rc.5
+        specifier: 1.0.0-rc.6
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
@@ -96,10 +96,10 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
       lavalink-api-client:
-        specifier: 1.0.0-rc.7
+        specifier: 1.0.0-rc.8
         version: link:../api
       lavalink-protocol:
-        specifier: 1.0.0-rc.5
+        specifier: 1.0.0-rc.6
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
@@ -145,10 +145,10 @@ importers:
   packages/node:
     dependencies:
       lavalink-api-client:
-        specifier: 1.0.0-rc.7
+        specifier: 1.0.0-rc.8
         version: link:../client/api
       lavalink-protocol:
-        specifier: 1.0.0-rc.5
+        specifier: 1.0.0-rc.6
         version: link:../protocol
       lavalink-ws-client:
         specifier: 1.0.0-rc.3
@@ -182,10 +182,10 @@ importers:
   packages/plugin/effects:
     dependencies:
       lavaclient:
-        specifier: workspace:5.0.0-alpha.1
+        specifier: 5.0.0-alpha.2
         version: link:../../node
       lavalink-protocol:
-        specifier: workspace:1.0.0-rc.5
+        specifier: 1.0.0-rc.6
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
@@ -219,10 +219,10 @@ importers:
         specifier: ^0.33.0
         version: 0.33.0(@effect/data@0.17.1)(@effect/io@0.38.0)
       lavalink-api-client:
-        specifier: workspace:1.0.0-rc.7
+        specifier: 1.0.0-rc.8
         version: link:../../client/api
       lavalink-protocol:
-        specifier: workspace:1.0.0-rc.5
+        specifier: 1.0.0-rc.6
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
@@ -297,13 +297,13 @@ importers:
   packages/test:
     dependencies:
       '@lavaclient/plugin-effects':
-        specifier: workspace:1.0.0-rc.1
+        specifier: 1.0.0-rc.1
         version: link:../plugin/effects
       '@lavaclient/plugin-lavasearch':
-        specifier: workspace:1.0.0-rc.1
+        specifier: 1.0.0-rc.1
         version: link:../plugin/lavasearch
       lavaclient:
-        specifier: workspace:5.0.0-alpha.1
+        specifier: workspace:5.0.0-alpha.2
         version: link:../node
       tslib:
         specifier: ^2.6.0
