@@ -16,18 +16,6 @@ type filtersObject = Writable<Protocol.Filters> & {
 export class PlayerEffectManager {
     private readonly effects: Map<string, Protocol.Filters>;
 
-    static readonly BUILT_IN_FILTERS: Array<keyof Protocol.Filters> = [
-        "timescale",
-        "equalizer",
-        "karaoke",
-        "tremolo",
-        "vibrato",
-        "distortion",
-        "rotation",
-        "channelMix",
-        "lowPass",
-    ];
-
     constructor(readonly player: Player) {
         this.effects = new Map();
     }
@@ -95,7 +83,6 @@ export class PlayerEffectManager {
         };
 
         for (const value of map(this.all, (it) => it.filters)) {
-            console.log(filters, value);
             const { pluginFilters, ...data } = value;
             filters = Object.assign(filters, data);
             filters.pluginFilters = Object.assign(filters.pluginFilters, pluginFilters);
