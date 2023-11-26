@@ -138,7 +138,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      */
     play(
         track: string | { encoded: string, userData: Record<string, unknown> },
-        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "encodedTrack" | "identifier" | "voice">,
+        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ) {
         const container = typeof track === "string" ? { encoded: track } : track;
         return this.update({ track: container, ...options });
@@ -148,7 +148,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * Stop the currently playing track.
      * @returns This player (but updated).
      */
-    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "encodedTrack">) {
+    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track">) {
         return this.update({ track: { encoded: null }, ...other });
     }
 
