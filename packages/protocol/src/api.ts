@@ -31,6 +31,21 @@ export const RESTGetAPIPlayer = {
 };
 
 export const RESTPatchAPIPlayerJSONBody = S.struct({
+    track: S.struct({
+        // TODO: `identifier` and `encodedTrack` are exclusive, find out a way to validate that.
+        /**
+         * The identifier of the track to play.
+         */
+        identifier: S.optional(S.string),
+        /**
+         * The base64 encoded track to play, `null` stops the current track.
+         */
+        encoded: S.nullable(S.string),
+        /**
+         * Additional track data to be sent back in the Track Object
+         */
+        userData: S.optional(S.record(S.string, S.unknown))
+    }).pipe(S.optional),
     /**
      * The track position in milliseconds.
      */
@@ -55,15 +70,6 @@ export const RESTPatchAPIPlayerJSONBody = S.struct({
      * Information required to create a voice connection.
      */
     voice: voiceState,
-    // TODO: `identifier` and `encodedTrack` are exclusive, find out a way to validate that.
-    /**
-     * The identifier of the track to play.
-     */
-    identifier: S.string,
-    /**
-     * The base64 encoded track to play, `null` stops the current track.
-     */
-    encodedTrack: S.nullable(S.string),
 }).pipe(S.partial);
 
 export const RESTPatchAPIPlayerResult = player;
