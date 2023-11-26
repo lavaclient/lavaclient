@@ -30,22 +30,24 @@ export const RESTGetAPIPlayer = {
     result: RESTGetAPIPlayerResult,
 };
 
+export const playerTrackUpdate = S.struct({
+    // TODO: `identifier` and `encodedTrack` are exclusive, find out a way to validate that.
+    /**
+     * The identifier of the track to play.
+     */
+    identifier: S.optional(S.string),
+    /**
+     * The base64 encoded track to play, `null` stops the current track.
+     */
+    encoded: S.nullable(S.string),
+    /**
+     * Additional track data to be sent back in the Track Object
+     */
+    userData: S.optional(S.record(S.string, S.unknown))
+})
+
 export const RESTPatchAPIPlayerJSONBody = S.struct({
-    track: S.struct({
-        // TODO: `identifier` and `encodedTrack` are exclusive, find out a way to validate that.
-        /**
-         * The identifier of the track to play.
-         */
-        identifier: S.optional(S.string),
-        /**
-         * The base64 encoded track to play, `null` stops the current track.
-         */
-        encoded: S.nullable(S.string),
-        /**
-         * Additional track data to be sent back in the Track Object
-         */
-        userData: S.optional(S.record(S.string, S.unknown))
-    }).pipe(S.optional),
+    track: S.optional(playerTrackUpdate),
     /**
      * The track position in milliseconds.
      */
@@ -230,6 +232,8 @@ export const RESTPostAPIFreeAllFailedAddresses = {
     method: "POST" as const,
     path: "/v4/routeplanner/free/all" as const,
 };
+
+export type UpdatePlayerTrack = S.Schema.To<typeof playerTrackUpdate>;
 
 export type RESTGetAPIPlayerResult = S.Schema.To<typeof RESTGetAPIPlayerResult>;
 export type RESTPatchAPIPlayerJSONBody = S.Schema.To<typeof RESTPatchAPIPlayerJSONBody>;

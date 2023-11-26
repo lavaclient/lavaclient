@@ -136,13 +136,12 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @returns This player (but updated).
      */
     play<T>(
-        track: { encoded: string, userData: T },
-        options: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> & {
-            /**
-             * The schema to encode the user data with.
-             */
-            userDataSchema: S.Schema<Record<string, unknown>, T>
-        }
+        track: { 
+            encoded: string, 
+            userData: T,
+            userDataSchema: S.Schema<any, T>
+        },
+        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">
     ): Promise<this>;
 
     /**
@@ -158,17 +157,22 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
     ): Promise<this>;
 
     async play(
-        track: string | { encoded: string, userData: any },
-        { userDataSchema, ...options }: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> & {
-            userDataSchema?: S.Schema<Record<string, unknown>, any>
-        } = {},
+        track: string | { encoded: string, userData: any, userDataSchema?: S.Schema<any, any> },
+        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ) {
-        if (userDataSchema && typeof track !== "string") {
-            track.userData = await S.encodePromise(userDataSchema)(track.userData);
+        const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
+        if (typeof track !== "string") {
+            update.userData = "userDataSchema" in track
+                ? await S.encodePromise(track.userDataSchema as S.Schema<any, any>)(track.userData)
+                : track.userData;
+
+            update.encoded = track.encoded;
+        } else {
+            update.encoded = track;
         }
 
-        const container = typeof track === "string" ? { encoded: track } : track;
-        return this.update({ track: container, ...options });
+        // @ts-expect-error - this code is so unbelievably scuffed lmao
+        return this.update({ track: update, ...options });
     }
 
     /**
