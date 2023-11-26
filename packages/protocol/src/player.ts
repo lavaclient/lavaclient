@@ -133,16 +133,16 @@ export const player = S.struct({
     filters,
 });
 
-export type TrackInfo = S.To<typeof trackInfo>;
+export type TrackInfo = S.Schema.To<typeof trackInfo>;
 
-export type Track = S.To<typeof track>;
+export type Track = S.Schema.To<typeof track>;
 
-export type Tracks = S.To<typeof tracks>;
+export type Tracks = S.Schema.To<typeof tracks>;
 
-export type EncodedTracks = S.To<typeof encodedTracks>;
+export type EncodedTracks = S.Schema.To<typeof encodedTracks>;
 
-export type VoiceState = S.To<typeof voiceState>;
+export type VoiceState = S.Schema.To<typeof voiceState>;
 
-export type PlayerState = S.To<typeof playerState>;
+export type PlayerState = S.Schema.To<typeof playerState>;
 
-export type Player = S.To<typeof player>;
+export type Player = S.Schema.To<typeof player>;

@@ -65,22 +65,22 @@ export const errorLoadResult = S.struct({
 
 export const loadResult = S.union(trackLoaded, playlistLoaded, searchLoadResult, emptyLoadResult, errorLoadResult);
 
-export type PlaylistInfo = S.To<typeof playlistInfo>;
+export type PlaylistInfo = S.Schema.To<typeof playlistInfo>;
 
-export type Playlist = S.To<typeof playlist>;
+export type Playlist = S.Schema.To<typeof playlist>;
 
-export type ExceptionSeverity = S.To<typeof exceptionSeverity>;
+export type ExceptionSeverity = S.Schema.To<typeof exceptionSeverity>;
 
-export type Exception = S.To<typeof exception>;
+export type Exception = S.Schema.To<typeof exception>;
 
-export type TrackLoaded = S.To<typeof trackLoaded>;
+export type TrackLoaded = S.Schema.To<typeof trackLoaded>;
 
-export type PlaylistLoaded = S.To<typeof playlistLoaded>;
+export type PlaylistLoaded = S.Schema.To<typeof playlistLoaded>;
 
-export type SearchLoadResult = S.To<typeof searchLoadResult>;
+export type SearchLoadResult = S.Schema.To<typeof searchLoadResult>;
 
-export type EmptyLoadResult = S.To<typeof emptyLoadResult>;
+export type EmptyLoadResult = S.Schema.To<typeof emptyLoadResult>;
 
-export type ErrorLoadResult = S.To<typeof errorLoadResult>;
+export type ErrorLoadResult = S.Schema.To<typeof errorLoadResult>;
 
-export type LoadResult = S.To<typeof loadResult>;
+export type LoadResult = S.Schema.To<typeof loadResult>;

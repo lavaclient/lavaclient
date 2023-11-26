@@ -225,33 +225,33 @@ export const RESTPostAPIFreeAllFailedAddresses = {
     path: "/v4/routeplanner/free/all" as const,
 };
 
-export type RESTGetAPIPlayerResult = S.To<typeof RESTGetAPIPlayerResult>;
-export type RESTPatchAPIPlayerJSONBody = S.To<typeof RESTPatchAPIPlayerJSONBody>;
-export type RESTPatchAPIPlayerResult = S.To<typeof RESTPatchAPIPlayerResult>;
+export type RESTGetAPIPlayerResult = S.Schema.To<typeof RESTGetAPIPlayerResult>;
+export type RESTPatchAPIPlayerJSONBody = S.Schema.To<typeof RESTPatchAPIPlayerJSONBody>;
+export type RESTPatchAPIPlayerResult = S.Schema.To<typeof RESTPatchAPIPlayerResult>;
 export type RESTPatchAPIPlayer = typeof RESTPatchAPIPlayer;
 
-export type RESTPatchAPISessionJSONBody = S.To<typeof RESTPatchAPISessionJSONBody>;
-export type RESTPatchAPISessionResult = S.To<typeof RESTPatchAPISessionResult>;
+export type RESTPatchAPISessionJSONBody = S.Schema.To<typeof RESTPatchAPISessionJSONBody>;
+export type RESTPatchAPISessionResult = S.Schema.To<typeof RESTPatchAPISessionResult>;
 export type RESTPatchAPISession = typeof RESTPatchAPISession;
 
-export type RESTGetAPILoadTracksResult = S.To<typeof RESTGetAPILoadTracksResult>;
+export type RESTGetAPILoadTracksResult = S.Schema.To<typeof RESTGetAPILoadTracksResult>;
 export type RESTGetAPILoadTracks = typeof RESTGetAPILoadTracks;
 
-export type RESTGetAPIDecodeTrackResult = S.To<typeof RESTGetAPIDecodeTrackResult>;
+export type RESTGetAPIDecodeTrackResult = S.Schema.To<typeof RESTGetAPIDecodeTrackResult>;
 export type RESTGetAPIDecodeTrack = typeof RESTGetAPIDecodeTrack;
 
-export type RESTPostAPIDecodeTracksJSONBody = S.To<typeof RESTPostAPIDecodeTracksJSONBody>;
-export type RESTPostAPIDecodeTracksResult = S.To<typeof RESTPostAPIDecodeTracksResult>;
+export type RESTPostAPIDecodeTracksJSONBody = S.Schema.To<typeof RESTPostAPIDecodeTracksJSONBody>;
+export type RESTPostAPIDecodeTracksResult = S.Schema.To<typeof RESTPostAPIDecodeTracksResult>;
 export type RESTPostAPIDecodeTracks = typeof RESTPostAPIDecodeTracks;
 
-export type RESTGetAPINodeInfoResult = S.To<typeof RESTGetAPINodeInfoResult>;
+export type RESTGetAPINodeInfoResult = S.Schema.To<typeof RESTGetAPINodeInfoResult>;
 export type RESTGetAPINodeInfo = typeof RESTGetAPINodeInfo;
 
-export type RESTGetAPINodeStatsResult = S.To<typeof RESTGetAPINodeStatsResult>;
+export type RESTGetAPINodeStatsResult = S.Schema.To<typeof RESTGetAPINodeStatsResult>;
 export type RESTGetAPINodeStats = typeof RESTGetAPINodeStats;
 
-export type RESTGetAPINodeVersionResult = S.To<typeof RESTGetAPINodeVersionResult>;
+export type RESTGetAPINodeVersionResult = S.Schema.To<typeof RESTGetAPINodeVersionResult>;
 export type RESTGetAPINodeVersion = typeof RESTGetAPINodeVersion;
 
-export type RESTGetAPIRoutePlannerStatusResult = S.To<typeof RESTGetAPIRoutePlannerStatusResult>;
+export type RESTGetAPIRoutePlannerStatusResult = S.Schema.To<typeof RESTGetAPIRoutePlannerStatusResult>;
 export type RESTGetAPIRoutePlannerStatus = typeof RESTGetAPIRoutePlannerStatus;

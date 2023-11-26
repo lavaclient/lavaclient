@@ -170,22 +170,22 @@ export const message = S.union(
     tag("op", "playerUpdate")(playerUpdate),
 );
 
-export type Ready = S.To<typeof ready>;
+export type Ready = S.Schema.To<typeof ready>;
 
-export type PlayerUpdate = S.To<typeof playerUpdate>;
+export type PlayerUpdate = S.Schema.To<typeof playerUpdate>;
 
-export type Event = S.To<typeof event>;
+export type Event = S.Schema.To<typeof event>;
 
-export type Message = S.To<typeof message>;
+export type Message = S.Schema.To<typeof message>;
 
-export type TrackStartEvent = S.To<typeof trackStartEvent>;
+export type TrackStartEvent = S.Schema.To<typeof trackStartEvent>;
 
-export type TrackEndReason = S.To<typeof trackEndReason>;
+export type TrackEndReason = S.Schema.To<typeof trackEndReason>;
 
-export type TrackEndEvent = S.To<typeof trackEndEvent>;
+export type TrackEndEvent = S.Schema.To<typeof trackEndEvent>;
 
-export type TrackExceptionEvent = S.To<typeof trackExceptionEvent>;
+export type TrackExceptionEvent = S.Schema.To<typeof trackExceptionEvent>;
 
-export type TrackStuckEvent = S.To<typeof trackStuckEvent>;
+export type TrackStuckEvent = S.Schema.To<typeof trackStuckEvent>;
 
-export type WebSocketClosedEvent = S.To<typeof webSocketClosedEvent>;
+export type WebSocketClosedEvent = S.Schema.To<typeof webSocketClosedEvent>;

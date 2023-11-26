@@ -38,10 +38,10 @@ export const info = S.struct({
     plugins,
 });
 
-export type Version = S.To<typeof version>;
+export type Version = S.Schema.To<typeof version>;
 
-export type Git = S.To<typeof git>;
+export type Git = S.Schema.To<typeof git>;
 
-export type Plugin = S.To<typeof plugin>;
+export type Plugin = S.Schema.To<typeof plugin>;
 
-export type Plugins = S.To<typeof plugins>;
+export type Plugins = S.Schema.To<typeof plugins>;
