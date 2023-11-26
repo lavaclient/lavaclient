@@ -25,6 +25,7 @@ import { ClusterNode } from "./cluster/node.js";
 import { Emitter } from "./tools.js";
 import { PlayerVoice } from "./playerVoice.js";
 
+import * as S from "@effect/schema/Schema";
 import type { DeepWritable } from "ts-essentials";
 
 export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
@@ -127,7 +128,22 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
 
     // high-level utilities.
 
-    // TODO: provide an optional type-safe & runtime-safe way to pass user-data between Lavalink and the client.
+    /**
+     * Plays the given {@link track} with some user data.
+     *
+     * @param track   The track to play.
+     * @param options The options for playing the track.
+     * @returns This player (but updated).
+     */
+    play<T>(
+        track: { encoded: string, userData: T },
+        options: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> & {
+            /**
+             * The schema to encode the user data with.
+             */
+            userDataSchema: S.Schema<Record<string, unknown>, T>
+        }
+    ): Promise<this>;
 
     /**
      * Plays the given {@link track}.
@@ -139,7 +155,18 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
     play(
         track: string | { encoded: string, userData: Record<string, unknown> },
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
+    ): Promise<this>;
+
+    async play(
+        track: string | { encoded: string, userData: any },
+        { userDataSchema, ...options }: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> & {
+            userDataSchema?: S.Schema<Record<string, unknown>, any>
+        } = {},
     ) {
+        if (userDataSchema && typeof track !== "string") {
+            track.userData = await S.encodePromise(userDataSchema)(track.userData);
+        }
+
         const container = typeof track === "string" ? { encoded: track } : track;
         return this.update({ track: container, ...options });
     }
@@ -148,7 +175,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * Stop the currently playing track.
      * @returns This player (but updated).
      */
-    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track">) {
+    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">) {
         return this.update({ track: { encoded: null }, ...other });
     }
 
@@ -158,7 +185,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @param paused Whether to pause the player.
      * @returns This player (but updated).
      */
-    pause(paused = true, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused"> = {}) {
+    pause(paused = true, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused" | "voice"> = {}) {
         return this.update({ paused, ...other });
     }
 
@@ -167,7 +194,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      *
      * @returns This player (but updated).
      */
-    resume(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused"> = {}) {
+    resume(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused" | "voice"> = {}) {
         return this.pause(false, other);
     }
 
@@ -177,7 +204,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @param position The position to seek to.
      * @returns This player (but updated).
      */
-    seek(position: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "position"> = {}) {
+    seek(position: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "position" | "voice"> = {}) {
         return this.update({ position, ...other });
     }
 
@@ -187,7 +214,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @param volume The volume to set.
      * @returns This player (but updated.
      */
-    setVolume(volume: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "volume"> = {}) {
+    setVolume(volume: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "volume" | "voice"> = {}) {
         return this.update({ volume, ...other });
     }
 

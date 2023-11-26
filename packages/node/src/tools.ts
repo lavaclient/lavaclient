@@ -16,6 +16,8 @@
 
 import EventEmitter from "events";
 import type { EventMap, default as TypedEmitter } from "typed-emitter";
+import type * as Protocol from "lavalink-protocol";
+import * as S from "@effect/schema/Schema";
 
 export const Emitter = EventEmitter as { new <T extends EventMap>(): TypedEmitter<T> };
 
@@ -29,4 +31,17 @@ export type Identifiable = Snowflake | DiscordResource;
 
 export function getId(value: Identifiable): Snowflake {
     return typeof value === "string" ? value : value.id;
+}
+
+export { S }
+
+/**
+ * Get the user data from a track.
+ * 
+ * @param track  The track to get the user data from
+ * @param schema The schema to parse the user data with
+ * @returns     The parsed user data 
+ */
+export function getUserData<T>(track: Protocol.Track, schema: S.Schema<Record<string, unknown>, T>): Promise<T> {
+    return S.parsePromise(schema)(track.userData)
 }
