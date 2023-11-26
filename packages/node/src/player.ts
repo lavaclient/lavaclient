@@ -127,6 +127,8 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
 
     // high-level utilities.
 
+    // TODO: provide an optional type-safe & runtime-safe way to pass user-data between Lavalink and the client.
+
     /**
      * Plays the given {@link track}.
      *
@@ -135,11 +137,11 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @returns This player (but updated).
      */
     play(
-        track: string | { encoded: string },
+        track: string | { encoded: string, userData: Record<string, unknown> },
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "encodedTrack" | "identifier" | "voice">,
     ) {
-        const encodedTrack = typeof track === "string" ? track : track.encoded;
-        return this.update({ encodedTrack, ...options });
+        const container = typeof track === "string" ? { encoded: track } : track;
+        return this.update({ track: container, ...options });
     }
 
     /**
@@ -147,7 +149,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @returns This player (but updated).
      */
     stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "encodedTrack">) {
-        return this.update({ encodedTrack: null, ...other });
+        return this.update({ track: { encoded: null }, ...other });
     }
 
     /**
@@ -321,11 +323,11 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
 
         //
         await this.update({
-            encodedTrack: this.track?.encoded,
             position: this.adjustedPosition,
             filters: this.filters,
             volume: this.volume,
             voice: this.voice.server ?? { endpoint: "", sessionId: "", token: "" },
+            track: this.track ? { encoded: this.track.encoded } : undefined,
         });
     }
 

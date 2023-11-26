@@ -63,8 +63,8 @@ export const RESTGetLoadSearch = {
     result: RESTGetLoadSearchResult,
 };
 
-export type AudioLoadSearchResultType = S.To<typeof audioLoadSearchResultType>;
+export type AudioLoadSearchResultType = S.Schema.To<typeof audioLoadSearchResultType>;
 
-export type RESTGetLoadSearchResult = S.To<typeof RESTGetLoadSearchResult>;
+export type RESTGetLoadSearchResult = S.Schema.To<typeof RESTGetLoadSearchResult>;
 
-export type RESTGetLoadSearchQuery = S.To<typeof RESTGetLoadSearchQuery>;
+export type RESTGetLoadSearchQuery = S.Schema.To<typeof RESTGetLoadSearchQuery>;
