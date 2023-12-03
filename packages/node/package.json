@@ -36,5 +36,8 @@
         "lavalink-protocol": "1.0.0-rc.6",
         "lavalink-ws-client": "1.0.0-rc.3",
         "tslib": "^2.6.0"
+    },
+    "engines": {
+        "node": ">=20"
     }
 }
