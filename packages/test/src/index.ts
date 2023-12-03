@@ -1,5 +1,5 @@
 import { Client, GatewayDispatchEvents } from "discord.js";
-import { S, Cluster, getUserData } from "lavaclient";
+import { S, Cluster } from "lavaclient";
 
 import "@lavaclient/plugin-lavasearch/register";
 import "@lavaclient/plugin-effects/register";
@@ -57,7 +57,7 @@ node.once("ready", async () => {
     player.voice.connect(process.env.TEST_CHANNEL!);
 
     await player.play({
-        encoded: result.tracks[0].track,
+        encoded: result.tracks[0].encoded,
         userData: { requesterId: "123" },
         userDataSchema
     });
