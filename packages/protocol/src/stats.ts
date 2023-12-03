@@ -88,10 +88,10 @@ export const stats = S.struct({
     cpu,
 });
 
-export type FrameStats = S.To<typeof frameStats>;
+export type FrameStats = S.Schema.To<typeof frameStats>;
 
-export type Memory = S.To<typeof memory>;
+export type Memory = S.Schema.To<typeof memory>;
 
-export type CPU = S.To<typeof cpu>;
+export type CPU = S.Schema.To<typeof cpu>;
 
-export type Stats = S.To<typeof stats>;
+export type Stats = S.Schema.To<typeof stats>;

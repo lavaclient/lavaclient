@@ -107,18 +107,18 @@ export const ipRoutePlanner = S.union(
     balancingIpRoutePlanner,
 );
 
-export type IpBlockType = S.To<typeof ipBlockType>;
+export type IpBlockType = S.Schema.To<typeof ipBlockType>;
 
-export type IpBlock = S.To<typeof ipBlock>;
+export type IpBlock = S.Schema.To<typeof ipBlock>;
 
-export type FailingAddress = S.To<typeof failingAddress>;
+export type FailingAddress = S.Schema.To<typeof failingAddress>;
 
-export type RotatingIpRoutePlanner = S.To<typeof rotatingIpRoutePlanner>;
+export type RotatingIpRoutePlanner = S.Schema.To<typeof rotatingIpRoutePlanner>;
 
-export type NanoIpRoutePlanner = S.To<typeof nanoIpRoutePlanner>;
+export type NanoIpRoutePlanner = S.Schema.To<typeof nanoIpRoutePlanner>;
 
-export type RotatingNanoIpRoutePlanner = S.To<typeof rotatingNanoIpRoutePlanner>;
+export type RotatingNanoIpRoutePlanner = S.Schema.To<typeof rotatingNanoIpRoutePlanner>;
 
-export type BalancingIpRoutePlanner = S.To<typeof balancingIpRoutePlanner>;
+export type BalancingIpRoutePlanner = S.Schema.To<typeof balancingIpRoutePlanner>;
 
-export type IpRoutePlanner = S.To<typeof ipRoutePlanner>;
+export type IpRoutePlanner = S.Schema.To<typeof ipRoutePlanner>;

@@ -12,4 +12,4 @@ export const error = S.struct({
     path: S.string,
 });
 
-export type Error = S.To<typeof error>;
+export type Error = S.Schema.To<typeof error>;

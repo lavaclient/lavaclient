@@ -1,5 +1,5 @@
 import { Client, GatewayDispatchEvents } from "discord.js";
-import { Cluster } from "lavaclient";
+import { S, Cluster, getUserData } from "lavaclient";
 
 import "@lavaclient/plugin-lavasearch/register";
 import "@lavaclient/plugin-effects/register";
@@ -41,6 +41,10 @@ const slowed: PlayerEffect = {
     },
 };
 
+const userDataSchema = S.struct({
+    requesterId: S.string
+})
+
 node.once("ready", async () => {
     const result = await node.api.loadSearch("spsearch:i love you hoe odetari", "track");
     console.log(result)
@@ -52,7 +56,12 @@ node.once("ready", async () => {
 
     player.voice.connect(process.env.TEST_CHANNEL!);
 
-    await player.play(result.tracks[0]);
+    await player.play({
+        encoded: result.tracks[0].track,
+        userData: { requesterId: "123" },
+        userDataSchema
+    });
+
     await player.effects.toggle(nightcore);
     await player.effects.toggle(slowed);
 });

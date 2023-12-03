@@ -25,6 +25,7 @@ import { ClusterNode } from "./cluster/node.js";
 import { Emitter } from "./tools.js";
 import { PlayerVoice } from "./playerVoice.js";
 
+import * as S from "@effect/schema/Schema";
 import type { DeepWritable } from "ts-essentials";
 
 export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
@@ -128,6 +129,22 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
     // high-level utilities.
 
     /**
+     * Plays the given {@link track} with some user data.
+     *
+     * @param track   The track to play.
+     * @param options The options for playing the track.
+     * @returns This player (but updated).
+     */
+    play<T>(
+        track: { 
+            encoded: string, 
+            userData: T,
+            userDataSchema: S.Schema<any, T>
+        },
+        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">
+    ): Promise<this>;
+
+    /**
      * Plays the given {@link track}.
      *
      * @param track   The track to play.
@@ -135,19 +152,35 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @returns This player (but updated).
      */
     play(
-        track: string | { encoded: string },
-        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "encodedTrack" | "identifier" | "voice">,
+        track: string | { encoded: string, userData: Record<string, unknown> },
+        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
+    ): Promise<this>;
+
+    async play(
+        track: string | { encoded: string, userData: any, userDataSchema?: S.Schema<any, any> },
+        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ) {
-        const encodedTrack = typeof track === "string" ? track : track.encoded;
-        return this.update({ encodedTrack, ...options });
+        const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
+        if (typeof track !== "string") {
+            update.userData = "userDataSchema" in track
+                ? await S.encodePromise(track.userDataSchema as S.Schema<any, any>)(track.userData)
+                : track.userData;
+
+            update.encoded = track.encoded;
+        } else {
+            update.encoded = track;
+        }
+
+        // @ts-expect-error - this code is so unbelievably scuffed lmao
+        return this.update({ track: update, ...options });
     }
 
     /**
      * Stop the currently playing track.
      * @returns This player (but updated).
      */
-    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "encodedTrack">) {
-        return this.update({ encodedTrack: null, ...other });
+    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">) {
+        return this.update({ track: { encoded: null }, ...other });
     }
 
     /**
@@ -156,7 +189,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @param paused Whether to pause the player.
      * @returns This player (but updated).
      */
-    pause(paused = true, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused"> = {}) {
+    pause(paused = true, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused" | "voice"> = {}) {
         return this.update({ paused, ...other });
     }
 
@@ -165,7 +198,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      *
      * @returns This player (but updated).
      */
-    resume(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused"> = {}) {
+    resume(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "paused" | "voice"> = {}) {
         return this.pause(false, other);
     }
 
@@ -175,7 +208,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @param position The position to seek to.
      * @returns This player (but updated).
      */
-    seek(position: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "position"> = {}) {
+    seek(position: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "position" | "voice"> = {}) {
         return this.update({ position, ...other });
     }
 
@@ -185,7 +218,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @param volume The volume to set.
      * @returns This player (but updated.
      */
-    setVolume(volume: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "volume"> = {}) {
+    setVolume(volume: number, other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "volume" | "voice"> = {}) {
         return this.update({ volume, ...other });
     }
 
@@ -321,11 +354,11 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
 
         //
         await this.update({
-            encodedTrack: this.track?.encoded,
             position: this.adjustedPosition,
             filters: this.filters,
             volume: this.volume,
             voice: this.voice.server ?? { endpoint: "", sessionId: "", token: "" },
+            track: this.track ? { encoded: this.track.encoded } : undefined,
         });
     }
 

@@ -30,7 +30,24 @@ export const RESTGetAPIPlayer = {
     result: RESTGetAPIPlayerResult,
 };
 
+export const playerTrackUpdate = S.struct({
+    // TODO: `identifier` and `encodedTrack` are exclusive, find out a way to validate that.
+    /**
+     * The identifier of the track to play.
+     */
+    identifier: S.optional(S.string),
+    /**
+     * The base64 encoded track to play, `null` stops the current track.
+     */
+    encoded: S.nullable(S.string),
+    /**
+     * Additional track data to be sent back in the Track Object
+     */
+    userData: S.optional(S.record(S.string, S.unknown))
+})
+
 export const RESTPatchAPIPlayerJSONBody = S.struct({
+    track: S.optional(playerTrackUpdate),
     /**
      * The track position in milliseconds.
      */
@@ -55,15 +72,6 @@ export const RESTPatchAPIPlayerJSONBody = S.struct({
      * Information required to create a voice connection.
      */
     voice: voiceState,
-    // TODO: `identifier` and `encodedTrack` are exclusive, find out a way to validate that.
-    /**
-     * The identifier of the track to play.
-     */
-    identifier: S.string,
-    /**
-     * The base64 encoded track to play, `null` stops the current track.
-     */
-    encodedTrack: S.nullable(S.string),
 }).pipe(S.partial);
 
 export const RESTPatchAPIPlayerResult = player;
@@ -225,33 +233,35 @@ export const RESTPostAPIFreeAllFailedAddresses = {
     path: "/v4/routeplanner/free/all" as const,
 };
 
-export type RESTGetAPIPlayerResult = S.To<typeof RESTGetAPIPlayerResult>;
-export type RESTPatchAPIPlayerJSONBody = S.To<typeof RESTPatchAPIPlayerJSONBody>;
-export type RESTPatchAPIPlayerResult = S.To<typeof RESTPatchAPIPlayerResult>;
+export type UpdatePlayerTrack = S.Schema.To<typeof playerTrackUpdate>;
+
+export type RESTGetAPIPlayerResult = S.Schema.To<typeof RESTGetAPIPlayerResult>;
+export type RESTPatchAPIPlayerJSONBody = S.Schema.To<typeof RESTPatchAPIPlayerJSONBody>;
+export type RESTPatchAPIPlayerResult = S.Schema.To<typeof RESTPatchAPIPlayerResult>;
 export type RESTPatchAPIPlayer = typeof RESTPatchAPIPlayer;
 
-export type RESTPatchAPISessionJSONBody = S.To<typeof RESTPatchAPISessionJSONBody>;
-export type RESTPatchAPISessionResult = S.To<typeof RESTPatchAPISessionResult>;
+export type RESTPatchAPISessionJSONBody = S.Schema.To<typeof RESTPatchAPISessionJSONBody>;
+export type RESTPatchAPISessionResult = S.Schema.To<typeof RESTPatchAPISessionResult>;
 export type RESTPatchAPISession = typeof RESTPatchAPISession;
 
-export type RESTGetAPILoadTracksResult = S.To<typeof RESTGetAPILoadTracksResult>;
+export type RESTGetAPILoadTracksResult = S.Schema.To<typeof RESTGetAPILoadTracksResult>;
 export type RESTGetAPILoadTracks = typeof RESTGetAPILoadTracks;
 
-export type RESTGetAPIDecodeTrackResult = S.To<typeof RESTGetAPIDecodeTrackResult>;
+export type RESTGetAPIDecodeTrackResult = S.Schema.To<typeof RESTGetAPIDecodeTrackResult>;
 export type RESTGetAPIDecodeTrack = typeof RESTGetAPIDecodeTrack;
 
-export type RESTPostAPIDecodeTracksJSONBody = S.To<typeof RESTPostAPIDecodeTracksJSONBody>;
-export type RESTPostAPIDecodeTracksResult = S.To<typeof RESTPostAPIDecodeTracksResult>;
+export type RESTPostAPIDecodeTracksJSONBody = S.Schema.To<typeof RESTPostAPIDecodeTracksJSONBody>;
+export type RESTPostAPIDecodeTracksResult = S.Schema.To<typeof RESTPostAPIDecodeTracksResult>;
 export type RESTPostAPIDecodeTracks = typeof RESTPostAPIDecodeTracks;
 
-export type RESTGetAPINodeInfoResult = S.To<typeof RESTGetAPINodeInfoResult>;
+export type RESTGetAPINodeInfoResult = S.Schema.To<typeof RESTGetAPINodeInfoResult>;
 export type RESTGetAPINodeInfo = typeof RESTGetAPINodeInfo;
 
-export type RESTGetAPINodeStatsResult = S.To<typeof RESTGetAPINodeStatsResult>;
+export type RESTGetAPINodeStatsResult = S.Schema.To<typeof RESTGetAPINodeStatsResult>;
 export type RESTGetAPINodeStats = typeof RESTGetAPINodeStats;
 
-export type RESTGetAPINodeVersionResult = S.To<typeof RESTGetAPINodeVersionResult>;
+export type RESTGetAPINodeVersionResult = S.Schema.To<typeof RESTGetAPINodeVersionResult>;
 export type RESTGetAPINodeVersion = typeof RESTGetAPINodeVersion;
 
-export type RESTGetAPIRoutePlannerStatusResult = S.To<typeof RESTGetAPIRoutePlannerStatusResult>;
+export type RESTGetAPIRoutePlannerStatusResult = S.Schema.To<typeof RESTGetAPIRoutePlannerStatusResult>;
 export type RESTGetAPIRoutePlannerStatus = typeof RESTGetAPIRoutePlannerStatus;

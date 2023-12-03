@@ -62,24 +62,24 @@ export const filters = S.struct({
     pluginFilters: S.record(S.string, S.unknown),
 }).pipe(S.partial);
 
-export type Band = S.To<typeof band>;
+export type Band = S.Schema.To<typeof band>;
 
-export type Equalizer = S.To<typeof equalizer>;
+export type Equalizer = S.Schema.To<typeof equalizer>;
 
-export type Karaoke = S.To<typeof karaoke>;
+export type Karaoke = S.Schema.To<typeof karaoke>;
 
-export type Timescale = S.To<typeof timescale>;
+export type Timescale = S.Schema.To<typeof timescale>;
 
-export type Tremolo = S.To<typeof tremolo>;
+export type Tremolo = S.Schema.To<typeof tremolo>;
 
-export type Vibrato = S.To<typeof vibrato>;
+export type Vibrato = S.Schema.To<typeof vibrato>;
 
-export type Distortion = S.To<typeof distortion>;
+export type Distortion = S.Schema.To<typeof distortion>;
 
-export type Rotation = S.To<typeof rotation>;
+export type Rotation = S.Schema.To<typeof rotation>;
 
-export type ChannelMix = S.To<typeof channelMix>;
+export type ChannelMix = S.Schema.To<typeof channelMix>;
 
-export type LowPass = S.To<typeof lowPass>;
+export type LowPass = S.Schema.To<typeof lowPass>;
 
-export type Filters = S.To<typeof filters>;
+export type Filters = S.Schema.To<typeof filters>;
