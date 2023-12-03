@@ -17,10 +17,10 @@ export const RESTGetLoadSearchQuery = S.struct({
     /**
      * The types to search for.
      */
-    types: S.transformResult(
+    types: S.transformOrFail(
         S.string,
         S.array(audioLoadSearchResultType),
-        (value) => S.parseResult(S.array(audioLoadSearchResultType))(value.split(",")),
+        (value, opts) => S.parse(S.array(audioLoadSearchResultType))(value.split(","), opts),
         (value) => PR.success(value.join(",")),
     ),
 });
