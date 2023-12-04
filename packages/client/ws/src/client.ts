@@ -219,10 +219,12 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
                 return;
             }
 
-            const duration =
-                typeof this.options.reconnecting?.delay === "function"
-                    ? await this.options.reconnecting.delay(this.reconnectTry)
-                    : this.options.reconnecting?.delay ?? 5_000;
+            const duration = await getReconnectDelay(this.reconnectTry, this.options);
+            if (duration == null) {
+                this.emit("debug", "unable to reconnect");
+                this.state = LavalinkWSClientState.Idle;
+                break;
+            }
 
             this.emit("debug", `attempting to reconnect in ${duration}ms, try=${this.reconnectTry}`);
 
@@ -293,9 +295,17 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
 const shouldResume = (options: LavalinkWSClientOptions) => options.resuming ?? true;
 
 const shouldReconnect = (index: number, options: LavalinkWSClientOptions) => {
+    if (options.reconnecting === false) return false;
     const maxTries = options.reconnecting?.tries ?? Infinity;
     return Boolean(options.reconnecting) && maxTries > index;
 };
+
+const getReconnectDelay = async (index: number, options: LavalinkWSClientOptions): Promise<number | null> => {
+    if (options.reconnecting === false) return null;
+    return typeof options.reconnecting?.delay === "function"
+        ? await options.reconnecting.delay(index)
+        : options.reconnecting?.delay ?? 5_000;
+}
 
 export interface LavalinkWSClientReadyEvent {
     /**
@@ -380,18 +390,18 @@ export interface LavalinkWSClientOptions {
      * Whether resuming should be enabled, defaults to `true`.
      */
     resuming?:
-        | false
-        | {
-              /**
-               * The resuming timeout in milliseconds, defaults to `60_000` (1 minute).
-               */
-              timeout: number;
-          };
+    | false
+    | {
+        /**
+         * The resuming timeout in milliseconds, defaults to `60_000` (1 minute).
+         */
+        timeout: number;
+    };
 
     /**
      * Options used for reconnection.
      */
-    reconnecting?: LavalinkWSClientReconnectOptions;
+    reconnecting?: false | LavalinkWSClientReconnectOptions;
 
     /**
      * The user id to authenticate with.

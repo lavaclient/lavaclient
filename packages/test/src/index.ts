@@ -1,5 +1,5 @@
 import { Client, GatewayDispatchEvents } from "discord.js";
-import { S, Cluster } from "lavaclient";
+import { S, Cluster, getUserData } from "lavaclient";
 
 import "@lavaclient/plugin-lavasearch/register";
 import "@lavaclient/plugin-effects/register";
@@ -17,8 +17,15 @@ const node = new Cluster({
                 host: "localhost",
                 port: 8080,
             },
+            rest: {
+                
+            },
             ws: {
-                reconnecting: { tries: Infinity },
+                reconnecting: {
+                     tries: Infinity 
+
+                },
+
             },
         },
     ],
@@ -49,11 +56,18 @@ node.once("ready", async () => {
     const result = await node.api.loadSearch("spsearch:i love you hoe odetari", "track");
     console.log(result)
 
+    const results = await node.api.loadTracks("ytsearch:never gonna give you up");
+
     const player = node.players.create(process.env.TEST_GUILD!);
     player.on("trackStart", (track) => {
         console.log("started playing", track.info.title, "by", track.info.author);
     });
 
+    player.
+
+    node.players.destroy("lol", )
+
+    player.voice.disconnect()
     player.voice.connect(process.env.TEST_CHANNEL!);
 
     await player.play({
