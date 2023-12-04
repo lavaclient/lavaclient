@@ -1,13 +1,28 @@
 {
     "name": "lavalink-protocol",
-    "version": "1.0.0-rc.6",
+    "version": "1.0.0",
     "description": "Type-safe validation for the Lavalink protocol.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "license": "Apache-2.0",
+    "author": "lavaclient team",
+    "homepage": "https://lavaclient.js.org",
+    "repository": "git@github.com:lavaclient/lavaclient.git",
+    "bugs": {
+        "url": "https://github.com/lavaclient/lavaclient/issues"
+    },
+    "keywords": [
+        "lavalink",
+        "flexible",
+        "easy",
+        "performant",
+        "lightweight",
+        "lavalink-protocol"
+    ],
     "maintainers": [
         {
             "email": "hi@vzt.gay",
-            "name": "vzt",
+            "name": "viztea",
             "url": "https://vzt.gay"
         }
     ],

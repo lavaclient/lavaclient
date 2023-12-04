@@ -1,7 +1,30 @@
 {
     "name": "@lavaclient/plugin-effects",
-    "version": "1.0.0-rc.1",
+    "version": "1.0.0",
     "description": "Lavaclient plugin for better filter management",
+    "license": "Apache-2.0",
+    "author": "lavaclient team",
+    "homepage": "https://lavaclient.js.org",
+    "repository": "git@github.com:lavaclient/lavaclient.git",
+    "bugs": {
+        "url": "https://github.com/lavaclient/lavaclient/issues"
+    },
+    "keywords": [
+        "lavalink",
+        "flexible",
+        "easy",
+        "performant",
+        "lightweight",
+        "music",
+        "effects"
+    ],
+    "maintainers": [
+        {
+            "email": "hi@vzt.gay",
+            "name": "viztea",
+            "url": "https://vzt.gay"
+        }
+    ],
     "exports": {
         ".": {
             "default": "./dist/index.js",
@@ -12,13 +35,6 @@
             "types": "./register.d.ts"
         }
     },
-    "maintainers": [
-        {
-            "email": "hi@vzt.gay",
-            "name": "vzt",
-            "url": "https://vzt.gay"
-        }
-    ],
     "files": [
         "dist/*",
         "!dist/.tsbuildinfo"
@@ -39,8 +55,8 @@
         "typescript": "^5.1.6"
     },
     "peerDependencies": {
-        "lavaclient": "5.0.0-alpha.2",
-        "lavalink-protocol": "1.0.0-rc.6"
+        "lavaclient": "5.0.0",
+        "lavalink-protocol": "1.0.0"
     },
     "dependencies": {
         "tslib": "^2.6.0"

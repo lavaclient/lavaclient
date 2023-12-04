@@ -2,7 +2,7 @@
 
 A type-safe validation library for the [Lavalink API & Protocol](https://github.com/lavalink-devs/Lavalink/blob/master/IMPLEMENTATION.md), it uses [@effect/schema](https://github.com/effect-ts/schema).
 
-- Compatible with **Lavalink v4 Beta 3**
+- Compatible with **Lavalink v4.0.0**
 
 ## 🛟 Need Support?
 

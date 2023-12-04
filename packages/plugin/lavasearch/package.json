@@ -1,7 +1,34 @@
 {
     "name": "@lavaclient/plugin-lavasearch",
-    "version": "1.0.0-rc.1",
+    "version": "1.0.0",
     "description": "Lavalink API client plug-in for better integration with LavaSearch",
+    "license": "Apache-2.0",
+    "author": "lavaclient team",
+    "homepage": "https://lavaclient.js.org",
+    "repository": "git@github.com:lavaclient/lavaclient.git",
+    "bugs": {
+        "url": "https://github.com/lavaclient/lavaclient/issues"
+    },
+    "keywords": [
+        "lavalink",
+        "flexible",
+        "easy",
+        "performant",
+        "lightweight",
+        "music",
+        "lavasearch",
+        "youtube",
+        "deezer",
+        "spofify",
+        "apple music"
+    ],
+    "maintainers": [
+        {
+            "email": "hi@vzt.gay",
+            "name": "viztea",
+            "url": "https://vzt.gay"
+        }
+    ],
     "exports": {
         ".": {
             "import": "./dist/index.js",
@@ -14,13 +41,6 @@
             "types": "./dist/register.d.ts"
         }
     },
-    "maintainers": [
-        {
-            "email": "hi@vzt.gay",
-            "name": "vzt",
-            "url": "https://vzt.gay"
-        }
-    ],
     "files": [
         "dist/*",
         "!dist/.tsbuildinfo"
@@ -41,8 +61,8 @@
     },
     "dependencies": {
         "@effect/schema": "^0.49.4",
-        "lavalink-api-client": "1.0.0-rc.8",
-        "lavalink-protocol": "1.0.0-rc.6",
+        "lavalink-api-client": "1.0.0",
+        "lavalink-protocol": "1.0.0",
         "tslib": "^2.6.0"
     },
     "engines": {

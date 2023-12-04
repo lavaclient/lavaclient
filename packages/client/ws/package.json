@@ -1,13 +1,30 @@
 {
     "name": "lavalink-ws-client",
-    "version": "1.0.0-rc.3",
+    "version": "1.0.0",
     "description": "Type-safe WebSocket client for Lavalink",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "license": "Apache-2.0",
+    "author": "lavaclient team",
+    "homepage": "https://lavaclient.js.org",
+    "repository": "git@github.com:lavaclient/lavaclient.git",
+    "bugs": {
+        "url": "https://github.com/lavaclient/lavaclient/issues"
+    },
+    "keywords": [
+        "lavalink",
+        "flexible",
+        "easy",
+        "performant",
+        "lightweight",
+        "websocket-client",
+        "websocket",
+        "lavalink-protocol"
+    ],
     "maintainers": [
         {
             "email": "hi@vzt.gay",
-            "name": "vzt",
+            "name": "viztea",
             "url": "https://vzt.gay"
         }
     ],
@@ -31,8 +48,8 @@
     },
     "dependencies": {
         "@effect/schema": "^0.49.4",
-        "lavalink-api-client": "1.0.0-rc.8",
-        "lavalink-protocol": "1.0.0-rc.6",
+        "lavalink-api-client": "1.0.0",
+        "lavalink-protocol": "1.0.0",
         "tslib": "^2.6.0",
         "ws": "^8.13.0"
     },
