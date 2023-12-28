@@ -9,9 +9,6 @@ import * as Protocol from "lavalink-protocol";
 import * as API from "lavalink-api-client";
 import WebSocket from "ws";
 
-import * as TF from "@effect/schema/TreeFormatter";
-import * as S from "@effect/schema/Schema";
-
 const decoder = new TextDecoder();
 
 // TODO: better error handling
@@ -37,6 +34,11 @@ export enum LavalinkWSClientState {
 }
 
 export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
+    /**
+     * The operations that are handled natively by the client.
+     */
+    static readonly NATIVE_OPS: Protocol.Message["op"][] = ["stats", "ready", "event", "playerUpdate"]
+
     /**
      * The current websocket connection, or null if there is none.
      */
@@ -260,19 +262,32 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
             return;
         }
 
-        /* parse the protocol message. */
-        const result = S.parseEither(Protocol.message)(payload);
-        if (result._tag === "Left") {
-            const error = new Error(TF.formatErrors(result.left.errors), {
-                cause: "Unable to parse WebSocket message",
-            });
+        /* validate that this is a basic message */
+        const basic = this.catchError(
+            "", // not required.
+            () => Protocol.parse(Protocol.basicMessage, payload, "Unable to parse WebSocket message")
+        );
 
-            this.emit("error", error);
+        if (basic == null) return;
+
+        /* check if the operation is native to lavalink */
+        // @ts-expect-error
+        if (!LavalinkWSClient.NATIVE_OPS.includes(basic.op)) {
+            this.emit("debug", `<<< ${basic.op}: ${text}`);
+            // we can safely cast this since the validation above ensures that it is an object.
+            this.emit("pluginMessage", basic.op, payload as Record<string, unknown>);
             return;
         }
 
+        /* parse the native protocol message. */
+        const message = this.catchError(
+            "",
+            () => Protocol.parse(Protocol.message, payload, "Unable to parse WebSocket message")
+        );
+
+        if (message == null) return;
+
         /* handle the websocket message. */
-        const message = result.right;
         if (message.op === "stats") {
             this.stats = message;
         } else if (message.op === "ready") {
@@ -296,6 +311,15 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
 
         this.emit("debug", `<<< ${message.op}: ${text}`);
         this.emit("message", message);
+    }
+
+    private catchError<T>(message: string, block: () => T): T | null {
+        try {
+            return block()
+        } catch (ex) {
+            this.emit("error", ex instanceof Error ? ex : new Error(message, { cause: ex }));
+            return null;
+        }
     }
 }
 
@@ -379,6 +403,9 @@ export type LavalinkWSClientEvents = {
 
     /** Emitted when a message is received by the client. */
     message: (message: Protocol.Message) => void;
+
+    /** Emitted when a message sent by a plugin is received by the client. */
+    pluginMessage: (op: string, message: Record<string, unknown>) => void;
 
     /** Emitted when the client encounters an error. */
     error: (error: Error) => void;

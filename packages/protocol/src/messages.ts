@@ -170,6 +170,15 @@ export const message = S.union(
     tag("op", "playerUpdate")(playerUpdate),
 );
 
+/**
+ * A basic lavalink message.
+ */
+export const basicMessage = S.struct({
+    op: S.string
+});
+
+export type BasicMessage = S.Schema.To<typeof basicMessage>;
+
 export type Ready = S.Schema.To<typeof ready>;
 
 export type PlayerUpdate = S.Schema.To<typeof playerUpdate>;
