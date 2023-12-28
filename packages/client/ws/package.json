@@ -43,13 +43,13 @@
         "@lavaclient/config-typescript": "workspace:^",
         "@types/node": "^20.3.3",
         "@types/ws": "^8.5.5",
-        "typed-emitter": "^2.1.0",
         "typescript": "^5.1.6"
     },
     "dependencies": {
         "lavalink-api-client": "1.0.0",
         "lavalink-protocol": "1.0.0",
         "tslib": "^2.6.0",
+        "typed-emitter": "^2.1.0",
         "ws": "^8.13.0"
     },
     "engines": {

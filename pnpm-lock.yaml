@@ -67,11 +67,8 @@ importers:
 
   packages/client/api:
     dependencies:
-      '@effect/schema':
-        specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
       lavalink-protocol:
-        specifier: 1.0.0-rc.6
+        specifier: 1.0.0
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
@@ -95,18 +92,18 @@ importers:
 
   packages/client/ws:
     dependencies:
-      '@effect/schema':
-        specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
       lavalink-api-client:
-        specifier: 1.0.0-rc.8
+        specifier: 1.0.0
         version: link:../api
       lavalink-protocol:
-        specifier: 1.0.0-rc.6
+        specifier: 1.0.0
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
         version: 2.6.0
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
       ws:
         specifier: ^8.13.0
         version: 8.13.0
@@ -123,9 +120,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.5
         version: 8.5.5
-      typed-emitter:
-        specifier: ^2.1.0
-        version: 2.1.0
       typescript:
         specifier: ^5.1.6
         version: 5.1.6
@@ -151,17 +145,20 @@ importers:
         specifier: ^0.49.4
         version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
       lavalink-api-client:
-        specifier: 1.0.0-rc.8
+        specifier: 1.0.0
         version: link:../client/api
       lavalink-protocol:
-        specifier: 1.0.0-rc.6
+        specifier: 1.0.0
         version: link:../protocol
       lavalink-ws-client:
-        specifier: 1.0.0-rc.3
+        specifier: 1.0.0
         version: link:../client/ws
       tslib:
         specifier: ^2.6.0
         version: 2.6.0
+      typed-emitter:
+        specifier: ^2.1.0
+        version: 2.1.0
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -178,9 +175,6 @@ importers:
       ts-essentials:
         specifier: ^9.3.2
         version: 9.3.2(typescript@5.1.6)
-      typed-emitter:
-        specifier: ^2.1.0
-        version: 2.1.0
       typescript:
         specifier: ^5.1.6
         version: 5.1.6
@@ -188,10 +182,10 @@ importers:
   packages/plugin/effects:
     dependencies:
       lavaclient:
-        specifier: 5.0.0-alpha.2
+        specifier: 5.0.0
         version: link:../../node
       lavalink-protocol:
-        specifier: 1.0.0-rc.6
+        specifier: 1.0.0
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
@@ -225,10 +219,10 @@ importers:
         specifier: ^0.49.4
         version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
       lavalink-api-client:
-        specifier: 1.0.0-rc.8
+        specifier: 1.0.0
         version: link:../../client/api
       lavalink-protocol:
-        specifier: 1.0.0-rc.6
+        specifier: 1.0.0
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
@@ -280,6 +274,9 @@ importers:
 
   packages/protocol:
     dependencies:
+      '@effect/data':
+        specifier: 0.17.6
+        version: 0.17.6
       '@effect/schema':
         specifier: ^0.49.4
         version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
@@ -303,13 +300,13 @@ importers:
   packages/test:
     dependencies:
       '@lavaclient/plugin-effects':
-        specifier: 1.0.0-rc.1
+        specifier: 1.0.0
         version: link:../plugin/effects
       '@lavaclient/plugin-lavasearch':
-        specifier: 1.0.0-rc.1
+        specifier: 1.0.0
         version: link:../plugin/lavasearch
       lavaclient:
-        specifier: workspace:5.0.0-alpha.2
+        specifier: 5.0.0
         version: link:../node
       tslib:
         specifier: ^2.6.0
@@ -404,6 +401,10 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
+
+  /@effect/data@0.17.6:
+    resolution: {integrity: sha512-/vwz7Jh05eS0qY8kczR/YyJd18d0C+PMtUkAealh4f6gwvhABLGCnktNJTcq/+UHxY0Cbv18r5uaJ4+7PPC+WQ==}
+    dev: false
 
   /@effect/schema@0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0):
     resolution: {integrity: sha512-Em5qFV7kXfHpt6n89B2Zwd0ccGgfFpZbBAfQuGPdw/zY18k01Tl3ufKfBA6fFphKQiWrU6JS9btTlq1+/WRRIg==}
@@ -530,7 +531,6 @@ packages:
     requiresBuild: true
     dependencies:
       tslib: 2.6.2
-    dev: true
     optional: true
 
   /streamsearch@1.1.0:
@@ -621,7 +621,6 @@ packages:
     resolution: {integrity: sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==}
     optionalDependencies:
       rxjs: 7.8.1
-    dev: true
 
   /typescript@5.1.6:
     resolution: {integrity: sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==}
