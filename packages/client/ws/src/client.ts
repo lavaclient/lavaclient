@@ -92,7 +92,14 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
      *
      * @param userId The user id to authenticate as.
      */
-    connect(userId: string | undefined = this.userId) {
+    connect({ userId = this.userId, force = false }: LavalinkWSClientConnectOptions = {}) {
+        // if we are already connected and we are not forcing a reconnect, then do nothing.
+        const shouldConnect = this.state === LavalinkWSClientState.Idle || this.state === LavalinkWSClientState.Reconnecting;
+        if (!shouldConnect) {
+            if (!force) return;
+            this.disconnect();
+        }
+
         this.userId ??= userId;
 
         if (!userId) {
@@ -346,6 +353,18 @@ export interface LavalinkWSClientDisconnectedEvent {
      * Whether the connection is going to automatically reeconnect.
      */
     reconnecting: boolean;
+}
+
+export interface LavalinkWSClientConnectOptions {
+    /**
+     * The user id to authenticate with. 
+     */
+    userId?: string;
+
+    /**
+     * Whether to connect even if the client is already connected.
+     */
+    force?: boolean;
 }
 
 export type LavalinkWSClientEvents = {

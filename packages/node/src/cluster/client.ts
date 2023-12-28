@@ -110,12 +110,12 @@ export class Cluster extends Emitter<ClusterEvents> implements Client {
      * Connects to all node(s) in this cluster.
      * @param userId The ID of the user to authenticate as.
      */
-    connect(userId?: string): void {
-        if (userId) this.userId = userId;
+    connect(options: WS.LavalinkWSClientConnectOptions = {}): void {
+        if (options.userId) this.userId = options.userId;
 
         for (const [k, v] of this.nodes) {
             this.debug({ system: "ws", message: `connecting to node: ${k}` });
-            v.connect(this.userId);
+            v.connect(options);
         }
 
         this.connectedAt = Date.now();

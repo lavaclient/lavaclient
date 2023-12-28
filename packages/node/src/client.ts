@@ -15,6 +15,7 @@
  */
 
 import type * as API from "lavalink-api-client";
+import type * as WS from "lavalink-ws-client";
 
 import type { PlayerManager } from "./players.js";
 import type { Player } from "./player.js";
@@ -54,9 +55,9 @@ export interface Client extends TypedEmitter<ClientEvents> {
     /**
      * Connects this Client to the lavalink node(s).
      *
-     * @param userId The user id to authenticate with.
+     * @param options The options to connect with.     
      */
-    connect(userId?: string): void;
+    connect(options?: WS.LavalinkWSClientConnectOptions): void;
 
     /**
      * Disconnects this Client from the lavalink node(s).

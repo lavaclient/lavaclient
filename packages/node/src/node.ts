@@ -88,9 +88,9 @@ export class Node extends Emitter<NodeEvents> implements Client {
      *
      * @param userId The user id to authenticate with.
      */
-    connect(userId?: string) {
-        if (userId) this.userId = userId;
-        this.ws.connect(userId);
+    connect(options: WS.LavalinkWSClientConnectOptions = {}) {
+        if (options.userId) this.userId = options.userId;
+        this.ws.connect(options);
     }
 
     /**

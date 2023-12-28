@@ -118,7 +118,7 @@ node.on("nodeReady", async (node, event) => {
 
 client.on("ready", async (client) => {
     console.log("connected to discord.");
-    node.connect(client.user.id);
+    node.connect({ userId: client.user.id });
 });
 
 client.ws.on(GatewayDispatchEvents.VoiceStateUpdate, (u) => node.players.handleVoiceUpdate(u));
