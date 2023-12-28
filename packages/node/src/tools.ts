@@ -16,7 +16,7 @@
 
 import EventEmitter from "events";
 import type { EventMap, default as TypedEmitter } from "typed-emitter";
-import type * as Protocol from "lavalink-protocol";
+import * as Protocol from "lavalink-protocol";
 import * as S from "@effect/schema/Schema";
 
 export const Emitter = EventEmitter as { new <T extends EventMap>(): TypedEmitter<T> };
@@ -42,6 +42,7 @@ export { S }
  * @param schema The schema to parse the user data with
  * @returns     The parsed user data 
  */
-export function getUserData<T>(track: Protocol.Track, schema: S.Schema<Record<string, unknown>, T>): Promise<T> {
-    return S.parsePromise(schema)(track.userData)
+export function getUserData<T>(track: Protocol.Track, schema: Protocol.AnySchema<T>): T | null {
+    if (!track.userData) return null
+    return Protocol.parse(schema, track.userData);
 }
