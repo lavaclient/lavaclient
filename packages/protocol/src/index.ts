@@ -55,8 +55,13 @@ export const parse = <T>(
     return result.right;
 }
 
-export class SchemaError extends TypeError {
+export class SchemaError extends Error {
     constructor(message: string, readonly inner: PR.ParseError) {
-        super(message, { cause: TF.formatErrors(inner.errors) });
+        super(message, { 
+            cause: new TypeError(TF.formatErrors(inner.errors))
+        });
+
+        // prevent `inner` from being shown in the printed error
+        Object.defineProperty(this, "inner", { enumerable: false });
     }
 }

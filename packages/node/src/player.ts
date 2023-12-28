@@ -163,7 +163,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
         const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
         if (typeof track !== "string") {
             update.userData = "userDataSchema" in track
-                ? Protocol.encode(track.userDataSchema as S.Schema<any, any>, track.userData)
+                ? Protocol.encode(track.userDataSchema as S.Schema<any, any>, track.userData, "Failed to validate given user data")
                 : track.userData;
 
             update.encoded = track.encoded;
