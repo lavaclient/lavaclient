@@ -18,9 +18,9 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
-        "@lavaclient/plugin-effects": "1.0.0-rc.1",
-        "@lavaclient/plugin-lavasearch": "1.0.0-rc.1",
-        "lavaclient": "workspace:5.0.0-alpha.2",
+        "@lavaclient/plugin-effects": "1.0.0",
+        "@lavaclient/plugin-lavasearch": "1.0.0",
+        "lavaclient": "5.0.0",
         "tslib": "^2.6.0"
     }
 }
