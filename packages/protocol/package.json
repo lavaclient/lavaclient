@@ -43,6 +43,7 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
+        "@effect/data": "0.17.6",
         "@effect/schema": "^0.49.4",
         "tslib": "^2.6.0"
     },

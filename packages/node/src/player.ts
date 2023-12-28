@@ -16,7 +16,7 @@
 
 import type { Node } from "./node.js";
 
-import type * as Protocol from "lavalink-protocol";
+import * as Protocol from "lavalink-protocol";
 import type * as API from "lavalink-api-client";
 
 import type { Cluster } from "./cluster/client.js";
@@ -139,7 +139,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
         track: { 
             encoded: string, 
             userData: T,
-            userDataSchema: S.Schema<any, T>
+            userDataSchema: Protocol.AnySchema<T>
         },
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">
     ): Promise<this>;
@@ -157,13 +157,13 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
     ): Promise<this>;
 
     async play(
-        track: string | { encoded: string, userData: any, userDataSchema?: S.Schema<any, any> },
+        track: string | { encoded: string, userData: any, userDataSchema?: Protocol.AnySchema },
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ) {
         const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
         if (typeof track !== "string") {
             update.userData = "userDataSchema" in track
-                ? await S.encodePromise(track.userDataSchema as S.Schema<any, any>)(track.userData)
+                ? Protocol.encode(track.userDataSchema as S.Schema<any, any>, track.userData)
                 : track.userData;
 
             update.encoded = track.encoded;

@@ -46,7 +46,6 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
-        "@effect/schema": "^0.49.4",
         "lavalink-protocol": "1.0.0",
         "tslib": "^2.6.0"
     },

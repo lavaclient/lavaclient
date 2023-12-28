@@ -4,7 +4,6 @@ import type { LavalinkHttpClient } from "../client/index.js";
 import * as LP from "lavalink-protocol";
 
 import { LavalinkAPIError, LavalinkHTTPError } from "../error.js";
-import { parseSchema } from "../tools.js";
 import { onRequest } from "../client/tools.js";
 
 export async function execute(
@@ -57,7 +56,7 @@ export async function execute(
         // parse json response.
         let error: LP.Error;
         try {
-            error = parseSchema(LP.error, data);
+            error = LP.parse(LP.error, data, "Failed to parse value");
         } catch (cause) {
             onRequest(client, {
                 type: "error",
