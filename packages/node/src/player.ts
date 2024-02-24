@@ -136,12 +136,12 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @returns This player (but updated).
      */
     play<T>(
-        track: { 
-            encoded: string, 
-            userData: T,
-            userDataSchema: Protocol.AnySchema<T>
+        track: {
+            encoded: string;
+            userData: T;
+            userDataSchema: Protocol.AnySchema<T>;
         },
-        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">
+        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ): Promise<this>;
 
     /**
@@ -152,19 +152,24 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * @returns This player (but updated).
      */
     play(
-        track: string | { encoded: string, userData: Record<string, unknown> },
+        track: string | { encoded: string; userData: Record<string, unknown> },
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ): Promise<this>;
 
     async play(
-        track: string | { encoded: string, userData: any, userDataSchema?: Protocol.AnySchema },
+        track: string | { encoded: string; userData: any; userDataSchema?: Protocol.AnySchema },
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ) {
         const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
         if (typeof track !== "string") {
-            update.userData = "userDataSchema" in track
-                ? Protocol.encode(track.userDataSchema as S.Schema<any, any>, track.userData, "Failed to validate given user data")
-                : track.userData;
+            update.userData =
+                "userDataSchema" in track
+                    ? Protocol.encode(
+                          track.userDataSchema as S.Schema<any, any>,
+                          track.userData,
+                          "Failed to validate given user data",
+                      )
+                    : track.userData;
 
             update.encoded = track.encoded;
         } else {

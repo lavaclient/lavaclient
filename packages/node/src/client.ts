@@ -55,7 +55,7 @@ export interface Client extends TypedEmitter<ClientEvents> {
     /**
      * Connects this Client to the lavalink node(s).
      *
-     * @param options The options to connect with.     
+     * @param options The options to connect with.
      */
     connect(options?: WS.LavalinkWSClientConnectOptions): void;
 
