@@ -61,11 +61,11 @@ export const track = S.struct({
     /**
      * Additional track info provided by plugins.
      */
-    pluginInfo: S.record(S.string, S.unknown).pipe(S.optional),
+    pluginInfo: S.record(S.string, S.unknown),
     /**
      * Addition track data provided via the Update Player endpoint.
      */
-    userData: S.record(S.string, S.unknown).pipe(S.optional)
+    userData: S.record(S.string, S.unknown)
 });
 
 export const tracks = S.array(track);
