@@ -37,7 +37,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
     /**
      * The operations that are handled natively by the client.
      */
-    static readonly NATIVE_OPS: Protocol.Message["op"][] = ["stats", "ready", "event", "playerUpdate"]
+    static readonly NATIVE_OPS: Protocol.Message["op"][] = ["stats", "ready", "event", "playerUpdate"];
 
     /**
      * The current websocket connection, or null if there is none.
@@ -96,7 +96,8 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
      */
     connect({ userId = this.userId, force = false }: LavalinkWSClientConnectOptions = {}) {
         // if we are already connected and we are not forcing a reconnect, then do nothing.
-        const shouldConnect = this.state === LavalinkWSClientState.Idle || this.state === LavalinkWSClientState.Reconnecting;
+        const shouldConnect =
+            this.state === LavalinkWSClientState.Idle || this.state === LavalinkWSClientState.Reconnecting;
         if (!shouldConnect) {
             if (!force) return;
             this.disconnect();
@@ -265,7 +266,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
         /* validate that this is a basic message */
         const basic = this.catchError(
             "", // not required.
-            () => Protocol.parse(Protocol.basicMessage, payload, "Unable to parse WebSocket message")
+            () => Protocol.parse(Protocol.basicMessage, payload, "Unable to parse WebSocket message"),
         );
 
         if (basic == null) return;
@@ -280,9 +281,8 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
         }
 
         /* parse the native protocol message. */
-        const message = this.catchError(
-            "",
-            () => Protocol.parse(Protocol.message, payload, "Unable to parse WebSocket message")
+        const message = this.catchError("", () =>
+            Protocol.parse(Protocol.message, payload, "Unable to parse WebSocket message"),
         );
 
         if (message == null) return;
@@ -315,7 +315,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
 
     private catchError<T>(message: string, block: () => T): T | null {
         try {
-            return block()
+            return block();
         } catch (ex) {
             this.emit("error", ex instanceof Error ? ex : new Error(message, { cause: ex }));
             return null;
@@ -336,7 +336,7 @@ const getReconnectDelay = async (index: number, options: LavalinkWSClientOptions
     return typeof options.reconnecting?.delay === "function"
         ? await options.reconnecting.delay(index)
         : options.reconnecting?.delay ?? 5_000;
-}
+};
 
 export interface LavalinkWSClientReadyEvent {
     /**
@@ -381,7 +381,7 @@ export interface LavalinkWSClientDisconnectedEvent {
 
 export interface LavalinkWSClientConnectOptions {
     /**
-     * The user id to authenticate with. 
+     * The user id to authenticate with.
      */
     userId?: string;
 
@@ -436,13 +436,13 @@ export interface LavalinkWSClientOptions {
      * Whether resuming should be enabled, defaults to `true`.
      */
     resuming?:
-    | false
-    | {
-        /**
-         * The resuming timeout in milliseconds, defaults to `60_000` (1 minute).
-         */
-        timeout: number;
-    };
+        | false
+        | {
+              /**
+               * The resuming timeout in milliseconds, defaults to `60_000` (1 minute).
+               */
+              timeout: number;
+          };
 
     /**
      * Options used for reconnection.

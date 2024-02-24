@@ -21,7 +21,7 @@ export type AnySchema<T = any> = S.Schema<any, T>;
 
 /**
  * Encode a value with the given schema.
- * 
+ *
  * @param schema  The schema to encode with.
  * @param value   The value to encode.
  * @param message The message to throw if the value fails to encode.
@@ -33,32 +33,31 @@ export const encode = <I, A>(schema: S.Schema<I, A>, value: A, message = "Failed
     }
 
     return result.right;
-}
+};
 
 /**
  * Parse a value with the given schema.
- * 
+ *
  * @param schema  The schema to parse with.
  * @param data    The data to parse.
  * @param message The message to throw if the data fails to parse.
  */
-export const parse = <T>(
-    schema: AnySchema<T>,
-    data: unknown,
-    message: string = "Failed to parse value",
-): T => {
+export const parse = <T>(schema: AnySchema<T>, data: unknown, message: string = "Failed to parse value"): T => {
     const result = S.parseEither(schema)(data);
     if (result._tag === "Left") {
         throw new SchemaError(message, result.left);
     }
 
     return result.right;
-}
+};
 
 export class SchemaError extends Error {
-    constructor(message: string, readonly inner: PR.ParseError) {
-        super(message, { 
-            cause: new TypeError(TF.formatErrors(inner.errors))
+    constructor(
+        message: string,
+        readonly inner: PR.ParseError,
+    ) {
+        super(message, {
+            cause: new TypeError(TF.formatErrors(inner.errors)),
         });
 
         // prevent `inner` from being shown in the printed error

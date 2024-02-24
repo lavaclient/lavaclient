@@ -43,8 +43,8 @@ export const playerTrackUpdate = S.struct({
     /**
      * Additional track data to be sent back in the Track Object
      */
-    userData: S.optional(S.record(S.string, S.unknown))
-})
+    userData: S.optional(S.record(S.string, S.unknown)),
+});
 
 export const RESTPatchAPIPlayerJSONBody = S.struct({
     track: S.optional(playerTrackUpdate),

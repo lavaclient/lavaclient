@@ -65,7 +65,7 @@ export const track = S.struct({
     /**
      * Addition track data provided via the Update Player endpoint.
      */
-    userData: S.record(S.string, S.unknown)
+    userData: S.record(S.string, S.unknown),
 });
 
 export const tracks = S.array(track);

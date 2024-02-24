@@ -174,7 +174,7 @@ export const message = S.union(
  * A basic lavalink message.
  */
 export const basicMessage = S.struct({
-    op: S.string
+    op: S.string,
 });
 
 export type BasicMessage = S.Schema.To<typeof basicMessage>;
