@@ -1,9 +1,7 @@
 {
-    "name": "@lavaclient/queue",
-    "version": "3.0.0",
+    "name": "@lavaclient/plugin-queue",
+    "version": "0.0.1",
     "description": "Adds queues to lavaclient",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
     "license": "Apache-2.0",
     "author": "lavaclient team",
     "homepage": "https://lavaclient.js.org",
@@ -27,6 +25,17 @@
             "url": "https://vzt.gay"
         }
     ],
+
+    "exports": {
+        ".": {
+            "default": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./register": {
+            "default": "./register.js",
+            "types": "./register.d.ts"
+        }
+    },
     "files": [
         "dist/*",
         "!dist/.tsbuildinfo"
@@ -42,10 +51,14 @@
         "@lavaclient/config-typescript": "workspace:^",
         "@types/node": "^20.3.3",
         "@types/ws": "^8.5.5",
-        "typed-emitter": "^2.1.0",
         "typescript": "^5.1.6"
     },
+    "peerDependencies": {
+        "lavaclient": "rc",
+        "lavalink-protocol": "1.0.1"
+    },
     "dependencies": {
+        "tiny-typed-emitter": "^2.1.0",
         "tslib": "^2.6.0"
     },
     "engines": {
