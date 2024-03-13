@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import EventEmitter from "events";
-import type { EventMap, default as TypedEmitter } from "typed-emitter";
 import * as Protocol from "lavalink-protocol";
 import * as S from "@effect/schema/Schema";
-
-export const Emitter = EventEmitter as { new <T extends EventMap>(): TypedEmitter<T> };
 
 export type Snowflake = string;
 

@@ -22,13 +22,13 @@ import type * as API from "lavalink-api-client";
 import type { Cluster } from "./cluster/client.js";
 import { ClusterNode } from "./cluster/node.js";
 
-import { Emitter } from "./tools.js";
 import { PlayerVoice } from "./playerVoice.js";
 
 import * as S from "@effect/schema/Schema";
+import { TypedEmitter } from "tiny-typed-emitter";
 import type { DeepWritable } from "ts-essentials";
 
-export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
+export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents> {
     /**
      * The voice manager for this player.
      */
@@ -158,7 +158,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
 
     async play(
         track: string | { encoded: string; userData: any; userDataSchema?: Protocol.AnySchema },
-        options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
+        options: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> = {},
     ) {
         const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
         if (typeof track !== "string") {
@@ -184,7 +184,7 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
      * Stop the currently playing track.
      * @returns This player (but updated).
      */
-    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">) {
+    stop(other: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> = {}) {
         return this.update({ track: { encoded: null }, ...other });
     }
 
@@ -405,11 +405,11 @@ export class Player<$Node extends Node = Node> extends Emitter<PlayerEvents> {
     }
 }
 
-export type PlayerEvents = {
+export interface PlayerEvents {
     disconnected: (code: number, reason: string, byRemote: boolean) => void;
     updated: () => void;
     trackStart: (track: Protocol.Track) => void;
     trackEnd: (track: Protocol.Track, reason: Protocol.TrackEndReason) => void;
     trackException: (track: Protocol.Track, exception: Protocol.Exception) => void;
     trackStuck: (track: Protocol.Track, thresholdMs: number) => void;
-};
+}

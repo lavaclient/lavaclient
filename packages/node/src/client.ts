@@ -20,7 +20,7 @@ import type * as WS from "lavalink-ws-client";
 import type { PlayerManager } from "./players.js";
 import type { Player } from "./player.js";
 
-import type TypedEmitter from "typed-emitter";
+import type { TypedEmitter } from "tiny-typed-emitter";
 
 // TODO: events
 
@@ -81,7 +81,7 @@ export type ClientDebugEvent = {
       }
 );
 
-export type ClientEvents = {
+export interface ClientEvents {
     /** Used for debugging the client. */
     debug: (event: ClientDebugEvent) => void;
 
@@ -95,4 +95,4 @@ export type ClientEvents = {
      * Emitted when the client is ready to be used.
      */
     ready: (event: { took: number }) => void;
-};
+}

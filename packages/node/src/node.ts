@@ -18,12 +18,12 @@ import * as Protocol from "lavalink-protocol";
 import * as API from "lavalink-api-client";
 import * as WS from "lavalink-ws-client";
 
-import { Emitter } from "./tools.js";
 import { Client, ClientEvents } from "./client.js";
 import { Player } from "./player.js";
+import { TypedEmitter } from "tiny-typed-emitter";
 import { NodePlayerManager, PlayerManager } from "./players.js";
 
-export class Node extends Emitter<NodeEvents> implements Client {
+export class Node extends TypedEmitter<NodeEvents> implements Client {
     /**
      * The player manager for this node.
      */
@@ -122,10 +122,12 @@ export class Node extends Emitter<NodeEvents> implements Client {
     }
 }
 
-export type NodeEvents = ClientEvents &
+type BaseNodeEvents = ClientEvents &
     Omit<WS.LavalinkWSClientEvents, "debug"> & {
         request: (event: API.LavalinkHttpClientRequestEvent) => void;
     };
+
+export interface NodeEvents extends BaseNodeEvents {}
 
 type InfoKeys = "host" | "port" | "tls" | "auth";
 

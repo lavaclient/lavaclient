@@ -20,8 +20,7 @@ import * as Protocol from "lavalink-protocol";
 import * as API from "lavalink-api-client";
 import * as WS from "lavalink-ws-client";
 
-import { Emitter } from "../tools.js";
-
+import { TypedEmitter } from "tiny-typed-emitter";
 import type { PlayerManager } from "../players.js";
 import type { NodeDiscordOptions } from "../node.js";
 
@@ -32,7 +31,7 @@ import { ClusterPlayerManager, ClusterPlayerManagerOptions } from "./players.js"
 /**
  * A client that manages multiple nodes.
  */
-export class Cluster extends Emitter<ClusterEvents> implements Client {
+export class Cluster extends TypedEmitter<ClusterEvents> implements Client {
     /**
      * All nodes registered to this cluster.
      */
@@ -143,7 +142,7 @@ const every = <T>(iterator: IterableIterator<T>, fn: (value: T, idx: number) => 
     return true;
 };
 
-export type ClusterEvents = ClientEvents & {
+export interface ClusterEvents extends ClientEvents {
     nodeDebug: (node: ClusterNode, event: ClientDebugEvent) => void;
 
     nodeError: (node: ClusterNode, error: Error) => void;

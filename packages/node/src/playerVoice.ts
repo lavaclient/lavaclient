@@ -16,10 +16,11 @@
 
 import type * as Protocol from "lavalink-protocol";
 
-import { DiscordResource, Emitter, Snowflake, getId } from "./tools.js";
+import { DiscordResource, Snowflake, getId } from "./tools.js";
 import { Player } from "./player.js";
+import { TypedEmitter } from "tiny-typed-emitter";
 
-export class PlayerVoice extends Emitter<PlayerVoiceEvents> {
+export class PlayerVoice extends TypedEmitter<PlayerVoiceEvents> {
     /**
      * The ID of the Voice Channel this player is connected to.
      */
@@ -140,11 +141,11 @@ export class PlayerVoice extends Emitter<PlayerVoiceEvents> {
     }
 }
 
-export type PlayerVoiceEvents = {
+export interface PlayerVoiceEvents {
     channelJoin: (joined: Snowflake) => void;
     channelLeave: (left: Snowflake) => void;
     channelMove: (from: Snowflake, to: Snowflake) => void;
-};
+}
 
 export interface ConnectOptions {
     /**
