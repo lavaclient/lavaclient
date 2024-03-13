@@ -9,6 +9,19 @@ const tag = <K extends string, V extends AST.LiteralValue>(k: K, v: V) =>
     S.extend(S.record(S.literal(k), S.literal(v)));
 
 /**
+ * A map that can help determine whether you should start a new track when a {@link TrackEndEvent} is received.
+ *
+ * See [lavaplayer/AudioTrackEndReason.java](https://github.com/lavalink-devs/lavaplayer/blob/main/main/src/main/java/com/sedmelluq/discord/lavaplayer/track/AudioTrackEndReason.java )
+ */
+export const mayStartNext: Record<TrackEndReason, boolean> = {
+    cleanup: false,
+    finished: true,
+    loadFailed: true,
+    replaced: false,
+    stopped: false,
+};
+
+/**
  * The type of event that was dispatched.
  *
  * - `TrackStartEvent`

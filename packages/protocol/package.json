@@ -1,6 +1,6 @@
 {
     "name": "lavalink-protocol",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Type-safe validation for the Lavalink protocol.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
