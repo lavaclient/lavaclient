@@ -309,7 +309,7 @@ importers:
         specifier: 1.0.0
         version: link:../plugin/lavasearch
       '@lavaclient/plugin-queue':
-        specifier: workspace:1.0.0-rc.1
+        specifier: workspace:0.0.1
         version: link:../plugin/queue
       lavaclient:
         specifier: rc
