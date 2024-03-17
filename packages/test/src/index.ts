@@ -61,11 +61,11 @@ node.once("ready", async () => {
     player.voice.connect(process.env.TEST_CHANNEL!);
 
     const loadAndQueue = async (query: string) => {
-        const result = await node.api.loadSearch("ytmsearch:" + query, "track");
-        console.log(result.tracks);
-        player.queue.add(result.tracks[0], {
-            requester: "123",
-        });
+        const result = await node.api.loadSearch("spsearch:" + query, "album");
+        console.log(result.albums);
+        // player.queue.add(result.tracks[0], {
+            // requester: "123",
+        // });
     }
 
 

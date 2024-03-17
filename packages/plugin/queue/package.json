@@ -55,7 +55,7 @@
     },
     "peerDependencies": {
         "lavaclient": "rc",
-        "lavalink-protocol": "1.0.1"
+        "lavalink-protocol": "1.0.2"
     },
     "dependencies": {
         "tiny-typed-emitter": "^2.1.0",

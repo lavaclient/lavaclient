@@ -9,7 +9,7 @@ export const playlistInfo = S.struct({
 
 export const playlist = S.struct({
     info: playlistInfo,
-    pluginInfo: S.record(S.string, S.number),
+    pluginInfo: S.record(S.string, S.unknown),
     tracks: tracks,
 });
 

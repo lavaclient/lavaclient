@@ -68,8 +68,8 @@ importers:
   packages/client/api:
     dependencies:
       lavalink-protocol:
-        specifier: 1.0.0
-        version: 1.0.0(effect@2.0.0-next.56)(fast-check@3.14.0)
+        specifier: 1.0.2
+        version: link:../../protocol
       tslib:
         specifier: ^2.6.0
         version: 2.6.0
@@ -93,11 +93,11 @@ importers:
   packages/client/ws:
     dependencies:
       lavalink-api-client:
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../api
       lavalink-protocol:
-        specifier: 1.0.0
-        version: 1.0.0(effect@2.0.0-next.56)(fast-check@3.14.0)
+        specifier: 1.0.2
+        version: link:../../protocol
       tslib:
         specifier: ^2.6.0
         version: 2.6.0
@@ -145,13 +145,13 @@ importers:
         specifier: ^0.49.4
         version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
       lavalink-api-client:
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../client/api
       lavalink-protocol:
-        specifier: 1.0.1
+        specifier: 1.0.2
         version: link:../protocol
       lavalink-ws-client:
-        specifier: 1.0.0
+        specifier: 1.0.1
         version: link:../client/ws
       tiny-typed-emitter:
         specifier: ^2.1.0
@@ -186,7 +186,7 @@ importers:
         version: link:../../node
       lavalink-protocol:
         specifier: 1.0.1
-        version: link:../../protocol
+        version: 1.0.1(effect@2.0.0-next.56)(fast-check@3.14.0)
       tslib:
         specifier: ^2.6.0
         version: 2.6.2
@@ -216,11 +216,11 @@ importers:
         specifier: ^0.49.4
         version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
       lavalink-api-client:
-        specifier: 1.0.0
+        specifier: workspace:1.0.1
         version: link:../../client/api
       lavalink-protocol:
-        specifier: 1.0.0
-        version: 1.0.0(effect@2.0.0-next.56)(fast-check@3.14.0)
+        specifier: workspace:1.0.2
+        version: link:../../protocol
       tslib:
         specifier: ^2.6.0
         version: 2.6.0
@@ -250,7 +250,7 @@ importers:
         specifier: rc
         version: link:../../node
       lavalink-protocol:
-        specifier: 1.0.1
+        specifier: 1.0.2
         version: link:../../protocol
       tiny-typed-emitter:
         specifier: ^2.1.0
@@ -303,10 +303,10 @@ importers:
   packages/test:
     dependencies:
       '@lavaclient/plugin-effects':
-        specifier: 1.0.0-rc.2
+        specifier: workspace:1.0.0-rc.2
         version: link:../plugin/effects
       '@lavaclient/plugin-lavasearch':
-        specifier: 1.0.0
+        specifier: workspace:1.0.2
         version: link:../plugin/lavasearch
       '@lavaclient/plugin-queue':
         specifier: workspace:0.0.1
@@ -504,8 +504,8 @@ packages:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
     dev: true
 
-  /lavalink-protocol@1.0.0(effect@2.0.0-next.56)(fast-check@3.14.0):
-    resolution: {integrity: sha512-rXdVC3Y7b3TBDF8XVzYeqCp1ZdlFbXQDBj0FhfRI1BcggsvB1ucCMLgGJFGaMHlRdQHzZy5wWz5LkhGBCtq0YQ==}
+  /lavalink-protocol@1.0.1(effect@2.0.0-next.56)(fast-check@3.14.0):
+    resolution: {integrity: sha512-/fwxIM9sby33NWNONbI96SbICRECyfdtd2ylEpkfz33OV/USN8PmeI4ua2RcAlFEiTf7E+ftRYyVdHtXgVVMOA==}
     engines: {node: '>=20'}
     dependencies:
       '@effect/data': 0.17.6

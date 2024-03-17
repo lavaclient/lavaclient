@@ -1,6 +1,6 @@
 {
     "name": "lavalink-ws-client",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Type-safe WebSocket client for Lavalink",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -45,9 +45,11 @@
         "@types/ws": "^8.5.5",
         "typescript": "^5.1.6"
     },
+    "peerDependencies": {
+        "lavalink-api-client": "1.0.1",
+        "lavalink-protocol": "1.0.2"
+    },
     "dependencies": {
-        "lavalink-api-client": "1.0.0",
-        "lavalink-protocol": "1.0.0",
         "tslib": "^2.6.0",
         "typed-emitter": "^2.1.0",
         "ws": "^8.13.0"
