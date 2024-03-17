@@ -1,0 +1,53 @@
+{
+    "name": "lavalink-protocol",
+    "version": "1.0.2",
+    "description": "Type-safe validation for the Lavalink protocol.",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "license": "Apache-2.0",
+    "author": "lavaclient team",
+    "homepage": "https://lavaclient.js.org",
+    "repository": "git@github.com:lavaclient/lavaclient.git",
+    "bugs": {
+        "url": "https://github.com/lavaclient/lavaclient/issues"
+    },
+    "keywords": [
+        "lavalink",
+        "flexible",
+        "easy",
+        "performant",
+        "lightweight",
+        "lavalink-protocol"
+    ],
+    "maintainers": [
+        {
+            "email": "hi@vzt.gay",
+            "name": "viztea",
+            "url": "https://vzt.gay"
+        }
+    ],
+    "files": [
+        "dist/*",
+        "!dist/.tsbuildinfo"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "check": "tsc --noEmit",
+        "format": "prettier -w src/**.ts",
+        "prepublishOnly": "pnpm run format && pnpm run build"
+    },
+    "devDependencies": {
+        "@lavaclient/config-prettier": "workspace:^",
+        "@lavaclient/config-typescript": "workspace:^",
+        "@types/node": "^20.3.3",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "@effect/data": "0.17.6",
+        "@effect/schema": "^0.49.4",
+        "tslib": "^2.6.0"
+    },
+    "engines": {
+        "node": ">=20"
+    }
+}

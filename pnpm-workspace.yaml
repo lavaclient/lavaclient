@@ -1,0 +1,14 @@
+packages:
+  - packages/config/prettier
+  - packages/config/typescript
+  - packages/client/ws
+  - packages/client/api
+  - packages/plugin/lavasearch
+  - packages/plugin/queue
+  - packages/plugin/effects
+  - packages/adapter/biscuit
+  - packages/adapter/djs
+  - packages/node
+  - packages/deno
+  - packages/test
+  - packages/protocol

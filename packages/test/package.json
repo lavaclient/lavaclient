@@ -1,0 +1,27 @@
+{
+    "name": "test",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "check": "tsc --noEmit",
+        "start": "pnpm run build && node --enable-source-maps .",
+        "format": "prettier -w src/**.ts"
+    },
+    "devDependencies": {
+        "@lavaclient/config-prettier": "workspace:^",
+        "@lavaclient/config-typescript": "workspace:^",
+        "@types/node": "^20.3.3",
+        "@types/ws": "^8.5.5",
+        "discord.js": "^14.13.0",
+        "ts-essentials": "^9.3.2",
+        "typed-emitter": "^2.1.0",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "@lavaclient/plugin-effects": "workspace:1.0.0-rc.2",
+        "@lavaclient/plugin-lavasearch": "workspace:1.0.2",
+        "@lavaclient/plugin-queue": "workspace:0.0.1",
+        "lavaclient": "rc",
+        "tslib": "^2.6.0"
+    }
+}

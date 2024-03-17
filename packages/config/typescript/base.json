@@ -1,0 +1,43 @@
+{
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+    "compilerOptions": {
+        "lib": ["ES2022", "DOM"],
+        "target": "ES2022",
+        "incremental": true,
+
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "resolveJsonModule": true,
+
+        "pretty": true,
+        "esModuleInterop": true,
+        "newLine": "lf",
+        "removeComments": true,
+        "inlineSourceMap": true,
+        "useDefineForClassFields": true,
+        "noEmitHelpers": true,
+        "importHelpers": true,
+
+        "strict": true,
+        "skipLibCheck": true,
+        "alwaysStrict": true,
+        "allowSyntheticDefaultImports": true,
+        "strictNullChecks": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": false,
+        "noImplicitOverride": false,
+        "noUnusedParameters": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "preserveConstEnums": true,
+
+        "types": ["node"],
+        "forceConsistentCasingInFileNames": true
+    },
+    "exclude": ["dist", "node_modules"]
+}
