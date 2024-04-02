@@ -1,0 +1,1 @@
+export = import("prettier").Config

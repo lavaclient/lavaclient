@@ -1,18 +1,13 @@
-#
+# ides
+.vscode/
+.fleet/
 .idea/
-dist/
 
-# Node
+# node
 node_modules/
 
-# Yarn
-.yarn/cache
-.yarn/install-state.gz
-.yarn/build-state.yml
+# typescript
+dist/
 
-*.lock
-
-# Testing Files
-*.env
-test/
-scripts/
+# monorepo
+.turbo

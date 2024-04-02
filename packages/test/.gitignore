@@ -1,0 +1,6 @@
+plugins
+plugins-old
+.rtx.toml
+logs
+application.yml
+Lavalink*
