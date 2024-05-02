@@ -31,8 +31,8 @@
             "types": "./dist/index.d.ts"
         },
         "./register": {
-            "default": "./register.js",
-            "types": "./register.d.ts"
+            "default": "./dist/register.js",
+            "types": "./dist/register.d.ts"
         }
     },
     "files": [
