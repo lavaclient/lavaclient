@@ -52,7 +52,7 @@
     "dependencies": {
         "tslib": "^2.6.0",
         "typed-emitter": "^2.1.0",
-        "ws": "^8.13.0"
+        "ws": "^8.17.1"
     },
     "engines": {
         "node": ">=20"
