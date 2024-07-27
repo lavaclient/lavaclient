@@ -94,4 +94,4 @@ Need some more help? Join our [**Support Server**](https://discord.gg/GQgM5pbJWm
 
 ---
 
-[lavaclient](https://lavaclient.js.org/) &copy; 2018 - 2022
+[lavaclient](https://lavaclient.js.org/) &copy; 2018 - 2024
