@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/LvsojLc.png" align="center">
+<img src="https://github.com/lavaclient/.github/raw/main/assets/banner.png" align="center">
 
 > A lightweight and powerful [lavalink v4](https://github.com/lavalink-devs/lavalink) client for NodeJs.
 

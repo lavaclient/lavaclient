@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/LvsojLc.png" align="center">
+<img src="https://github.com/lavaclient/.github/raw/main/assets/banner.png" align="center">
 
 > A [lavaclient](https://npmjs.com/lavaclient) plugin for better filter management.
 
