@@ -18,10 +18,10 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
-        "@lavaclient/plugin-effects": "workspace:1.0.0-rc.2",
-        "@lavaclient/plugin-lavasearch": "workspace:1.0.2",
-        "@lavaclient/plugin-queue": "workspace:0.0.1",
-        "lavaclient": "rc",
+        "@lavaclient/plugin-effects": "workspace:1.0.1",
+        "@lavaclient/plugin-lavasearch": "workspace:1.0.3",
+        "@lavaclient/plugin-queue": "workspace:0.0.2",
+        "lavaclient": "workspace:5.0.0",
         "tslib": "^2.6.0"
     }
 }

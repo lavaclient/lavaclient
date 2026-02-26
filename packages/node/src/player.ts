@@ -362,7 +362,7 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
             position: this.adjustedPosition,
             filters: this.filters,
             volume: this.volume,
-            voice: this.voice.server ?? { endpoint: "", sessionId: "", token: "" },
+            voice: this.voice.server ?? { endpoint: "", sessionId: "", token: "", channelId: null },
             track: this.track ? { encoded: this.track.encoded } : undefined,
         });
     }
