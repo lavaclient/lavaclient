@@ -1,15 +1,15 @@
-import * as S from "@effect/schema/Schema";
+import { Schema as S } from "effect" ;
 
 /**
  * Representation of a REST error.
  */
-export const error = S.struct({
-    timestamp: S.number,
-    status: S.number,
-    error: S.string,
-    trace: S.optional(S.string),
-    message: S.string,
-    path: S.string,
+export const error = S.Struct({
+    timestamp: S.Number,
+    status: S.Number,
+    error: S.String,
+    trace: S.optional(S.String),
+    message: S.String,
+    path: S.String,
 });
 
-export type Error = S.Schema.To<typeof error>;
+export type Error = S.Schema.Type<typeof error>;

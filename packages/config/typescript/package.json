@@ -2,7 +2,7 @@
     "name": "@lavaclient/config-typescript",
     "packageManager": "pnpm@8.3.1",
     "devDependencies": {
-        "@types/node": "^20.3.3",
-        "typescript": "^5.1.6"
+        "@types/node": "catalog:",
+        "typescript": "catalog:"
     }
 }

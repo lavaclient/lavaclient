@@ -113,23 +113,25 @@ export const createEndpointMethod =
         onRequest(client, { type: "success", finished: true, ...executed });
     };
 
-interface ResultContainer<T> {
-    result: LP.AnySchema<T>;
+interface ResultContainer<T extends LP.AnySchema> {
+    result: T;
 }
 
-interface JSONBodyContainer<T> {
-    jsonBody: LP.AnySchema<T>;
+interface JSONBodyContainer<T extends LP.AnySchema> {
+    jsonBody: T;
 }
 
-interface QueryContainer<T> {
-    query: LP.AnySchema<T>;
+interface QueryContainer<T extends LP.AnySchema> {
+    query: T;
 }
 
 interface PathContainer<P extends string> {
     path: P;
 }
 
-type EndpointDefinition = Partial<ResultContainer<any> & JSONBodyContainer<any> & QueryContainer<any>> &
+type EndpointDefinition = Partial<
+    ResultContainer<LP.AnySchema> & JSONBodyContainer<LP.AnySchema> & QueryContainer<LP.AnySchema>
+> &
     PathContainer<string> & {
         method: "GET" | "DELETE" | "POST" | "PATCH";
     };
@@ -150,20 +152,20 @@ type CreatePathArguments<E extends EndpointDefinition> = E extends PathContainer
 
 type EmptyObject = Record<PropertyKey, never>;
 
-type AddPath<E extends EndpointDefinition, R extends object> = CreatePathArguments<E> extends EmptyObject
-    ? R
-    : R & { path: CreatePathArguments<E> };
+type AddPath<E extends EndpointDefinition, R extends object> =
+    CreatePathArguments<E> extends EmptyObject ? R : R & { path: CreatePathArguments<E> };
 
-type createEndpointMethodArgs<E extends EndpointDefinition> = E extends JSONBodyContainer<infer Body>
-    ? E extends QueryContainer<infer QP>
-        ? { body: Body; query: QP }
-        : { body: Body }
-    : E extends QueryContainer<infer QP>
-    ? { query: QP }
-    : {};
+type createEndpointMethodArgs<E extends EndpointDefinition> =
+    E extends JSONBodyContainer<infer Body>
+        ? E extends QueryContainer<infer QP>
+            ? { body: Body["Type"]; query: QP["Type"] }
+            : { body: Body["Type"] }
+        : E extends QueryContainer<infer QP>
+          ? { query: QP["Type"] }
+          : {};
 
 type createExecuteEndpointFn<E extends EndpointDefinition> = (
     client: LavalinkHttpClient,
     request: AddPath<E, createEndpointMethodArgs<E>>,
     options?: Omit<LavalinkHttpRequest, "path" | "method" | "query" | "body">,
-) => Promise<E extends ResultContainer<infer Result> ? Result : void>;
+) => Promise<E extends ResultContainer<infer Result> ? Result["Type"] : void>;

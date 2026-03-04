@@ -1,47 +1,47 @@
-import * as S from "@effect/schema/Schema";
+import { Schema as S } from "effect" ;
 
 /**
  * Representation of a Lavalink version.
  */
-export const version = S.struct({
-    semver: S.string,
-    major: S.number,
-    minor: S.number,
-    patch: S.number,
-    preRelease: S.nullable(S.string),
+export const version = S.Struct({
+    semver: S.String,
+    major: S.Number,
+    minor: S.Number,
+    patch: S.Number,
+    preRelease: S.NullOr(S.String),
 });
 
-export const git = S.struct({
-    branch: S.string,
-    commit: S.string,
-    commitTime: S.number,
+export const git = S.Struct({
+    branch: S.String,
+    commit: S.String,
+    commitTime: S.Number,
 });
 
-export const plugin = S.struct({
-    name: S.string,
-    version: S.string,
+export const plugin = S.Struct({
+    name: S.String,
+    version: S.String,
 });
 
-export const plugins = S.array(plugin);
+export const plugins = S.Array(plugin);
 
 /**
  * Representation of Lavalink server information.
  */
-export const info = S.struct({
+export const info = S.Struct({
     version,
-    buildTime: S.number,
+    buildTime: S.Number,
     git,
-    jvm: S.string,
-    lavaplayer: S.string,
-    sourceManagers: S.array(S.string),
-    filters: S.array(S.string),
+    jvm: S.String,
+    lavaplayer: S.String,
+    sourceManagers: S.Array(S.String),
+    filters: S.Array(S.String),
     plugins,
 });
 
-export type Version = S.Schema.To<typeof version>;
+export type Version = S.Schema.Type<typeof version>;
 
-export type Git = S.Schema.To<typeof git>;
+export type Git = S.Schema.Type<typeof git>;
 
-export type Plugin = S.Schema.To<typeof plugin>;
+export type Plugin = S.Schema.Type<typeof plugin>;
 
-export type Plugins = S.Schema.To<typeof plugins>;
+export type Plugins = S.Schema.Type<typeof plugins>;
