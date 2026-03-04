@@ -53,6 +53,7 @@ export class Queue extends TypedEmitter<QueueEvents> {
                 switch (this.loop.type) {
                     case LoopType.Song:
                         await this.options.play(this, this.current);
+                        this.emit("trackEnd", this.current, reason);
                         return;
                     case LoopType.Queue:
                         this.previous.push(this.current);
@@ -61,7 +62,7 @@ export class Queue extends TypedEmitter<QueueEvents> {
                         break;
                 }
 
-                this.emit("trackEnd", this.current);
+                this.emit("trackEnd", this.current, reason);
             }
 
             if (!this.tracks.length) {
