@@ -10,18 +10,18 @@
     "devDependencies": {
         "@lavaclient/config-prettier": "workspace:^",
         "@lavaclient/config-typescript": "workspace:^",
-        "@types/node": "^20.3.3",
-        "@types/ws": "^8.5.5",
-        "discord.js": "^14.13.0",
-        "ts-essentials": "^9.3.2",
-        "typed-emitter": "^2.1.0",
-        "typescript": "^5.1.6"
+        "@types/node": "catalog:",
+        "@types/ws": "catalog:",
+        "discord.js": "catalog:",
+        "ts-essentials": "catalog:",
+        "typed-emitter": "catalog:",
+        "typescript": "catalog:"
     },
     "dependencies": {
-        "@lavaclient/plugin-effects": "workspace:1.0.1",
-        "@lavaclient/plugin-lavasearch": "workspace:1.0.3",
-        "@lavaclient/plugin-queue": "workspace:0.0.2",
-        "lavaclient": "workspace:5.0.0",
-        "tslib": "^2.6.0"
+        "@lavaclient/plugin-effects": "workspace:^",
+        "@lavaclient/plugin-lavasearch": "workspace:^",
+        "@lavaclient/plugin-queue": "workspace:^",
+        "lavaclient": "workspace:^",
+        "tslib": "catalog:"
     }
 }

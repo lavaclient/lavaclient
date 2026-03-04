@@ -1,15 +1,15 @@
-import * as S from "@effect/schema/Schema";
+import { Schema as S } from "effect" ;
 
 import { track, tracks } from "./player.js";
 
-export const playlistInfo = S.struct({
-    name: S.string,
-    selectedTrack: S.number,
+export const playlistInfo = S.Struct({
+    name: S.String,
+    selectedTrack: S.Number,
 });
 
-export const playlist = S.struct({
+export const playlist = S.Struct({
     info: playlistInfo,
-    pluginInfo: S.record(S.string, S.unknown),
+    pluginInfo: S.Record({ key: S.String, value: S.Unknown }),
     tracks: tracks,
 });
 
@@ -28,59 +28,59 @@ export const playlist = S.struct({
  *    This is the default level and other levels are used in cases where the thrower has more in-depth knowledge
  *    about the error.
  */
-export const exceptionSeverity = S.literal("common", "suspicious", "fault");
+export const exceptionSeverity = S.Literal("common", "suspicious", "fault");
 
-export const exception = S.struct({
-    message: S.nullable(S.string),
+export const exception = S.Struct({
+    message: S.NullOr(S.String),
     severity: exceptionSeverity,
-    cause: S.string,
+    cause: S.String,
 });
 
 //
 
-export const trackLoaded = S.struct({
-    loadType: S.literal("track"),
+export const trackLoaded = S.Struct({
+    loadType: S.Literal("track"),
     data: track,
 });
 
-export const playlistLoaded = S.struct({
-    loadType: S.literal("playlist"),
+export const playlistLoaded = S.Struct({
+    loadType: S.Literal("playlist"),
     data: playlist,
 });
 
-export const searchLoadResult = S.struct({
-    loadType: S.literal("search"),
+export const searchLoadResult = S.Struct({
+    loadType: S.Literal("search"),
     data: tracks,
 });
 
-export const emptyLoadResult = S.struct({
-    loadType: S.literal("empty"),
-    data: S.null,
+export const emptyLoadResult = S.Struct({
+    loadType: S.Literal("empty"),
+    data: S.Null,
 });
 
-export const errorLoadResult = S.struct({
-    loadType: S.literal("error"),
+export const errorLoadResult = S.Struct({
+    loadType: S.Literal("error"),
     data: exception,
 });
 
-export const loadResult = S.union(trackLoaded, playlistLoaded, searchLoadResult, emptyLoadResult, errorLoadResult);
+export const loadResult = S.Union(trackLoaded, playlistLoaded, searchLoadResult, emptyLoadResult, errorLoadResult);
 
-export type PlaylistInfo = S.Schema.To<typeof playlistInfo>;
+export type PlaylistInfo = S.Schema.Type<typeof playlistInfo>;
 
-export type Playlist = S.Schema.To<typeof playlist>;
+export type Playlist = S.Schema.Type<typeof playlist>;
 
-export type ExceptionSeverity = S.Schema.To<typeof exceptionSeverity>;
+export type ExceptionSeverity = S.Schema.Type<typeof exceptionSeverity>;
 
-export type Exception = S.Schema.To<typeof exception>;
+export type Exception = S.Schema.Type<typeof exception>;
 
-export type TrackLoaded = S.Schema.To<typeof trackLoaded>;
+export type TrackLoaded = S.Schema.Type<typeof trackLoaded>;
 
-export type PlaylistLoaded = S.Schema.To<typeof playlistLoaded>;
+export type PlaylistLoaded = S.Schema.Type<typeof playlistLoaded>;
 
-export type SearchLoadResult = S.Schema.To<typeof searchLoadResult>;
+export type SearchLoadResult = S.Schema.Type<typeof searchLoadResult>;
 
-export type EmptyLoadResult = S.Schema.To<typeof emptyLoadResult>;
+export type EmptyLoadResult = S.Schema.Type<typeof emptyLoadResult>;
 
-export type ErrorLoadResult = S.Schema.To<typeof errorLoadResult>;
+export type ErrorLoadResult = S.Schema.Type<typeof errorLoadResult>;
 
-export type LoadResult = S.Schema.To<typeof loadResult>;
+export type LoadResult = S.Schema.Type<typeof loadResult>;

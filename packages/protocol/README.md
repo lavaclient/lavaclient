@@ -1,8 +1,8 @@
 # Lavalink Protocol
 
-A type-safe validation library for the [Lavalink API & Protocol](https://github.com/lavalink-devs/Lavalink/blob/master/IMPLEMENTATION.md), it uses [@effect/schema](https://github.com/effect-ts/schema).
+A type-safe validation library for the [Lavalink API & Protocol](https://github.com/lavalink-devs/Lavalink/blob/master/IMPLEMENTATION.md), it uses [effect/schema](https://effect.website).
 
-- Compatible with **Lavalink v4.0.0**
+- Compatible with **Lavalink v4.2.x**
 
 ## 🛟 Need Support?
 

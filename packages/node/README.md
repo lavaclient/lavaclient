@@ -128,8 +128,8 @@ if (results.loadType === "search") {
     });
 
     // There's also an option to pass a user data schema for type-safe user data values.
-    const schema = S.struct({
-        requesterId: S.string,
+    const schema = S.Struct({
+        requesterId: S.String,
     });
 
     await player.play({

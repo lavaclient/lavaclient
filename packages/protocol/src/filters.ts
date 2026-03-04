@@ -1,55 +1,55 @@
-import * as S from "@effect/schema/Schema";
+import { Schema as S } from "effect";
 
-export const band = S.struct({
-    band: S.number,
-    gain: S.optional(S.number),
+export const band = S.Struct({
+    band: S.Number,
+    gain: S.optional(S.Number),
 });
 
-export const equalizer = S.array(band).pipe(S.maxItems(15));
+export const equalizer = S.Array(band).pipe(S.maxItems(15));
 
-export const karaoke = S.struct({
-    level: S.number,
-    monoLevel: S.number,
-    filterBand: S.number,
-    filterWidth: S.number,
+export const karaoke = S.Struct({
+    level: S.Number,
+    monoLevel: S.Number,
+    filterBand: S.Number,
+    filterWidth: S.Number,
 }).pipe(S.partial);
 
-export const timescale = S.struct({
-    speed: S.number,
-    pitch: S.number,
-    rate: S.number,
+export const timescale = S.Struct({
+    speed: S.Number,
+    pitch: S.Number,
+    rate: S.Number,
 }).pipe(S.partial);
 
-const oscillator = S.struct({
-    frequency: S.number,
-    depth: S.number,
+const oscillator = S.Struct({
+    frequency: S.Number,
+    depth: S.Number,
 }).pipe(S.partial);
 
 export const tremolo = oscillator;
 
 export const vibrato = oscillator;
 
-export const distortion = S.record(
-    S.union(
-        S.templateLiteral(S.literal("sin", "tan", "cos"), S.literal("Offset", "Scale")),
-        S.literal("offset", "scale"),
+export const distortion = S.Record({
+    key: S.Union(
+        S.TemplateLiteral(S.Literal("sin", "tan", "cos"), S.Literal("Offset", "Scale")),
+        S.Literal("offset", "scale"),
     ),
-    S.number,
-).pipe(S.partial);
+    value: S.Number,
+}).pipe(S.partial);
 
-export const rotation = S.struct({
-    rotationHz: S.optional(S.number),
+export const rotation = S.Struct({
+    rotationHz: S.optional(S.Number),
 });
 
-export const channelMix = S.record(
-    S.templateLiteral(S.literal("left", "right"), S.literal("To"), S.literal("Left", "Right")),
-    S.number,
-).pipe(S.partial);
+export const channelMix = S.Record({
+    key: S.TemplateLiteral(S.Literal("left", "right"), S.Literal("To"), S.Literal("Left", "Right")),
+    value: S.Number,
+}).pipe(S.partial);
 
-export const lowPass = S.struct({ smoothing: S.optional(S.number) });
+export const lowPass = S.Struct({ smoothing: S.optional(S.Number) });
 
-export const filters = S.struct({
-    volume: S.number,
+export const filters = S.Struct({
+    volume: S.Number,
     equalizer,
     karaoke,
     timescale,
@@ -59,27 +59,27 @@ export const filters = S.struct({
     rotation,
     channelMix,
     lowPass,
-    pluginFilters: S.record(S.string, S.unknown),
+    pluginFilters: S.Record({ key: S.String, value: S.Unknown }),
 }).pipe(S.partial);
 
-export type Band = S.Schema.To<typeof band>;
+export type Band = S.Schema.Type<typeof band>;
 
-export type Equalizer = S.Schema.To<typeof equalizer>;
+export type Equalizer = S.Schema.Type<typeof equalizer>;
 
-export type Karaoke = S.Schema.To<typeof karaoke>;
+export type Karaoke = S.Schema.Type<typeof karaoke>;
 
-export type Timescale = S.Schema.To<typeof timescale>;
+export type Timescale = S.Schema.Type<typeof timescale>;
 
-export type Tremolo = S.Schema.To<typeof tremolo>;
+export type Tremolo = S.Schema.Type<typeof tremolo>;
 
-export type Vibrato = S.Schema.To<typeof vibrato>;
+export type Vibrato = S.Schema.Type<typeof vibrato>;
 
-export type Distortion = S.Schema.To<typeof distortion>;
+export type Distortion = S.Schema.Type<typeof distortion>;
 
-export type Rotation = S.Schema.To<typeof rotation>;
+export type Rotation = S.Schema.Type<typeof rotation>;
 
-export type ChannelMix = S.Schema.To<typeof channelMix>;
+export type ChannelMix = S.Schema.Type<typeof channelMix>;
 
-export type LowPass = S.Schema.To<typeof lowPass>;
+export type LowPass = S.Schema.Type<typeof lowPass>;
 
-export type Filters = S.Schema.To<typeof filters>;
+export type Filters = S.Schema.Type<typeof filters>;

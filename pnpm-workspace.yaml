@@ -12,3 +12,16 @@ packages:
   - packages/deno
   - packages/test
   - packages/protocol
+
+catalog:
+  "@types/node": ^20.3.3
+  "@types/ws": ^8.5.5
+  discord.js: ^14.13.0
+  effect: ^3.19.19
+  prettier: ^3.0.0
+  tiny-typed-emitter: ^2.1.0
+  ts-essentials: ^9.3.2
+  tslib: ^2.6.0
+  typed-emitter: ^2.1.0
+  typescript: ^5.1.6
+  turbo: ^1.10.16

@@ -9,7 +9,7 @@
         }
     ],
     "devDependencies": {
-        "prettier": "^3.0.0",
-        "turbo": "^1.10.16"
+        "prettier": "catalog:",
+        "turbo": "catalog:"
     }
 }

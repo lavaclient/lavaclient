@@ -24,7 +24,6 @@ import { ClusterNode } from "./cluster/node.js";
 
 import { PlayerVoice } from "./playerVoice.js";
 
-import * as S from "@effect/schema/Schema";
 import { TypedEmitter } from "tiny-typed-emitter";
 import type { DeepWritable } from "ts-essentials";
 
@@ -163,27 +162,22 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ): Promise<this>;
 
-    async play(
-        track: string | { encoded: string; userData: any; userDataSchema?: Protocol.AnySchema },
+    async play<T extends Protocol.AnySchema>(
+        track: string | { encoded: string; userData: any; userDataSchema?: T },
         options: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> = {},
     ) {
-        const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
-        if (typeof track !== "string") {
-            update.userData =
-                "userDataSchema" in track
-                    ? Protocol.encode(
-                          track.userDataSchema as S.Schema<any, any>,
-                          track.userData,
-                          "Failed to validate given user data",
-                      )
-                    : track.userData;
+        const update: Protocol.UpdatePlayerTrack =
+            typeof track !== "string"
+                ? {
+                      userData: track.userDataSchema
+                          ? Protocol.encode(track.userDataSchema, track.userData, "Failed to validate given user data")
+                          : track.userData,
+                      encoded: track.encoded,
+                  }
+                : {
+                      encoded: track,
+                  };
 
-            update.encoded = track.encoded;
-        } else {
-            update.encoded = track;
-        }
-
-        // @ts-expect-error - this code is so unbelievably scuffed lmao
         return this.update({ track: update, ...options });
     }
 

@@ -15,7 +15,7 @@
  */
 
 import * as Protocol from "lavalink-protocol";
-import * as S from "@effect/schema/Schema";
+import { Schema as S } from "effect" ;
 
 export type Snowflake = string;
 

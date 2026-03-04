@@ -4,21 +4,57 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@types/node':
+      specifier: ^20.3.3
+      version: 20.19.35
+    '@types/ws':
+      specifier: ^8.5.5
+      version: 8.18.1
+    discord.js:
+      specifier: ^14.13.0
+      version: 14.25.1
+    effect:
+      specifier: ^3.19.19
+      version: 3.19.19
+    prettier:
+      specifier: ^3.0.0
+      version: 3.8.1
+    tiny-typed-emitter:
+      specifier: ^2.1.0
+      version: 2.1.0
+    ts-essentials:
+      specifier: ^9.3.2
+      version: 9.4.2
+    tslib:
+      specifier: ^2.6.0
+      version: 2.8.1
+    turbo:
+      specifier: ^1.10.16
+      version: 1.13.4
+    typed-emitter:
+      specifier: ^2.1.0
+      version: 2.1.0
+    typescript:
+      specifier: ^5.1.6
+      version: 5.9.3
+
 importers:
 
   .:
     devDependencies:
       prettier:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.8.1
       turbo:
-        specifier: ^1.10.16
+        specifier: 'catalog:'
         version: 1.13.4
 
   packages/adapter/biscuit:
     dependencies:
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -28,22 +64,22 @@ importers:
         specifier: workspace:^
         version: link:../../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/adapter/djs:
     dependencies:
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -53,25 +89,25 @@ importers:
         specifier: workspace:^
         version: link:../../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/client/api:
     dependencies:
       lavalink-protocol:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../../protocol
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -81,28 +117,28 @@ importers:
         specifier: workspace:^
         version: link:../../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/client/ws:
     dependencies:
       lavalink-api-client:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../api
       lavalink-protocol:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../../protocol
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
       typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       ws:
         specifier: ^8.17.1
@@ -115,13 +151,13 @@ importers:
         specifier: workspace:^
         version: link:../../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/config/prettier:
@@ -133,31 +169,31 @@ importers:
   packages/config/typescript:
     devDependencies:
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/node:
     dependencies:
-      '@effect/schema':
-        specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)
+      effect:
+        specifier: 'catalog:'
+        version: 3.19.19
       lavalink-api-client:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../client/api
       lavalink-protocol:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../protocol
       lavalink-ws-client:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../client/ws
       tiny-typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -167,28 +203,28 @@ importers:
         specifier: workspace:^
         version: link:../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       ts-essentials:
-        specifier: ^9.3.2
+        specifier: 'catalog:'
         version: 9.4.2(typescript@5.9.3)
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/plugin/effects:
     dependencies:
       lavaclient:
-        specifier: workspace:5.0.0
+        specifier: workspace:^
         version: link:../../node
       lavalink-protocol:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../../protocol
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -198,31 +234,31 @@ importers:
         specifier: workspace:^
         version: link:../../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       ts-essentials:
-        specifier: ^9.3.2
+        specifier: 'catalog:'
         version: 9.4.2(typescript@5.9.3)
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/plugin/lavasearch:
     dependencies:
-      '@effect/schema':
-        specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)
+      effect:
+        specifier: 'catalog:'
+        version: 3.19.19
       lavalink-api-client:
-        specifier: workspace:1.0.1
+        specifier: workspace:^
         version: link:../../client/api
       lavalink-protocol:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../../protocol
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -232,31 +268,31 @@ importers:
         specifier: workspace:^
         version: link:../../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/plugin/queue:
     dependencies:
       lavaclient:
-        specifier: workspace:5.0.0
+        specifier: workspace:^
         version: link:../../node
       lavalink-protocol:
-        specifier: workspace:1.1.0
+        specifier: workspace:^
         version: link:../../protocol
       tiny-typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -266,25 +302,22 @@ importers:
         specifier: workspace:^
         version: link:../../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/protocol:
     dependencies:
-      '@effect/data':
-        specifier: 0.17.6
-        version: 0.17.6
-      '@effect/schema':
-        specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)
+      effect:
+        specifier: 'catalog:'
+        version: 3.19.19
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -294,28 +327,28 @@ importers:
         specifier: workspace:^
         version: link:../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/test:
     dependencies:
       '@lavaclient/plugin-effects':
-        specifier: workspace:1.0.1
+        specifier: workspace:^
         version: link:../plugin/effects
       '@lavaclient/plugin-lavasearch':
-        specifier: workspace:1.0.3
+        specifier: workspace:^
         version: link:../plugin/lavasearch
       '@lavaclient/plugin-queue':
-        specifier: workspace:0.0.2
+        specifier: workspace:^
         version: link:../plugin/queue
       lavaclient:
-        specifier: workspace:5.0.0
+        specifier: workspace:^
         version: link:../node
       tslib:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
@@ -325,22 +358,22 @@ importers:
         specifier: workspace:^
         version: link:../config/typescript
       '@types/node':
-        specifier: ^20.3.3
+        specifier: 'catalog:'
         version: 20.19.35
       '@types/ws':
-        specifier: ^8.5.5
+        specifier: 'catalog:'
         version: 8.18.1
       discord.js:
-        specifier: ^14.13.0
+        specifier: 'catalog:'
         version: 14.25.1
       ts-essentials:
-        specifier: ^9.3.2
+        specifier: 'catalog:'
         version: 9.4.2(typescript@5.9.3)
       typed-emitter:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       typescript:
-        specifier: ^5.1.6
+        specifier: 'catalog:'
         version: 5.9.3
 
 packages:
@@ -373,17 +406,6 @@ packages:
     resolution: {integrity: sha512-wPlQDxEmlDg5IxhJPuxXr3Vy9AjYq5xCvFWGJyD7w7Np8ZGu+Mc+97LCoEc/+AYCo2IDpKioiH0/c/mj5ZR9Uw==}
     engines: {node: '>=16.11.0'}
 
-  '@effect/data@0.17.6':
-    resolution: {integrity: sha512-/vwz7Jh05eS0qY8kczR/YyJd18d0C+PMtUkAealh4f6gwvhABLGCnktNJTcq/+UHxY0Cbv18r5uaJ4+7PPC+WQ==}
-    deprecated: this package has been merged into the main effect package
-
-  '@effect/schema@0.49.4':
-    resolution: {integrity: sha512-Em5qFV7kXfHpt6n89B2Zwd0ccGgfFpZbBAfQuGPdw/zY18k01Tl3ufKfBA6fFphKQiWrU6JS9btTlq1+/WRRIg==}
-    deprecated: this package has been merged into the main effect package
-    peerDependencies:
-      effect: 2.0.0-next.56
-      fast-check: ^3.13.2
-
   '@sapphire/async-queue@1.5.5':
     resolution: {integrity: sha512-cvGzxbba6sav2zZkH8GPf2oGk9yYoD5qrNWdu9fRehifgnFZJMV+nuy2nON2roRO4yQQ+v7MK/Pktl/HgfsUXg==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
@@ -395,6 +417,9 @@ packages:
   '@sapphire/snowflake@3.5.3':
     resolution: {integrity: sha512-jjmJywLAFoWeBi1W7994zZyiNWPIiqRRNAmSERxyg93xRGzNYvGjlZ0gR6x0F4gPRi2+0O6S71kOZYyr3cxaIQ==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+
+  '@standard-schema/spec@1.1.0':
+    resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
   '@types/node@20.19.35':
     resolution: {integrity: sha512-Uarfe6J91b9HAUXxjvSOdiO2UPOKLm07Q1oh0JHxoZ1y8HoqxDAu3gVrsrOHeiio0kSsoVBt4wFrKOm0dKxVPQ==}
@@ -413,8 +438,8 @@ packages:
     resolution: {integrity: sha512-2l0gsPOLPs5t6GFZfQZKnL1OJNYFcuC/ETWsW4VtKVD/tg4ICa9x+jb9bkPffkMdRpRpuUaO/fKkHCBeiCKh8g==}
     engines: {node: '>=18'}
 
-  effect@2.0.0-next.56:
-    resolution: {integrity: sha512-Z6L9rf78OveZorl4pC82hUM/kNhQ8epChuCBVNIjVsookbb6iqTuP9goi3qi6CR7xUZE+HnOKF2bzMIdOOP+Vw==}
+  effect@3.19.19:
+    resolution: {integrity: sha512-Yc8U/SVXo2dHnaP7zNBlAo83h/nzSJpi7vph6Hzyl4ulgMBIgPmz3UzOjb9sBgpFE00gC0iETR244sfXDNLHRg==}
 
   fast-check@3.23.2:
     resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
@@ -577,13 +602,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@effect/data@0.17.6': {}
-
-  '@effect/schema@0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)':
-    dependencies:
-      effect: 2.0.0-next.56
-      fast-check: 3.23.2
-
   '@sapphire/async-queue@1.5.5': {}
 
   '@sapphire/shapeshift@4.0.0':
@@ -592,6 +610,8 @@ snapshots:
       lodash: 4.17.23
 
   '@sapphire/snowflake@3.5.3': {}
+
+  '@standard-schema/spec@1.1.0': {}
 
   '@types/node@20.19.35':
     dependencies:
@@ -624,7 +644,10 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  effect@2.0.0-next.56: {}
+  effect@3.19.19:
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      fast-check: 3.23.2
 
   fast-check@3.23.2:
     dependencies:

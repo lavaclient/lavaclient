@@ -1,18 +1,18 @@
-import * as S from "@effect/schema/Schema";
+import { Schema as S } from "effect";
 
 /**
  * Representation of a session.
  */
-export const session = S.struct({
+export const session = S.Struct({
     /**
      * Whether resuming is enabled or not.
      */
-    resuming: S.boolean,
+    resuming: S.Boolean,
 
     /**
      * The amount of seconds you are allowed to resume.
      */
-    timeout: S.number,
+    timeout: S.Number,
 });
 
 /**
