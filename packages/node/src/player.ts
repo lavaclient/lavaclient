@@ -80,6 +80,11 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
     paused = false;
 
     /**
+     * The timestamp of when this player was paused.
+     */
+    pausedTimestamp: number | null = null;
+
+    /**
      * Unix Timestamp of when this player was last updated.
      */
     lastUpdate?: number;
@@ -119,11 +124,13 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
 
         const length = this.track?.info?.length,
             last = this.lastUpdate;
-        if (this.paused || !length || !last) {
+
+        if ((this.paused && this.pausedTimestamp == null) || !length || !last) {
             return this.position;
         }
 
-        return Math.min(this.position + (Date.now() - last), length);
+        const ref = this.paused ? this.pausedTimestamp! : Date.now();
+        return ref > last ? Math.min(this.position + (ref - last), length) : this.position;
     }
 
     // high-level utilities.
@@ -318,6 +325,7 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
         this.filters = data.filters;
         this.volume = data.volume;
         this.paused = data.paused;
+        this.pausedTimestamp = this.paused ? Date.now() : null;
 
         return this.patchWithState(data.state);
     }
