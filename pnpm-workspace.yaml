@@ -8,7 +8,7 @@ packages:
   - packages/plugin/effects
   - packages/adapter/biscuit
   - packages/adapter/djs
-  - packages/node
-  - packages/deno
+  - packages/lavadeno
+  - packages/lavaclient
   - packages/test
   - packages/protocol

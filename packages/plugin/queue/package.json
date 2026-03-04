@@ -25,7 +25,6 @@
             "url": "https://vzt.gay"
         }
     ],
-
     "exports": {
         ".": {
             "default": "./dist/index.js",
@@ -49,17 +48,17 @@
     "devDependencies": {
         "@lavaclient/config-prettier": "workspace:^",
         "@lavaclient/config-typescript": "workspace:^",
-        "@types/node": "^20.3.3",
-        "@types/ws": "^8.5.5",
-        "typescript": "^5.1.6"
+        "@types/node": "^20.14.2",
+        "@types/ws": "^8.5.10",
+        "typescript": "^5.4.5"
     },
     "peerDependencies": {
-        "lavaclient": "rc",
-        "lavalink-protocol": "1.0.2"
+        "lavaclient": "workspace:^",
+        "lavalink-protocol": "1.1.1"
     },
     "dependencies": {
         "tiny-typed-emitter": "^2.1.0",
-        "tslib": "^2.6.0"
+        "tslib": "^2.6.3"
     },
     "engines": {
         "node": ">=20"

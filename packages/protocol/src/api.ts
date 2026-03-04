@@ -8,7 +8,7 @@ import { stats } from "./stats.js";
 import { ipRoutePlanner } from "./routeplanner.js";
 import { filters } from "./filters.js";
 
-export const RESTGetAPIPlayersResult = S.array(player);
+export const RESTGetAPIPlayersResult = S.Array(player);
 
 /**
  * https://lavalink.dev/api/rest.html#get-players
@@ -30,40 +30,40 @@ export const RESTGetAPIPlayer = {
     result: RESTGetAPIPlayerResult,
 };
 
-export const playerTrackUpdate = S.struct({
+export const playerTrackUpdate = S.Struct({
     // TODO: `identifier` and `encodedTrack` are exclusive, find out a way to validate that.
     /**
      * The identifier of the track to play.
      */
-    identifier: S.optional(S.string),
+    identifier: S.optional(S.String),
     /**
      * The base64 encoded track to play, `null` stops the current track.
      */
-    encoded: S.nullable(S.string),
+    encoded: S.NullOr(S.String),
     /**
      * Additional track data to be sent back in the Track Object
      */
-    userData: S.optional(S.record(S.string, S.unknown)),
+    userData: S.optional(S.Record(S.String, S.Unknown)),
 });
 
-export const RESTPatchAPIPlayerJSONBody = S.struct({
+export const RESTPatchAPIPlayerJSONBody = S.Struct({
     track: S.optional(playerTrackUpdate),
     /**
      * The track position in milliseconds.
      */
-    position: S.number,
+    position: S.Number,
     /**
      *
      */
-    endTime: S.nullable(S.number),
+    endTime: S.NullOr(S.Number),
     /**
      * The player volume to set, from 0-1000.
      */
-    volume: S.number,
+    volume: S.Number,
     /**
      * Whether the player should be paused.
      */
-    paused: S.boolean,
+    paused: S.Boolean,
     /**
      * The new filters to apply. This overrides any previously applied filters.
      */
@@ -72,15 +72,15 @@ export const RESTPatchAPIPlayerJSONBody = S.struct({
      * Information required to create a voice connection.
      */
     voice: voiceState,
-}).pipe(S.partial);
+}).pipe(S.partial());
 
 export const RESTPatchAPIPlayerResult = player;
 
-export const RESTPatchAPIPlayerQuery = S.struct({
+export const RESTPatchAPIPlayerQuery = S.Struct({
     /**
      * Whether to replace the current track with the new track. Defaults to `false`.
      */
-    noReplace: S.optional(S.boolean),
+    noReplace: S.optional(S.Boolean),
 });
 
 /**
@@ -118,8 +118,8 @@ export const RESTPatchAPISession = {
 
 export const RESTGetAPILoadTracksResult = loadResult;
 
-export const RESTGetAPILoadTracksQuery = S.struct({
-    identifier: S.string,
+export const RESTGetAPILoadTracksQuery = S.Struct({
+    identifier: S.String,
 });
 
 /**
@@ -134,11 +134,11 @@ export const RESTGetAPILoadTracks = {
 
 export const RESTGetAPIDecodeTrackResult = track;
 
-export const RESTGetAPIDecodeTrackQuery = S.struct({
+export const RESTGetAPIDecodeTrackQuery = S.Struct({
     /**
-     * The base64 encoded track string.
+     * The base64 encoded track String.
      */
-    encodedTrack: S.string,
+    encodedTrack: S.String,
 });
 
 /**
@@ -187,7 +187,7 @@ export const RESTGetAPINodeStats = {
     result: RESTGetAPINodeStatsResult,
 };
 
-export const RESTGetAPINodeVersionResult = S.string;
+export const RESTGetAPINodeVersionResult = S.String;
 
 /**
  * https://lavalink.dev/api/rest.html#get-lavalink-version
@@ -209,11 +209,11 @@ export const RESTGetAPIRoutePlannerStatus = {
     result: RESTGetAPIRoutePlannerStatusResult,
 };
 
-export const RESTPostAPIFreeFailedAddressJSONBody = S.struct({
+export const RESTPostAPIFreeFailedAddressJSONBody = S.Struct({
     /**
      * The address to unmark as failed. This address must be in the same ip block.
      */
-    address: S.string,
+    address: S.String,
 });
 
 /**
@@ -233,35 +233,35 @@ export const RESTPostAPIFreeAllFailedAddresses = {
     path: "/v4/routeplanner/free/all" as const,
 };
 
-export type UpdatePlayerTrack = S.Schema.To<typeof playerTrackUpdate>;
+export type UpdatePlayerTrack = S.Schema.Type<typeof playerTrackUpdate>;
 
-export type RESTGetAPIPlayerResult = S.Schema.To<typeof RESTGetAPIPlayerResult>;
-export type RESTPatchAPIPlayerJSONBody = S.Schema.To<typeof RESTPatchAPIPlayerJSONBody>;
-export type RESTPatchAPIPlayerResult = S.Schema.To<typeof RESTPatchAPIPlayerResult>;
+export type RESTGetAPIPlayerResult = S.Schema.Type<typeof RESTGetAPIPlayerResult>;
+export type RESTPatchAPIPlayerJSONBody = S.Schema.Type<typeof RESTPatchAPIPlayerJSONBody>;
+export type RESTPatchAPIPlayerResult = S.Schema.Type<typeof RESTPatchAPIPlayerResult>;
 export type RESTPatchAPIPlayer = typeof RESTPatchAPIPlayer;
 
-export type RESTPatchAPISessionJSONBody = S.Schema.To<typeof RESTPatchAPISessionJSONBody>;
-export type RESTPatchAPISessionResult = S.Schema.To<typeof RESTPatchAPISessionResult>;
+export type RESTPatchAPISessionJSONBody = S.Schema.Type<typeof RESTPatchAPISessionJSONBody>;
+export type RESTPatchAPISessionResult = S.Schema.Type<typeof RESTPatchAPISessionResult>;
 export type RESTPatchAPISession = typeof RESTPatchAPISession;
 
-export type RESTGetAPILoadTracksResult = S.Schema.To<typeof RESTGetAPILoadTracksResult>;
+export type RESTGetAPILoadTracksResult = S.Schema.Type<typeof RESTGetAPILoadTracksResult>;
 export type RESTGetAPILoadTracks = typeof RESTGetAPILoadTracks;
 
-export type RESTGetAPIDecodeTrackResult = S.Schema.To<typeof RESTGetAPIDecodeTrackResult>;
+export type RESTGetAPIDecodeTrackResult = S.Schema.Type<typeof RESTGetAPIDecodeTrackResult>;
 export type RESTGetAPIDecodeTrack = typeof RESTGetAPIDecodeTrack;
 
-export type RESTPostAPIDecodeTracksJSONBody = S.Schema.To<typeof RESTPostAPIDecodeTracksJSONBody>;
-export type RESTPostAPIDecodeTracksResult = S.Schema.To<typeof RESTPostAPIDecodeTracksResult>;
+export type RESTPostAPIDecodeTracksJSONBody = S.Schema.Type<typeof RESTPostAPIDecodeTracksJSONBody>;
+export type RESTPostAPIDecodeTracksResult = S.Schema.Type<typeof RESTPostAPIDecodeTracksResult>;
 export type RESTPostAPIDecodeTracks = typeof RESTPostAPIDecodeTracks;
 
-export type RESTGetAPINodeInfoResult = S.Schema.To<typeof RESTGetAPINodeInfoResult>;
+export type RESTGetAPINodeInfoResult = S.Schema.Type<typeof RESTGetAPINodeInfoResult>;
 export type RESTGetAPINodeInfo = typeof RESTGetAPINodeInfo;
 
-export type RESTGetAPINodeStatsResult = S.Schema.To<typeof RESTGetAPINodeStatsResult>;
+export type RESTGetAPINodeStatsResult = S.Schema.Type<typeof RESTGetAPINodeStatsResult>;
 export type RESTGetAPINodeStats = typeof RESTGetAPINodeStats;
 
-export type RESTGetAPINodeVersionResult = S.Schema.To<typeof RESTGetAPINodeVersionResult>;
+export type RESTGetAPINodeVersionResult = S.Schema.Type<typeof RESTGetAPINodeVersionResult>;
 export type RESTGetAPINodeVersion = typeof RESTGetAPINodeVersion;
 
-export type RESTGetAPIRoutePlannerStatusResult = S.Schema.To<typeof RESTGetAPIRoutePlannerStatusResult>;
+export type RESTGetAPIRoutePlannerStatusResult = S.Schema.Type<typeof RESTGetAPIRoutePlannerStatusResult>;
 export type RESTGetAPIRoutePlannerStatus = typeof RESTGetAPIRoutePlannerStatus;

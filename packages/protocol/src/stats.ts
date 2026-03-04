@@ -3,81 +3,81 @@ import * as S from "@effect/schema/Schema";
 /**
  * Frame statistics.
  */
-export const frameStats = S.struct({
+export const frameStats = S.Struct({
     /**
      * The amount of frames that were sent to Discord.
      */
-    sent: S.number,
+    sent: S.Number,
     /**
      * The amount of frames that were nulled.
      */
-    nulled: S.number,
+    nulled: S.Number,
     /**
      * The amount of frames that were deficit.
      */
-    deficit: S.number,
+    deficit: S.Number,
 });
 
 /**
  * Memory statistics.
  */
-export const memory = S.struct({
+export const memory = S.Struct({
     /**
      * The amount of free memory.
      */
-    free: S.number,
+    free: S.Number,
     /**
      * The amount of used memory (in bytes).
      */
-    used: S.number,
+    used: S.Number,
     /**
      * The amount of allocated memory (in bytes).
      */
-    allocated: S.number,
+    allocated: S.Number,
     /**
      * The amount of reservable memory (in bytes).
      */
-    reservable: S.number,
+    reservable: S.Number,
 });
 
 /**
  * CPU statistics.
  */
-export const cpu = S.struct({
+export const cpu = S.Struct({
     /**
      * The amount of cores the node has.
      */
-    cores: S.number,
+    cores: S.Number,
     /**
      * The system load of the node.
      */
-    systemLoad: S.number,
+    systemLoad: S.Number,
     /**
      * The load of Lavalink on the node.
      */
-    lavalinkLoad: S.number,
+    lavalinkLoad: S.Number,
 });
 
 /**
  * Representation of node stats.
  */
-export const stats = S.struct({
+export const stats = S.Struct({
     /**
      * The frame stats of the node. null, if the node has no players or when retrieved via `/v4/stats`
      */
-    frameStats: S.nullable(frameStats),
+    frameStats: S.NullOr(frameStats),
     /**
      * The amount of players connected to the node.
      */
-    players: S.number,
+    players: S.Number,
     /**
      * The amount of players playing a track.
      */
-    playingPlayers: S.number,
+    playingPlayers: S.Number,
     /**
      * The uptime of the node (in milliseconds).
      */
-    uptime: S.number,
+    uptime: S.Number,
     /**
      * The memory stats of the node.
      */
@@ -88,10 +88,10 @@ export const stats = S.struct({
     cpu,
 });
 
-export type FrameStats = S.Schema.To<typeof frameStats>;
+export type FrameStats = S.Schema.Type<typeof frameStats>;
 
-export type Memory = S.Schema.To<typeof memory>;
+export type Memory = S.Schema.Type<typeof memory>;
 
-export type CPU = S.Schema.To<typeof cpu>;
+export type CPU = S.Schema.Type<typeof cpu>;
 
-export type Stats = S.Schema.To<typeof stats>;
+export type Stats = S.Schema.Type<typeof stats>;

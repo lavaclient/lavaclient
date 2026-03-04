@@ -46,13 +46,20 @@ export class Node extends TypedEmitter<NodeEvents> implements Client {
 
     userId: string | undefined;
 
-    constructor(readonly options: NodeOptions) {
+    constructor(
+        sessionId: string | null,
+        readonly options: NodeOptions,
+    ) {
         super();
 
         this.players = new NodePlayerManager(this);
+
         this.rest = new API.LavalinkHttpClient({ ...options.info, ...options.rest });
+
         this.api = new API.LavalinkAPI(this.rest);
+
         this.ws = new WS.LavalinkWSClient(this.api, { ...options.ws, userId: options.discord.userId });
+
         this.userId = options.discord.userId;
 
         /* attach event listeners. */

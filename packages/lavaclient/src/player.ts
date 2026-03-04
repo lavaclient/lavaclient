@@ -79,6 +79,8 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
      */
     paused = false;
 
+    pausedAt?: number;
+
     /**
      * Unix Timestamp of when this player was last updated.
      */
@@ -119,6 +121,7 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
 
         const length = this.track?.info?.length,
             last = this.lastUpdate;
+
         if (this.paused || !length || !last) {
             return this.position;
         }
@@ -139,8 +142,8 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
         track: {
             encoded: string;
             userData: T;
-            userDataSchema: Protocol.AnySchema<T>;
-        },
+            userDataSchema: Protocol.Schema<T, any>;
+        },  
         options?: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice">,
     ): Promise<this>;
 
@@ -157,18 +160,15 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
     ): Promise<this>;
 
     async play(
-        track: string | { encoded: string; userData: any; userDataSchema?: Protocol.AnySchema },
+        track: string | { encoded: string; userData: any; userDataSchema?: S.Schema.Any },
         options: Omit<Protocol.RESTPatchAPIPlayerJSONBody, "track" | "voice"> = {},
     ) {
         const update: Partial<DeepWritable<Protocol.UpdatePlayerTrack>> = {};
         if (typeof track !== "string") {
             update.userData =
                 "userDataSchema" in track
-                    ? Protocol.encode(
-                          track.userDataSchema as S.Schema<any, any>,
-                          track.userData,
-                          "Failed to validate given user data",
-                      )
+                    ? // @ts-expect-error - this should be fine.
+                      Protocol.encode(track.userDataSchema, track.userData, "Failed to validate given user data")
                     : track.userData;
 
             update.encoded = track.encoded;
@@ -318,6 +318,7 @@ export class Player<$Node extends Node = Node> extends TypedEmitter<PlayerEvents
         this.filters = data.filters;
         this.volume = data.volume;
         this.paused = data.paused;
+        this.pausedAt = data.paused ? Date.now() : undefined;
 
         return this.patchWithState(data.state);
     }

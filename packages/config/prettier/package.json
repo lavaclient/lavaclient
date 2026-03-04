@@ -2,7 +2,7 @@
     "name": "@lavaclient/config-prettier",
     "main": "./index.js",
     "types": "./index.d.ts",
-    "packageManager": "pnpm@8.3.1",
+    "packageManager": "pnpm@9.1.4",
     "devDependencies": {
         "prettier": "^2.8.8"
     }

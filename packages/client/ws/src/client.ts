@@ -67,11 +67,17 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
     private reconnectTry = 0;
 
     constructor(
+        sessionId: string | null,
         readonly api: API.LavalinkAPI,
         readonly options: LavalinkWSClientOptions = {},
     ) {
         super();
+
         this.userId = options.userId;
+
+        if (sessionId != null) {
+            this.session = this.api.session(sessionId);
+        }
     }
 
     /**

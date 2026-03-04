@@ -1,1 +1,3 @@
-export = import("prettier").Config
+import { Options } from "prettier";
+
+export = Options;

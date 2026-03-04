@@ -21,7 +21,7 @@
         "@lavaclient/plugin-effects": "workspace:1.0.0-rc.2",
         "@lavaclient/plugin-lavasearch": "workspace:1.0.2",
         "@lavaclient/plugin-queue": "workspace:0.0.1",
-        "lavaclient": "rc",
+        "lavaclient": "workspace:^",
         "tslib": "^2.6.0"
     }
 }

@@ -2,58 +2,58 @@ import * as S from "@effect/schema/Schema";
 
 import { filters } from "./filters.js";
 
-export const trackInfo = S.struct({
+export const trackInfo = S.Struct({
     /**
      * The track identifier.
      */
-    identifier: S.string,
+    identifier: S.String,
     /**
      * Whether the track is seekable.
      */
-    isSeekable: S.boolean,
+    isSeekable: S.Boolean,
     /**
      * The track author.
      */
-    author: S.string,
+    author: S.String,
     /**
      * The track length in milliseconds.
      */
-    length: S.number,
+    length: S.Number,
     /**
      * Whether the track is a live stream.
      */
-    isStream: S.boolean,
+    isStream: S.Boolean,
     /**
      * The track position (in milliseconds).
      */
-    position: S.number,
+    position: S.Number,
     /**
      * The track title.
      */
-    title: S.string,
+    title: S.String,
     /**
      * The track uri.
      */
-    uri: S.nullable(S.string),
+    uri: S.NullOr(S.String),
     /**
      * The track source name.
      */
-    sourceName: S.string,
+    sourceName: S.String,
     /**
      * The track artwork url.
      */
-    artworkUrl: S.nullable(S.string),
+    artworkUrl: S.NullOr(S.String),
     /**
      * The track [ISRC](https://en.wikipedia.org/wiki/International_Standard_Recording_Code)
      */
-    isrc: S.nullable(S.string),
+    isrc: S.NullOr(S.String),
 });
 
-export const track = S.struct({
+export const track = S.Struct({
     /**
      * The base64 encoded track data.
      */
-    encoded: S.string,
+    encoded: S.String,
     /**
      * Info about the track.
      */
@@ -61,68 +61,68 @@ export const track = S.struct({
     /**
      * Additional track info provided by plugins.
      */
-    pluginInfo: S.record(S.string, S.unknown),
+    pluginInfo: S.Record(S.String, S.Unknown),
     /**
      * Addition track data provided via the Update Player endpoint.
      */
-    userData: S.record(S.string, S.unknown),
+    userData: S.Record(S.String, S.Unknown),
 });
 
-export const tracks = S.array(track);
+export const tracks = S.Array(track);
 
-export const encodedTracks = S.array(S.string);
+export const encodedTracks = S.Array(S.String);
 
-export const voiceState = S.struct({
+export const voiceState = S.Struct({
     /**
      * The Discord voice token.
      */
-    token: S.string,
+    token: S.String,
     /**
      * The Discord voice server endpoint.
      */
-    endpoint: S.string,
+    endpoint: S.String,
     /**
      * The Discord voice session id.
      */
-    sessionId: S.string,
+    sessionId: S.String,
 });
 
-export const playerState = S.struct({
+export const playerState = S.Struct({
     /**
      * The unix timestamp of when the state was constructed.
      */
-    time: S.number,
+    time: S.Number,
     /**
      * The position of the current track (in milliseconds).
      */
-    position: S.number,
+    position: S.Number,
     /**
      * Whether a voice connection for this player is active.
      */
-    connected: S.boolean,
+    connected: S.Boolean,
     /**
      * The calculated RTT of the player's voice connection.
      */
-    ping: S.number,
+    ping: S.Number,
 });
 
-export const player = S.struct({
+export const player = S.Struct({
     /**
      * The guild id of the player.
      */
-    guildId: S.string,
+    guildId: S.String,
     /**
      * The currently playing track.
      */
-    track: S.nullable(track),
+    track: S.NullOr(track),
     /**
      * The volume of the player, range 0-1000, in percentage.
      */
-    volume: S.number,
+    volume: S.Number,
     /**
      * Whether the player is paused.
      */
-    paused: S.boolean,
+    paused: S.Boolean,
     /**
      * The state of the
      */
@@ -137,16 +137,16 @@ export const player = S.struct({
     filters,
 });
 
-export type TrackInfo = S.Schema.To<typeof trackInfo>;
+export type TrackInfo = S.Schema.Type<typeof trackInfo>;
 
-export type Track = S.Schema.To<typeof track>;
+export type Track = S.Schema.Type<typeof track>;
 
-export type Tracks = S.Schema.To<typeof tracks>;
+export type Tracks = S.Schema.Type<typeof tracks>;
 
-export type EncodedTracks = S.Schema.To<typeof encodedTracks>;
+export type EncodedTracks = S.Schema.Type<typeof encodedTracks>;
 
-export type VoiceState = S.Schema.To<typeof voiceState>;
+export type VoiceState = S.Schema.Type<typeof voiceState>;
 
-export type PlayerState = S.Schema.To<typeof playerState>;
+export type PlayerState = S.Schema.Type<typeof playerState>;
 
-export type Player = S.Schema.To<typeof player>;
+export type Player = S.Schema.Type<typeof player>;

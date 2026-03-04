@@ -150,17 +150,17 @@ type CreatePathArguments<E extends EndpointDefinition> = E extends PathContainer
 
 type EmptyObject = Record<PropertyKey, never>;
 
-type AddPath<E extends EndpointDefinition, R extends object> = CreatePathArguments<E> extends EmptyObject
-    ? R
-    : R & { path: CreatePathArguments<E> };
+type AddPath<E extends EndpointDefinition, R extends object> =
+    CreatePathArguments<E> extends EmptyObject ? R : R & { path: CreatePathArguments<E> };
 
-type createEndpointMethodArgs<E extends EndpointDefinition> = E extends JSONBodyContainer<infer Body>
-    ? E extends QueryContainer<infer QP>
-        ? { body: Body; query: QP }
-        : { body: Body }
-    : E extends QueryContainer<infer QP>
-    ? { query: QP }
-    : {};
+type createEndpointMethodArgs<E extends EndpointDefinition> =
+    E extends JSONBodyContainer<infer Body>
+        ? E extends QueryContainer<infer QP>
+            ? { body: Body; query: QP }
+            : { body: Body }
+        : E extends QueryContainer<infer QP>
+          ? { query: QP }
+          : {};
 
 type createExecuteEndpointFn<E extends EndpointDefinition> = (
     client: LavalinkHttpClient,

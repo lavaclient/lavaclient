@@ -6,7 +6,7 @@ import { exception } from "./loadResult.js";
 import { stats } from "./stats.js";
 
 const tag = <K extends string, V extends AST.LiteralValue>(k: K, v: V) =>
-    S.extend(S.record(S.literal(k), S.literal(v)));
+    S.extend(S.Record(S.Literal(k), S.Literal(v)));
 
 /**
  * A map that can help determine whether you should start a new track when a {@link TrackEndEvent} is received.
@@ -39,7 +39,7 @@ export const mayStartNext: Record<TrackEndReason, boolean> = {
  * - `WebSocketClosedEvent`
  *   Dispatched when a websocket connection to Discord voice servers is closed.
  */
-export const eventType = S.literal(
+export const eventType = S.Literal(
     "TrackStartEvent",
     "TrackEndEvent",
     "TrackExceptionEvent",
@@ -47,11 +47,11 @@ export const eventType = S.literal(
     "WebSocketClosedEvent",
 );
 
-export const trackStartEvent = S.struct({
+export const trackStartEvent = S.Struct({
     /**
      * The guild id.
      */
-    guildId: S.string,
+    guildId: S.String,
     /**
      * The track that started playing.
      */
@@ -80,13 +80,13 @@ export const trackStartEvent = S.struct({
  *   of time passed since the last call to AudioPlayer#provide() has reached the threshold specified in player manager
  *   configuration. This may also indicate either a leaked audio player which was discarded, but not stopped.
  */
-export const trackEndReason = S.literal("finished", "loadFailed", "stopped", "replaced", "cleanup");
+export const trackEndReason = S.Literal("finished", "loadFailed", "stopped", "replaced", "cleanup");
 
-export const trackEndEvent = S.struct({
+export const trackEndEvent = S.Struct({
     /**
      * The guild id.
      */
-    guildId: S.string,
+    guildId: S.String,
     /**
      * The track that ended.
      */
@@ -97,11 +97,11 @@ export const trackEndEvent = S.struct({
     reason: trackEndReason,
 });
 
-export const trackExceptionEvent = S.struct({
+export const trackExceptionEvent = S.Struct({
     /**
      * The guild id.
      */
-    guildId: S.string,
+    guildId: S.String,
     /**
      * The track that threw the exception.
      */
@@ -112,11 +112,11 @@ export const trackExceptionEvent = S.struct({
     exception: exception,
 });
 
-export const trackStuckEvent = S.struct({
+export const trackStuckEvent = S.Struct({
     /**
      * The guild id.
      */
-    guildId: S.string,
+    guildId: S.String,
     /**
      * The track that got stuck.
      */
@@ -124,29 +124,29 @@ export const trackStuckEvent = S.struct({
     /**
      * The threshold that was exceeded (in milliseconds).
      */
-    thresholdMs: S.number,
+    thresholdMs: S.Number,
 });
 
-export const webSocketClosedEvent = S.struct({
+export const webSocketClosedEvent = S.Struct({
     /**
      * The guild id.
      */
-    guildId: S.string,
+    guildId: S.String,
     /**
      * The Discord close event code.
      */
-    code: S.number,
+    code: S.Number,
     /**
      * The reason the socket was closed.
      */
-    reason: S.string,
+    reason: S.String,
     /**
      * Whether the connection was closed by Discord.
      */
-    byRemote: S.boolean,
+    byRemote: S.Boolean,
 });
 
-export const event = S.union(
+export const event = S.Union(
     tag("type", "TrackStartEvent")(trackStartEvent),
     tag("type", "TrackEndEvent")(trackEndEvent),
     tag("type", "TrackExceptionEvent")(trackExceptionEvent),
@@ -154,29 +154,29 @@ export const event = S.union(
     tag("type", "WebSocketClosedEvent")(webSocketClosedEvent),
 );
 
-export const ready = S.struct({
+export const ready = S.Struct({
     /**
      * Whether this session was resumed.
      */
-    resumed: S.boolean,
+    resumed: S.Boolean,
     /**
      * The Lavalink session id of this connection. Not to be confused with a Discord voice session id.
      */
-    sessionId: S.string,
+    sessionId: S.String,
 });
 
-export const playerUpdate = S.struct({
+export const playerUpdate = S.Struct({
     /**
      * The guild id of the player.
      */
-    guildId: S.string,
+    guildId: S.String,
     /**
      * The player state.
      */
     state: playerState,
 });
 
-export const message = S.union(
+export const message = S.Union(
     tag("op", "stats")(stats),
     tag("op", "event")(event),
     tag("op", "ready")(ready),
@@ -186,28 +186,28 @@ export const message = S.union(
 /**
  * A basic lavalink message.
  */
-export const basicMessage = S.struct({
-    op: S.string,
+export const basicMessage = S.Struct({
+    op: S.String,
 });
 
-export type BasicMessage = S.Schema.To<typeof basicMessage>;
+export type BasicMessage = S.Schema.Type<typeof basicMessage>;
 
-export type Ready = S.Schema.To<typeof ready>;
+export type Ready = S.Schema.Type<typeof ready>;
 
-export type PlayerUpdate = S.Schema.To<typeof playerUpdate>;
+export type PlayerUpdate = S.Schema.Type<typeof playerUpdate>;
 
-export type Event = S.Schema.To<typeof event>;
+export type Event = S.Schema.Type<typeof event>;
 
-export type Message = S.Schema.To<typeof message>;
+export type Message = S.Schema.Type<typeof message>;
 
-export type TrackStartEvent = S.Schema.To<typeof trackStartEvent>;
+export type TrackStartEvent = S.Schema.Type<typeof trackStartEvent>;
 
-export type TrackEndReason = S.Schema.To<typeof trackEndReason>;
+export type TrackEndReason = S.Schema.Type<typeof trackEndReason>;
 
-export type TrackEndEvent = S.Schema.To<typeof trackEndEvent>;
+export type TrackEndEvent = S.Schema.Type<typeof trackEndEvent>;
 
-export type TrackExceptionEvent = S.Schema.To<typeof trackExceptionEvent>;
+export type TrackExceptionEvent = S.Schema.Type<typeof trackExceptionEvent>;
 
-export type TrackStuckEvent = S.Schema.To<typeof trackStuckEvent>;
+export type TrackStuckEvent = S.Schema.Type<typeof trackStuckEvent>;
 
-export type WebSocketClosedEvent = S.Schema.To<typeof webSocketClosedEvent>;
+export type WebSocketClosedEvent = S.Schema.Type<typeof webSocketClosedEvent>;

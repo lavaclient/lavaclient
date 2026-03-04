@@ -10,24 +10,24 @@ import * as S from "@effect/schema/Schema";
  * - `Inet6Address`
  *   An IP v6 ip block.
  */
-export const ipBlockType = S.literal("Inet4Address", "Inet6Address");
+export const ipBlockType = S.Literal("Inet4Address", "Inet6Address");
 
-export const failingAddress = S.struct({
+export const failingAddress = S.Struct({
     /**
      * The failing address.
      */
-    failingAddress: S.string,
+    failingAddress: S.String,
     /**
      * The timestamp when the address failed.
      */
-    failingTimestamp: S.number,
+    failingTimestamp: S.Number,
     /**
      * The timestamp when the address failed, as a pretty string.
      */
-    failingTime: S.string,
+    failingTime: S.String,
 });
 
-export const ipBlock = S.struct({
+export const ipBlock = S.Struct({
     /**
      * The type of ip block.
      */
@@ -35,17 +35,17 @@ export const ipBlock = S.struct({
     /**
      * The size of the ip block.
      */
-    size: S.string,
+    size: S.String,
 });
 
-type StructFields = Parameters<typeof S.struct>[0];
+type StructFields = Parameters<typeof S.Struct>[0];
 
 const planner = <T extends AST.LiteralValue, O extends StructFields>(type: T, fields: O) =>
-    S.struct({
-        class: S.literal(type),
-        details: S.struct({
+    S.Struct({
+        class: S.Literal(type),
+        details: S.Struct({
             ipBlock,
-            failingAddresses: S.array(failingAddress),
+            failingAddresses: S.Array(failingAddress),
             ...fields,
         }),
     });
@@ -57,15 +57,15 @@ export const rotatingIpRoutePlanner = planner("RotatingIpRoutePlanner", {
     /**
      * The number of rotations.
      */
-    rotateIndex: S.string,
+    rotateIndex: S.String,
     /**
      * The current offset in the block.
      */
-    ipIndex: S.string,
+    ipIndex: S.String,
     /**
      * The current address being used.
      */
-    currentAddress: S.string,
+    currentAddress: S.String,
 });
 
 /**
@@ -75,7 +75,7 @@ export const nanoIpRoutePlanner = planner("NanoIpRoutePlanner", {
     /**
      * The current offset in the ip block
      */
-    currentAddressIndex: S.string,
+    currentAddressIndex: S.String,
 });
 
 /**
@@ -85,11 +85,11 @@ export const rotatingNanoIpRoutePlanner = planner("RotatingNanoIpRoutePlanner", 
     /**
      * The current offset in the ip block
      */
-    currentAddressIndex: S.string,
+    currentAddressIndex: S.String,
     /**
      * The information in which /64 block ips are chosen. This number increases on each ban.
      */
-    blockIndex: S.string,
+    blockIndex: S.String,
 });
 
 /**
@@ -100,25 +100,25 @@ export const balancingIpRoutePlanner = planner("BalancingIpRoutePlanner", {});
 /**
  * Object describing the IP route planner for YouTube.
  */
-export const ipRoutePlanner = S.union(
+export const ipRoutePlanner = S.Union(
     rotatingIpRoutePlanner,
     nanoIpRoutePlanner,
     rotatingNanoIpRoutePlanner,
     balancingIpRoutePlanner,
 );
 
-export type IpBlockType = S.Schema.To<typeof ipBlockType>;
+export type IpBlockType = S.Schema.Type<typeof ipBlockType>;
 
-export type IpBlock = S.Schema.To<typeof ipBlock>;
+export type IpBlock = S.Schema.Type<typeof ipBlock>;
 
-export type FailingAddress = S.Schema.To<typeof failingAddress>;
+export type FailingAddress = S.Schema.Type<typeof failingAddress>;
 
-export type RotatingIpRoutePlanner = S.Schema.To<typeof rotatingIpRoutePlanner>;
+export type RotatingIpRoutePlanner = S.Schema.Type<typeof rotatingIpRoutePlanner>;
 
-export type NanoIpRoutePlanner = S.Schema.To<typeof nanoIpRoutePlanner>;
+export type NanoIpRoutePlanner = S.Schema.Type<typeof nanoIpRoutePlanner>;
 
-export type RotatingNanoIpRoutePlanner = S.Schema.To<typeof rotatingNanoIpRoutePlanner>;
+export type RotatingNanoIpRoutePlanner = S.Schema.Type<typeof rotatingNanoIpRoutePlanner>;
 
-export type BalancingIpRoutePlanner = S.Schema.To<typeof balancingIpRoutePlanner>;
+export type BalancingIpRoutePlanner = S.Schema.Type<typeof balancingIpRoutePlanner>;
 
-export type IpRoutePlanner = S.Schema.To<typeof ipRoutePlanner>;
+export type IpRoutePlanner = S.Schema.Type<typeof ipRoutePlanner>;

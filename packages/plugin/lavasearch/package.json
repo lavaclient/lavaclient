@@ -54,18 +54,18 @@
     "devDependencies": {
         "@lavaclient/config-prettier": "workspace:^",
         "@lavaclient/config-typescript": "workspace:^",
-        "@types/node": "^20.3.3",
-        "@types/ws": "^8.5.5",
+        "@types/node": "^20.14.2",
+        "@types/ws": "^8.5.10",
         "typed-emitter": "^2.1.0",
-        "typescript": "^5.1.6"
+        "typescript": "^5.4.5"
     },
     "peerDependencies": {
-        "lavalink-api-client": "workspace:1.0.1",
-        "lavalink-protocol": "workspace:1.0.2"
+        "lavalink-api-client": "1.0.2",
+        "lavalink-protocol": "1.1.1"
     },
     "dependencies": {
-        "@effect/schema": "^0.49.4",
-        "tslib": "^2.6.0"
+        "@effect/schema": "^0.67.21",
+        "tslib": "^2.6.3"
     },
     "engines": {
         "node": ">=20"

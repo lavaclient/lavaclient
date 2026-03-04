@@ -48,17 +48,17 @@
     "devDependencies": {
         "@lavaclient/config-prettier": "workspace:^",
         "@lavaclient/config-typescript": "workspace:^",
-        "@types/node": "^20.3.3",
-        "@types/ws": "^8.5.5",
-        "ts-essentials": "^9.3.2",
-        "typescript": "^5.1.6"
+        "@types/node": "^20.14.2",
+        "@types/ws": "^8.5.10",
+        "ts-essentials": "^10.0.0",
+        "typescript": "^5.4.5"
     },
     "peerDependencies": {
-        "lavaclient": "rc",
-        "lavalink-protocol": "1.0.1"
+        "lavaclient": "workspace:^",
+        "lavalink-protocol": "1.1.1"
     },
     "dependencies": {
-        "tslib": "^2.6.0"
+        "tslib": "^2.6.3"
     },
     "engines": {
         "node": ">=20"

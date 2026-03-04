@@ -24,13 +24,13 @@
     "devDependencies": {
         "@lavaclient/config-prettier": "workspace:^",
         "@lavaclient/config-typescript": "workspace:^",
-        "@types/node": "^20.3.3",
-        "@types/ws": "^8.5.5",
+        "@types/node": "^20.14.2",
+        "@types/ws": "^8.5.10",
         "typed-emitter": "^2.1.0",
-        "typescript": "^5.1.6"
+        "typescript": "^5.4.5"
     },
     "dependencies": {
-        "tslib": "^2.6.0"
+        "tslib": "^2.6.3"
     },
     "engines": {
         "node": ">=20"
