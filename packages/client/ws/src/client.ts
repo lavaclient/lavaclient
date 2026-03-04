@@ -335,7 +335,7 @@ const getReconnectDelay = async (index: number, options: LavalinkWSClientOptions
     if (options.reconnecting === false) return null;
     return typeof options.reconnecting?.delay === "function"
         ? await options.reconnecting.delay(index)
-        : options.reconnecting?.delay ?? 5_000;
+        : (options.reconnecting?.delay ?? 5_000);
 };
 
 export interface LavalinkWSClientReadyEvent {

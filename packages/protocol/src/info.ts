@@ -1,4 +1,4 @@
-import { Schema as S } from "effect" ;
+import { Schema as S } from "effect";
 
 /**
  * Representation of a Lavalink version.
