@@ -1,6 +1,6 @@
 {
     "name": "@lavaclient/plugin-effects",
-    "version": "1.0.0-rc.2",
+    "version": "1.0.1",
     "description": "Lavaclient plugin for better filter management",
     "license": "Apache-2.0",
     "author": "lavaclient team",
@@ -54,8 +54,8 @@
         "typescript": "^5.1.6"
     },
     "peerDependencies": {
-        "lavaclient": "rc",
-        "lavalink-protocol": "1.0.1"
+        "lavaclient": "workspace:5.0.0",
+        "lavalink-protocol": "workspace:1.1.0"
     },
     "dependencies": {
         "tslib": "^2.6.0"

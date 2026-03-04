@@ -85,6 +85,10 @@ export const voiceState = S.struct({
      * The Discord voice session id.
      */
     sessionId: S.string,
+    /**
+     * The Discord voice channel id.
+     */
+    channelId: S.nullable(S.string),
 });
 
 export const playerState = S.struct({

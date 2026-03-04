@@ -1,10 +1,14 @@
 import { Client, GatewayDispatchEvents } from "discord.js";
 import { Cluster } from "lavaclient";
 
-import "@lavaclient/plugin-lavasearch/register";
-import "@lavaclient/plugin-effects/register";
-import "@lavaclient/plugin-queue/register";
+import { load as loadLavaSearch } from "@lavaclient/plugin-lavasearch";
+import { load as loadEffects } from "@lavaclient/plugin-effects";
+import { load as loadQueue } from "@lavaclient/plugin-queue";
 import { PlayerEffect } from "@lavaclient/plugin-effects";
+
+loadLavaSearch();
+loadEffects();
+loadQueue();
 
 const client = new Client({
     intents: ["Guilds", "GuildVoiceStates"],
@@ -16,17 +20,13 @@ const node = new Cluster({
             info: {
                 auth: "youshallnotpass",
                 host: "localhost",
-                port: 8080,
+                port: 2333,
             },
-            rest: {
-
-            },
+            rest: {},
             ws: {
                 reconnecting: {
-                    tries: Infinity
-
+                    tries: Infinity,
                 },
-
             },
         },
     ],
@@ -50,27 +50,34 @@ const slowed: PlayerEffect = {
 };
 
 node.once("ready", async () => {
-
     const player = node.players.create(process.env.TEST_GUILD!);
     player.on("trackStart", (track) => {
         console.log("started playing", track.info.title, "by", track.info.author);
         // console.log(getUserData(track, userDataSchema))
     });
 
-    player.voice.disconnect()
+    player.voice.disconnect();
     player.voice.connect(process.env.TEST_CHANNEL!);
 
     const loadAndQueue = async (query: string) => {
-        const result = await node.api.loadSearch("spsearch:" + query, "album");
-        console.log(result.albums);
-        // player.queue.add(result.tracks[0], {
-            // requester: "123",
-        // });
-    }
+        const result = await node.api.loadTracks(query);
 
+        const tracks =
+            result.loadType === "track"
+                ? [result.data]
+                : result.loadType === "search"
+                  ? result.data
+                  : result.loadType === "playlist"
+                    ? result.data.tracks
+                    : [];
 
-    await loadAndQueue("heylog gravel");
-    await loadAndQueue("surround sound jid baby tate");
+        player.queue.add(tracks[0], {
+            requester: "123",
+        });
+    };
+
+    await loadAndQueue("https://soundcloud.com/imnotvrycreative/he-say-she-say");
+    // await loadAndQueue("surround sound jid baby tate");
 
     await player.queue.start();
 

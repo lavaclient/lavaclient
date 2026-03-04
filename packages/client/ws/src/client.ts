@@ -113,7 +113,7 @@ export class LavalinkWSClient extends Emitter<LavalinkWSClientEvents> {
         const headers: Record<string, string> = {};
         headers["User-Id"] = userId;
         headers["Authorization"] = this.api.client.options.auth;
-        headers["Client-Name"] = this.options.clientName ?? "lavalink-ws-client v1.0.0";
+        headers["Client-Name"] = this.options.clientName ?? "lavalink-ws-client v1.1.0";
 
         if (this.session && shouldResume(this.options)) {
             // resume

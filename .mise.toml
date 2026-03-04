@@ -1,2 +1,4 @@
 [tools]
 java = "zulu-21"
+node = "latest"
+pnpm = "latest"

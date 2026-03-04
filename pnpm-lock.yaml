@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
@@ -10,16 +10,16 @@ importers:
     devDependencies:
       prettier:
         specifier: ^3.0.0
-        version: 3.0.0
+        version: 3.8.1
       turbo:
         specifier: ^1.10.16
-        version: 1.10.16
+        version: 1.13.4
 
   packages/adapter/biscuit:
     dependencies:
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -29,22 +29,22 @@ importers:
         version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/adapter/djs:
     dependencies:
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -54,25 +54,25 @@ importers:
         version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/client/api:
     dependencies:
       lavalink-protocol:
-        specifier: 1.0.2
+        specifier: workspace:1.1.0
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -82,31 +82,31 @@ importers:
         version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/client/ws:
     dependencies:
       lavalink-api-client:
-        specifier: 1.0.1
+        specifier: workspace:1.1.0
         version: link:../api
       lavalink-protocol:
-        specifier: 1.0.2
+        specifier: workspace:1.1.0
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       ws:
         specifier: ^8.17.1
-        version: 8.17.1
+        version: 8.19.0
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -116,13 +116,13 @@ importers:
         version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/config/prettier:
     devDependencies:
@@ -134,31 +134,31 @@ importers:
     devDependencies:
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/node:
     dependencies:
       '@effect/schema':
         specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
+        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)
       lavalink-api-client:
-        specifier: 1.0.1
+        specifier: workspace:1.1.0
         version: link:../client/api
       lavalink-protocol:
-        specifier: 1.0.2
+        specifier: workspace:1.1.0
         version: link:../protocol
       lavalink-ws-client:
-        specifier: 1.0.1
+        specifier: workspace:1.1.0
         version: link:../client/ws
       tiny-typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -168,28 +168,28 @@ importers:
         version: link:../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       ts-essentials:
         specifier: ^9.3.2
-        version: 9.3.2(typescript@5.1.6)
+        version: 9.4.2(typescript@5.9.3)
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/plugin/effects:
     dependencies:
       lavaclient:
-        specifier: rc
+        specifier: workspace:5.0.0
         version: link:../../node
       lavalink-protocol:
-        specifier: 1.0.1
-        version: 1.0.1(effect@2.0.0-next.56)(fast-check@3.14.0)
+        specifier: workspace:1.1.0
+        version: link:../../protocol
       tslib:
         specifier: ^2.6.0
-        version: 2.6.2
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -199,31 +199,31 @@ importers:
         version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       ts-essentials:
         specifier: ^9.3.2
-        version: 9.3.2(typescript@5.1.6)
+        version: 9.4.2(typescript@5.9.3)
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/plugin/lavasearch:
     dependencies:
       '@effect/schema':
         specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
+        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)
       lavalink-api-client:
         specifier: workspace:1.0.1
         version: link:../../client/api
       lavalink-protocol:
-        specifier: workspace:1.0.2
+        specifier: workspace:1.1.0
         version: link:../../protocol
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -233,31 +233,31 @@ importers:
         version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/plugin/queue:
     dependencies:
       lavaclient:
-        specifier: rc
+        specifier: workspace:5.0.0
         version: link:../../node
       lavalink-protocol:
-        specifier: 1.0.2
+        specifier: workspace:1.1.0
         version: link:../../protocol
       tiny-typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -267,13 +267,13 @@ importers:
         version: link:../../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/protocol:
     dependencies:
@@ -282,10 +282,10 @@ importers:
         version: 0.17.6
       '@effect/schema':
         specifier: ^0.49.4
-        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
+        version: 0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -295,28 +295,28 @@ importers:
         version: link:../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
   packages/test:
     dependencies:
       '@lavaclient/plugin-effects':
-        specifier: workspace:1.0.0-rc.2
+        specifier: workspace:1.0.1
         version: link:../plugin/effects
       '@lavaclient/plugin-lavasearch':
-        specifier: workspace:1.0.2
+        specifier: workspace:1.0.3
         version: link:../plugin/lavasearch
       '@lavaclient/plugin-queue':
-        specifier: workspace:0.0.1
+        specifier: workspace:0.0.2
         version: link:../plugin/queue
       lavaclient:
-        specifier: rc
+        specifier: workspace:5.0.0
         version: link:../node
       tslib:
         specifier: ^2.6.0
-        version: 2.6.0
+        version: 2.8.1
     devDependencies:
       '@lavaclient/config-prettier':
         specifier: workspace:^
@@ -326,339 +326,196 @@ importers:
         version: link:../config/typescript
       '@types/node':
         specifier: ^20.3.3
-        version: 20.3.3
+        version: 20.19.35
       '@types/ws':
         specifier: ^8.5.5
-        version: 8.5.5
+        version: 8.18.1
       discord.js:
         specifier: ^14.13.0
-        version: 14.13.0
+        version: 14.25.1
       ts-essentials:
         specifier: ^9.3.2
-        version: 9.3.2(typescript@5.1.6)
+        version: 9.4.2(typescript@5.9.3)
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
       typescript:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.9.3
 
 packages:
 
-  /@discordjs/builders@1.6.5:
-    resolution: {integrity: sha512-SdweyCs/+mHj+PNhGLLle7RrRFX9ZAhzynHahMCLqp5Zeq7np7XC6/mgzHc79QoVlQ1zZtOkTTiJpOZu5V8Ufg==}
+  '@discordjs/builders@1.13.1':
+    resolution: {integrity: sha512-cOU0UDHc3lp/5nKByDxkmRiNZBpdp0kx55aarbiAfakfKJHlxv/yFW1zmIqCAmwH5CRlrH9iMFKJMpvW4DPB+w==}
     engines: {node: '>=16.11.0'}
-    dependencies:
-      '@discordjs/formatters': 0.3.2
-      '@discordjs/util': 1.0.1
-      '@sapphire/shapeshift': 3.9.2
-      discord-api-types: 0.37.50
-      fast-deep-equal: 3.1.3
-      ts-mixer: 6.0.3
-      tslib: 2.6.2
-    dev: true
 
-  /@discordjs/collection@1.5.3:
+  '@discordjs/collection@1.5.3':
     resolution: {integrity: sha512-SVb428OMd3WO1paV3rm6tSjM4wC+Kecaa1EUGX7vc6/fddvw/6lg90z4QtCqm21zvVe92vMMDt9+DkIvjXImQQ==}
     engines: {node: '>=16.11.0'}
-    dev: true
 
-  /@discordjs/formatters@0.3.2:
-    resolution: {integrity: sha512-lE++JZK8LSSDRM5nLjhuvWhGuKiXqu+JZ/DsOR89DVVia3z9fdCJVcHF2W/1Zxgq0re7kCzmAJlCMMX3tetKpA==}
+  '@discordjs/collection@2.1.1':
+    resolution: {integrity: sha512-LiSusze9Tc7qF03sLCujF5iZp7K+vRNEDBZ86FT9aQAv3vxMLihUvKvpsCWiQ2DJq1tVckopKm1rxomgNUc9hg==}
+    engines: {node: '>=18'}
+
+  '@discordjs/formatters@0.6.2':
+    resolution: {integrity: sha512-y4UPwWhH6vChKRkGdMB4odasUbHOUwy7KL+OVwF86PvT6QVOwElx+TiI1/6kcmcEe+g5YRXJFiXSXUdabqZOvQ==}
     engines: {node: '>=16.11.0'}
-    dependencies:
-      discord-api-types: 0.37.50
-    dev: true
 
-  /@discordjs/rest@2.0.1:
-    resolution: {integrity: sha512-/eWAdDRvwX/rIE2tuQUmKaxmWeHmGealttIzGzlYfI4+a7y9b6ZoMp8BG/jaohs8D8iEnCNYaZiOFLVFLQb8Zg==}
+  '@discordjs/rest@2.6.0':
+    resolution: {integrity: sha512-RDYrhmpB7mTvmCKcpj+pc5k7POKszS4E2O9TYc+U+Y4iaCP+r910QdO43qmpOja8LRr1RJ0b3U+CqVsnPqzf4w==}
+    engines: {node: '>=18'}
+
+  '@discordjs/util@1.2.0':
+    resolution: {integrity: sha512-3LKP7F2+atl9vJFhaBjn4nOaSWahZ/yWjOvA4e5pnXkt2qyXRCHLxoBQy81GFtLGCq7K9lPm9R517M1U+/90Qg==}
+    engines: {node: '>=18'}
+
+  '@discordjs/ws@1.2.3':
+    resolution: {integrity: sha512-wPlQDxEmlDg5IxhJPuxXr3Vy9AjYq5xCvFWGJyD7w7Np8ZGu+Mc+97LCoEc/+AYCo2IDpKioiH0/c/mj5ZR9Uw==}
     engines: {node: '>=16.11.0'}
-    dependencies:
-      '@discordjs/collection': 1.5.3
-      '@discordjs/util': 1.0.1
-      '@sapphire/async-queue': 1.5.0
-      '@sapphire/snowflake': 3.5.1
-      '@vladfrangu/async_event_emitter': 2.2.2
-      discord-api-types: 0.37.50
-      magic-bytes.js: 1.0.15
-      tslib: 2.6.2
-      undici: 5.22.1
-    dev: true
 
-  /@discordjs/util@1.0.1:
-    resolution: {integrity: sha512-d0N2yCxB8r4bn00/hvFZwM7goDcUhtViC5un4hPj73Ba4yrChLSJD8fy7Ps5jpTLg1fE9n4K0xBLc1y9WGwSsA==}
-    engines: {node: '>=16.11.0'}
-    dev: true
-
-  /@discordjs/ws@1.0.1:
-    resolution: {integrity: sha512-avvAolBqN3yrSvdBPcJ/0j2g42ABzrv3PEL76e3YTp2WYMGH7cuspkjfSyNWaqYl1J+669dlLp+YFMxSVQyS5g==}
-    engines: {node: '>=16.11.0'}
-    dependencies:
-      '@discordjs/collection': 1.5.3
-      '@discordjs/rest': 2.0.1
-      '@discordjs/util': 1.0.1
-      '@sapphire/async-queue': 1.5.0
-      '@types/ws': 8.5.5
-      '@vladfrangu/async_event_emitter': 2.2.2
-      discord-api-types: 0.37.50
-      tslib: 2.6.2
-      ws: 8.17.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: true
-
-  /@effect/data@0.17.6:
+  '@effect/data@0.17.6':
     resolution: {integrity: sha512-/vwz7Jh05eS0qY8kczR/YyJd18d0C+PMtUkAealh4f6gwvhABLGCnktNJTcq/+UHxY0Cbv18r5uaJ4+7PPC+WQ==}
-    dev: false
+    deprecated: this package has been merged into the main effect package
 
-  /@effect/schema@0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0):
+  '@effect/schema@0.49.4':
     resolution: {integrity: sha512-Em5qFV7kXfHpt6n89B2Zwd0ccGgfFpZbBAfQuGPdw/zY18k01Tl3ufKfBA6fFphKQiWrU6JS9btTlq1+/WRRIg==}
+    deprecated: this package has been merged into the main effect package
     peerDependencies:
       effect: 2.0.0-next.56
       fast-check: ^3.13.2
-    dependencies:
-      effect: 2.0.0-next.56
-      fast-check: 3.14.0
-    dev: false
 
-  /@sapphire/async-queue@1.5.0:
-    resolution: {integrity: sha512-JkLdIsP8fPAdh9ZZjrbHWR/+mZj0wvKS5ICibcLrRI1j84UmLMshx5n9QmL8b95d4onJ2xxiyugTgSAX7AalmA==}
+  '@sapphire/async-queue@1.5.5':
+    resolution: {integrity: sha512-cvGzxbba6sav2zZkH8GPf2oGk9yYoD5qrNWdu9fRehifgnFZJMV+nuy2nON2roRO4yQQ+v7MK/Pktl/HgfsUXg==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
-    dev: true
 
-  /@sapphire/shapeshift@3.9.2:
-    resolution: {integrity: sha512-YRbCXWy969oGIdqR/wha62eX8GNHsvyYi0Rfd4rNW6tSVVa8p0ELiMEuOH/k8rgtvRoM+EMV7Csqz77YdwiDpA==}
+  '@sapphire/shapeshift@4.0.0':
+    resolution: {integrity: sha512-d9dUmWVA7MMiKobL3VpLF8P2aeanRTu6ypG2OIaEv/ZHH/SUQ2iHOVyi5wAPjQ+HmnMuL0whK9ez8I/raWbtIg==}
+    engines: {node: '>=v16'}
+
+  '@sapphire/snowflake@3.5.3':
+    resolution: {integrity: sha512-jjmJywLAFoWeBi1W7994zZyiNWPIiqRRNAmSERxyg93xRGzNYvGjlZ0gR6x0F4gPRi2+0O6S71kOZYyr3cxaIQ==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
-    dependencies:
-      fast-deep-equal: 3.1.3
-      lodash: 4.17.21
-    dev: true
 
-  /@sapphire/snowflake@3.5.1:
-    resolution: {integrity: sha512-BxcYGzgEsdlG0dKAyOm0ehLGm2CafIrfQTZGWgkfKYbj+pNNsorZ7EotuZukc2MT70E0UbppVbtpBrqpzVzjNA==}
+  '@types/node@20.19.35':
+    resolution: {integrity: sha512-Uarfe6J91b9HAUXxjvSOdiO2UPOKLm07Q1oh0JHxoZ1y8HoqxDAu3gVrsrOHeiio0kSsoVBt4wFrKOm0dKxVPQ==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
+
+  '@vladfrangu/async_event_emitter@2.4.7':
+    resolution: {integrity: sha512-Xfe6rpCTxSxfbswi/W/Pz7zp1WWSNn4A0eW4mLkQUewCrXXtMj31lCg+iQyTkh/CkusZSq9eDflu7tjEDXUY6g==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
-    dev: true
 
-  /@types/node@20.3.3:
-    resolution: {integrity: sha512-wheIYdr4NYML61AjC8MKj/2jrR/kDQri/CIpVoZwldwhnIrD/j9jIU5bJ8yBKuB2VhpFV7Ab6G2XkBjv9r9Zzw==}
-    dev: true
+  discord-api-types@0.38.40:
+    resolution: {integrity: sha512-P/His8cotqZgQqrt+hzrocp9L8RhQQz1GkrCnC9TMJ8Uw2q0tg8YyqJyGULxhXn/8kxHETN4IppmOv+P2m82lQ==}
 
-  /@types/ws@8.5.5:
-    resolution: {integrity: sha512-lwhs8hktwxSjf9UaZ9tG5M03PGogvFaH8gUgLNbN9HKIg0dvv6q+gkSuJ8HN4/VbyxkuLzCjlN7GquQ0gUJfIg==}
-    dependencies:
-      '@types/node': 20.3.3
-    dev: true
+  discord.js@14.25.1:
+    resolution: {integrity: sha512-2l0gsPOLPs5t6GFZfQZKnL1OJNYFcuC/ETWsW4VtKVD/tg4ICa9x+jb9bkPffkMdRpRpuUaO/fKkHCBeiCKh8g==}
+    engines: {node: '>=18'}
 
-  /@vladfrangu/async_event_emitter@2.2.2:
-    resolution: {integrity: sha512-HIzRG7sy88UZjBJamssEczH5q7t5+axva19UbZLO6u0ySbYPrwzWiXBcC0WuHyhKKoeCyneH+FvYzKQq/zTtkQ==}
-    engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
-    dev: true
-
-  /busboy@1.6.0:
-    resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
-    engines: {node: '>=10.16.0'}
-    dependencies:
-      streamsearch: 1.1.0
-    dev: true
-
-  /discord-api-types@0.37.50:
-    resolution: {integrity: sha512-X4CDiMnDbA3s3RaUXWXmgAIbY1uxab3fqe3qwzg5XutR3wjqi7M3IkgQbsIBzpqBN2YWr/Qdv7JrFRqSgb4TFg==}
-    dev: true
-
-  /discord.js@14.13.0:
-    resolution: {integrity: sha512-Kufdvg7fpyTEwANGy9x7i4od4yu5c6gVddGi5CKm4Y5a6sF0VBODObI3o0Bh7TGCj0LfNT8Qp8z04wnLFzgnbA==}
-    engines: {node: '>=16.11.0'}
-    dependencies:
-      '@discordjs/builders': 1.6.5
-      '@discordjs/collection': 1.5.3
-      '@discordjs/formatters': 0.3.2
-      '@discordjs/rest': 2.0.1
-      '@discordjs/util': 1.0.1
-      '@discordjs/ws': 1.0.1
-      '@sapphire/snowflake': 3.5.1
-      '@types/ws': 8.5.5
-      discord-api-types: 0.37.50
-      fast-deep-equal: 3.1.3
-      lodash.snakecase: 4.1.1
-      tslib: 2.6.2
-      undici: 5.22.1
-      ws: 8.17.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: true
-
-  /effect@2.0.0-next.56:
+  effect@2.0.0-next.56:
     resolution: {integrity: sha512-Z6L9rf78OveZorl4pC82hUM/kNhQ8epChuCBVNIjVsookbb6iqTuP9goi3qi6CR7xUZE+HnOKF2bzMIdOOP+Vw==}
-    dev: false
 
-  /fast-check@3.14.0:
-    resolution: {integrity: sha512-9Z0zqASzDNjXBox/ileV/fd+4P+V/f3o4shM6QawvcdLFh8yjPG4h5BrHUZ8yzY6amKGDTAmRMyb/JZqe+dCgw==}
+  fast-check@3.23.2:
+    resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
     engines: {node: '>=8.0.0'}
-    dependencies:
-      pure-rand: 6.0.2
-    dev: false
 
-  /fast-deep-equal@3.1.3:
+  fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
-    dev: true
 
-  /lavalink-protocol@1.0.1(effect@2.0.0-next.56)(fast-check@3.14.0):
-    resolution: {integrity: sha512-/fwxIM9sby33NWNONbI96SbICRECyfdtd2ylEpkfz33OV/USN8PmeI4ua2RcAlFEiTf7E+ftRYyVdHtXgVVMOA==}
-    engines: {node: '>=20'}
-    dependencies:
-      '@effect/data': 0.17.6
-      '@effect/schema': 0.49.4(effect@2.0.0-next.56)(fast-check@3.14.0)
-      tslib: 2.6.2
-    transitivePeerDependencies:
-      - effect
-      - fast-check
-    dev: false
-
-  /lodash.snakecase@4.1.1:
+  lodash.snakecase@4.1.1:
     resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
-    dev: true
 
-  /lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
-  /magic-bytes.js@1.0.15:
-    resolution: {integrity: sha512-bpRmwbRHqongRhA+mXzbLWjVy7ylqmfMBYaQkSs6pac0z6hBTvsgrH0r4FBYd/UYVJBmS6Rp/O+oCCQVLzKV1g==}
-    dev: true
+  magic-bytes.js@1.13.0:
+    resolution: {integrity: sha512-afO2mnxW7GDTXMm5/AoN1WuOcdoKhtgXjIvHmobqTD1grNplhGdv3PFOyjCVmrnOZBIT/gD/koDKpYG+0mvHcg==}
 
-  /prettier@2.8.8:
+  prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
     hasBin: true
-    dev: true
 
-  /prettier@3.0.0:
-    resolution: {integrity: sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==}
+  prettier@3.8.1:
+    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
 
-  /pure-rand@6.0.2:
-    resolution: {integrity: sha512-6Yg0ekpKICSjPswYOuC5sku/TSWaRYlA0qsXqJgM/d/4pLPHPuTxK7Nbf7jFKzAeedUhR8C7K9Uv63FBsSo8xQ==}
-    dev: false
+  pure-rand@6.1.0:
+    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
 
-  /rxjs@7.8.1:
-    resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
-    requiresBuild: true
-    dependencies:
-      tslib: 2.6.2
-    optional: true
+  rxjs@7.8.2:
+    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
 
-  /streamsearch@1.1.0:
-    resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
-    engines: {node: '>=10.0.0'}
-    dev: true
-
-  /tiny-typed-emitter@2.1.0:
+  tiny-typed-emitter@2.1.0:
     resolution: {integrity: sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==}
-    dev: false
 
-  /ts-essentials@9.3.2(typescript@5.1.6):
-    resolution: {integrity: sha512-JxKJzuWqH1MmH4ZFHtJzGEhkfN3QvVR3C3w+4BIoWeoY68UVVoA2Np/Bca9z0IPSErVCWhv439aT0We4Dks8kQ==}
+  ts-essentials@9.4.2:
+    resolution: {integrity: sha512-mB/cDhOvD7pg3YCLk2rOtejHjjdSi9in/IBYE13S+8WA5FBSraYf4V/ws55uvs0IvQ/l0wBOlXy5yBNZ9Bl8ZQ==}
     peerDependencies:
       typescript: '>=4.1.0'
-    dependencies:
-      typescript: 5.1.6
-    dev: true
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
-  /ts-mixer@6.0.3:
-    resolution: {integrity: sha512-k43M7uCG1AkTyxgnmI5MPwKoUvS/bRvLvUb7+Pgpdlmok8AoqmUaZxUUw8zKM5B1lqZrt41GjYgnvAi0fppqgQ==}
-    dev: true
+  ts-mixer@6.0.4:
+    resolution: {integrity: sha512-ufKpbmrugz5Aou4wcr5Wc1UUFWOLhq+Fm6qa6P0w0K5Qw2yhaUoiWszhCVuNQyNwrlGiscHOmqYoAox1PtvgjA==}
 
-  /tslib@2.6.0:
-    resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==}
-    dev: false
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
-  /tslib@2.6.2:
-    resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-
-  /turbo-darwin-64@1.10.16:
-    resolution: {integrity: sha512-+Jk91FNcp9e9NCLYlvDDlp2HwEDp14F9N42IoW3dmHI5ZkGSXzalbhVcrx3DOox3QfiNUHxzWg4d7CnVNCuuMg==}
+  turbo-darwin-64@1.13.4:
+    resolution: {integrity: sha512-A0eKd73R7CGnRinTiS7txkMElg+R5rKFp9HV7baDiEL4xTG1FIg/56Vm7A5RVgg8UNgG2qNnrfatJtb+dRmNdw==}
     cpu: [x64]
     os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
 
-  /turbo-darwin-arm64@1.10.16:
-    resolution: {integrity: sha512-jqGpFZipIivkRp/i+jnL8npX0VssE6IAVNKtu573LXtssZdV/S+fRGYA16tI46xJGxSAivrZ/IcgZrV6Jk80bw==}
+  turbo-darwin-arm64@1.13.4:
+    resolution: {integrity: sha512-eG769Q0NF6/Vyjsr3mKCnkG/eW6dKMBZk6dxWOdrHfrg6QgfkBUk0WUUujzdtVPiUIvsh4l46vQrNVd9EOtbyA==}
     cpu: [arm64]
     os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
 
-  /turbo-linux-64@1.10.16:
-    resolution: {integrity: sha512-PpqEZHwLoizQ6sTUvmImcRmACyRk9EWLXGlqceogPZsJ1jTRK3sfcF9fC2W56zkSIzuLEP07k5kl+ZxJd8JMcg==}
+  turbo-linux-64@1.13.4:
+    resolution: {integrity: sha512-Bq0JphDeNw3XEi+Xb/e4xoKhs1DHN7OoLVUbTIQz+gazYjigVZvtwCvgrZI7eW9Xo1eOXM2zw2u1DGLLUfmGkQ==}
     cpu: [x64]
     os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
 
-  /turbo-linux-arm64@1.10.16:
-    resolution: {integrity: sha512-TMjFYz8to1QE0fKVXCIvG/4giyfnmqcQIwjdNfJvKjBxn22PpbjeuFuQ5kNXshUTRaTJihFbuuCcb5OYFNx4uw==}
+  turbo-linux-arm64@1.13.4:
+    resolution: {integrity: sha512-BJcXw1DDiHO/okYbaNdcWN6szjXyHWx9d460v6fCHY65G8CyqGU3y2uUTPK89o8lq/b2C8NK0yZD+Vp0f9VoIg==}
     cpu: [arm64]
     os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
 
-  /turbo-windows-64@1.10.16:
-    resolution: {integrity: sha512-+jsf68krs0N66FfC4/zZvioUap/Tq3sPFumnMV+EBo8jFdqs4yehd6+MxIwYTjSQLIcpH8KoNMB0gQYhJRLZzw==}
+  turbo-windows-64@1.13.4:
+    resolution: {integrity: sha512-OFFhXHOFLN7A78vD/dlVuuSSVEB3s9ZBj18Tm1hk3aW1HTWTuAw0ReN6ZNlVObZUHvGy8d57OAGGxf2bT3etQw==}
     cpu: [x64]
     os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
 
-  /turbo-windows-arm64@1.10.16:
-    resolution: {integrity: sha512-sKm3hcMM1bl0B3PLG4ifidicOGfoJmOEacM5JtgBkYM48ncMHjkHfFY7HrJHZHUnXM4l05RQTpLFoOl/uIo2HQ==}
+  turbo-windows-arm64@1.13.4:
+    resolution: {integrity: sha512-u5A+VOKHswJJmJ8o8rcilBfU5U3Y1TTAfP9wX8bFh8teYF1ghP0EhtMRLjhtp6RPa+XCxHHVA2CiC3gbh5eg5g==}
     cpu: [arm64]
     os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
 
-  /turbo@1.10.16:
-    resolution: {integrity: sha512-2CEaK4FIuSZiP83iFa9GqMTQhroW2QryckVqUydmg4tx78baftTOS0O+oDAhvo9r9Nit4xUEtC1RAHoqs6ZEtg==}
+  turbo@1.13.4:
+    resolution: {integrity: sha512-1q7+9UJABuBAHrcC4Sxp5lOqYS5mvxRrwa33wpIyM18hlOCpRD/fTJNxZ0vhbMcJmz15o9kkVm743mPn7p6jpQ==}
     hasBin: true
-    optionalDependencies:
-      turbo-darwin-64: 1.10.16
-      turbo-darwin-arm64: 1.10.16
-      turbo-linux-64: 1.10.16
-      turbo-linux-arm64: 1.10.16
-      turbo-windows-64: 1.10.16
-      turbo-windows-arm64: 1.10.16
-    dev: true
 
-  /typed-emitter@2.1.0:
+  typed-emitter@2.1.0:
     resolution: {integrity: sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==}
-    optionalDependencies:
-      rxjs: 7.8.1
 
-  /typescript@5.1.6:
-    resolution: {integrity: sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
-  /undici@5.22.1:
-    resolution: {integrity: sha512-Ji2IJhFXZY0x/0tVBXeQwgPlLWw13GVzpsWPQ3rV50IFMMof2I55PZZxtm4P6iNq+L5znYN9nSTAq0ZyE6lSJw==}
-    engines: {node: '>=14.0'}
-    dependencies:
-      busboy: 1.6.0
-    dev: true
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
-  /ws@8.17.1:
-    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
+  undici@6.21.3:
+    resolution: {integrity: sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==}
+    engines: {node: '>=18.17'}
+
+  ws@8.19.0:
+    resolution: {integrity: sha512-blAT2mjOEIi0ZzruJfIhb3nps74PRWTCz1IjglWEEpQl5XS/UNama6u2/rjFkDDouqr4L67ry+1aGIALViWjDg==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -668,3 +525,175 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+snapshots:
+
+  '@discordjs/builders@1.13.1':
+    dependencies:
+      '@discordjs/formatters': 0.6.2
+      '@discordjs/util': 1.2.0
+      '@sapphire/shapeshift': 4.0.0
+      discord-api-types: 0.38.40
+      fast-deep-equal: 3.1.3
+      ts-mixer: 6.0.4
+      tslib: 2.8.1
+
+  '@discordjs/collection@1.5.3': {}
+
+  '@discordjs/collection@2.1.1': {}
+
+  '@discordjs/formatters@0.6.2':
+    dependencies:
+      discord-api-types: 0.38.40
+
+  '@discordjs/rest@2.6.0':
+    dependencies:
+      '@discordjs/collection': 2.1.1
+      '@discordjs/util': 1.2.0
+      '@sapphire/async-queue': 1.5.5
+      '@sapphire/snowflake': 3.5.3
+      '@vladfrangu/async_event_emitter': 2.4.7
+      discord-api-types: 0.38.40
+      magic-bytes.js: 1.13.0
+      tslib: 2.8.1
+      undici: 6.21.3
+
+  '@discordjs/util@1.2.0':
+    dependencies:
+      discord-api-types: 0.38.40
+
+  '@discordjs/ws@1.2.3':
+    dependencies:
+      '@discordjs/collection': 2.1.1
+      '@discordjs/rest': 2.6.0
+      '@discordjs/util': 1.2.0
+      '@sapphire/async-queue': 1.5.5
+      '@types/ws': 8.18.1
+      '@vladfrangu/async_event_emitter': 2.4.7
+      discord-api-types: 0.38.40
+      tslib: 2.8.1
+      ws: 8.19.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@effect/data@0.17.6': {}
+
+  '@effect/schema@0.49.4(effect@2.0.0-next.56)(fast-check@3.23.2)':
+    dependencies:
+      effect: 2.0.0-next.56
+      fast-check: 3.23.2
+
+  '@sapphire/async-queue@1.5.5': {}
+
+  '@sapphire/shapeshift@4.0.0':
+    dependencies:
+      fast-deep-equal: 3.1.3
+      lodash: 4.17.23
+
+  '@sapphire/snowflake@3.5.3': {}
+
+  '@types/node@20.19.35':
+    dependencies:
+      undici-types: 6.21.0
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 20.19.35
+
+  '@vladfrangu/async_event_emitter@2.4.7': {}
+
+  discord-api-types@0.38.40: {}
+
+  discord.js@14.25.1:
+    dependencies:
+      '@discordjs/builders': 1.13.1
+      '@discordjs/collection': 1.5.3
+      '@discordjs/formatters': 0.6.2
+      '@discordjs/rest': 2.6.0
+      '@discordjs/util': 1.2.0
+      '@discordjs/ws': 1.2.3
+      '@sapphire/snowflake': 3.5.3
+      discord-api-types: 0.38.40
+      fast-deep-equal: 3.1.3
+      lodash.snakecase: 4.1.1
+      magic-bytes.js: 1.13.0
+      tslib: 2.8.1
+      undici: 6.21.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  effect@2.0.0-next.56: {}
+
+  fast-check@3.23.2:
+    dependencies:
+      pure-rand: 6.1.0
+
+  fast-deep-equal@3.1.3: {}
+
+  lodash.snakecase@4.1.1: {}
+
+  lodash@4.17.23: {}
+
+  magic-bytes.js@1.13.0: {}
+
+  prettier@2.8.8: {}
+
+  prettier@3.8.1: {}
+
+  pure-rand@6.1.0: {}
+
+  rxjs@7.8.2:
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
+  tiny-typed-emitter@2.1.0: {}
+
+  ts-essentials@9.4.2(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
+
+  ts-mixer@6.0.4: {}
+
+  tslib@2.8.1: {}
+
+  turbo-darwin-64@1.13.4:
+    optional: true
+
+  turbo-darwin-arm64@1.13.4:
+    optional: true
+
+  turbo-linux-64@1.13.4:
+    optional: true
+
+  turbo-linux-arm64@1.13.4:
+    optional: true
+
+  turbo-windows-64@1.13.4:
+    optional: true
+
+  turbo-windows-arm64@1.13.4:
+    optional: true
+
+  turbo@1.13.4:
+    optionalDependencies:
+      turbo-darwin-64: 1.13.4
+      turbo-darwin-arm64: 1.13.4
+      turbo-linux-64: 1.13.4
+      turbo-linux-arm64: 1.13.4
+      turbo-windows-64: 1.13.4
+      turbo-windows-arm64: 1.13.4
+
+  typed-emitter@2.1.0:
+    optionalDependencies:
+      rxjs: 7.8.2
+
+  typescript@5.9.3: {}
+
+  undici-types@6.21.0: {}
+
+  undici@6.21.3: {}
+
+  ws@8.19.0: {}

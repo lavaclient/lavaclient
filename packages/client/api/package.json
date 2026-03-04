@@ -1,6 +1,6 @@
 {
     "name": "lavalink-api-client",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "description": "Type-safe API client for Lavalink",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -46,7 +46,7 @@
         "typescript": "^5.1.6"
     },
     "peerDependencies": {
-        "lavalink-protocol": "1.0.2"
+        "lavalink-protocol": "workspace:1.1.0"
     },
     "dependencies": {
         "tslib": "^2.6.0"

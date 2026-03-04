@@ -1,6 +1,6 @@
 {
     "name": "@lavaclient/plugin-queue",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Adds queues to lavaclient",
     "license": "Apache-2.0",
     "author": "lavaclient team",
@@ -54,8 +54,8 @@
         "typescript": "^5.1.6"
     },
     "peerDependencies": {
-        "lavaclient": "rc",
-        "lavalink-protocol": "1.0.2"
+        "lavaclient": "workspace:5.0.0",
+        "lavalink-protocol": "workspace:1.1.0"
     },
     "dependencies": {
         "tiny-typed-emitter": "^2.1.0",

@@ -118,7 +118,7 @@ export class PlayerVoice extends TypedEmitter<PlayerVoiceEvents> {
             this.voiceUpdate.sessionId = update.session_id;
         }
 
-        if (this.voiceUpdate.event && this.voiceUpdate.sessionId) {
+        if (this.channelId && this.voiceUpdate.event && this.voiceUpdate.sessionId) {
             this.player.node.emit("debug", {
                 system: "player",
                 subsystem: "voice",
@@ -131,6 +131,7 @@ export class PlayerVoice extends TypedEmitter<PlayerVoiceEvents> {
                 voice: {
                     ...this.voiceUpdate.event,
                     sessionId: this.voiceUpdate.sessionId,
+                    channelId: this.channelId,
                 },
             });
 
