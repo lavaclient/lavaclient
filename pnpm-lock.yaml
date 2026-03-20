@@ -16,8 +16,8 @@ catalogs:
       specifier: ^14.13.0
       version: 14.25.1
     effect:
-      specifier: ^3.19.19
-      version: 3.19.19
+      specifier: ^3.20.0
+      version: 3.21.0
     prettier:
       specifier: ^3.0.0
       version: 3.8.1
@@ -179,7 +179,7 @@ importers:
     dependencies:
       effect:
         specifier: 'catalog:'
-        version: 3.19.19
+        version: 3.21.0
       lavalink-api-client:
         specifier: workspace:^
         version: link:../client/api
@@ -250,7 +250,7 @@ importers:
     dependencies:
       effect:
         specifier: 'catalog:'
-        version: 3.19.19
+        version: 3.21.0
       lavalink-api-client:
         specifier: workspace:^
         version: link:../../client/api
@@ -315,7 +315,7 @@ importers:
     dependencies:
       effect:
         specifier: 'catalog:'
-        version: 3.19.19
+        version: 3.21.0
       tslib:
         specifier: 'catalog:'
         version: 2.8.1
@@ -438,8 +438,8 @@ packages:
     resolution: {integrity: sha512-2l0gsPOLPs5t6GFZfQZKnL1OJNYFcuC/ETWsW4VtKVD/tg4ICa9x+jb9bkPffkMdRpRpuUaO/fKkHCBeiCKh8g==}
     engines: {node: '>=18'}
 
-  effect@3.19.19:
-    resolution: {integrity: sha512-Yc8U/SVXo2dHnaP7zNBlAo83h/nzSJpi7vph6Hzyl4ulgMBIgPmz3UzOjb9sBgpFE00gC0iETR244sfXDNLHRg==}
+  effect@3.21.0:
+    resolution: {integrity: sha512-PPN80qRokCd1f015IANNhrwOnLO7GrrMQfk4/lnZRE/8j7UPWrNNjPV0uBrZutI/nHzernbW+J0hdqQysHiSnQ==}
 
   fast-check@3.23.2:
     resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
@@ -644,7 +644,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  effect@3.19.19:
+  effect@3.21.0:
     dependencies:
       '@standard-schema/spec': 1.1.0
       fast-check: 3.23.2
