@@ -24,4 +24,4 @@ catalog:
   tslib: ^2.6.0
   typed-emitter: ^2.1.0
   typescript: ^5.1.6
-  turbo: ^1.10.16
+  turbo: ^2.9.14
