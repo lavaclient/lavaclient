@@ -52,7 +52,7 @@
     "dependencies": {
         "tslib": "catalog:",
         "typed-emitter": "catalog:",
-        "ws": "^8.17.1"
+        "ws": "^8.20.1"
     },
     "engines": {
         "node": ">=20"
